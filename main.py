@@ -1,6 +1,12 @@
 from kivy.uix.screenmanager import ScreenManager, Screen, NoTransition
 from kivy.metrics import dp
 from kivymd.app import MDApp
+import kivy
+import kivymd
+print(kivy.__version__)
+print(kivymd.__version__)
+import sys
+print(sys.version)
 from kivymd.uix.button import MDFlatButton
 from kivymd.uix.label import MDLabel
 from kivymd.uix.screen import MDScreen
@@ -27,4 +33,3 @@ class TestApp(MDApp):
         self.screen_manager.current = name
 
 TestApp().run()
-
