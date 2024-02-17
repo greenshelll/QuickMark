@@ -1,30 +1,15 @@
-from kivy.uix.screenmanager import ScreenManager, Screen, NoTransition
-from kivy.metrics import dp
 from kivymd.app import MDApp
-from kivymd.uix.button import MDFlatButton
+from kivy.uix.boxlayout import BoxLayout
 from kivymd.uix.label import MDLabel
-from kivymd.uix.screen import MDScreen
-from kivymd.uix.toolbar import MDTopAppBar
-from kivymd.uix.boxlayout import MDBoxLayout
-####
-from screens.first import FirstScreen
-from screens.second import SheetScreen
-from screens import first, second
 
-class TestApp(MDApp):
+
+class CenteredLabelApp(MDApp):
     def build(self):
-        self.theme_cls.primary_palette = "Purple"
-        self.first_screen = FirstScreen(name='first')
-        self.sheet_screen = SheetScreen(name = 'second')
-        self.screen_manager = ScreenManager(transition=NoTransition())
-        first.screenmanager = self.change_screen
-        second.screenmanager = self.change_screen
-        self.screen_manager.add_widget(self.first_screen)
-        self.screen_manager.add_widget(self.sheet_screen)
-        return self.screen_manager
-    
-    def change_screen(self, name):
-        self.screen_manager.current = name
+        layout = BoxLayout(orientation="vertical")
+        label = MDLabel(text="Hello, KivyMD!", halign="center", valign="middle", font_style="H4")
+        layout.add_widget(label)
+        return layout
 
-TestApp().run()
 
+if __name__ == "__main__":
+    CenteredLabelApp().run()
