@@ -33,7 +33,7 @@ Temporary Items
 # Distribution / packaging
 .Python
 env/
-build/
+#build/
 develop-eggs/
 dist/
 downloads/
@@ -59,4 +59,4 @@ var/
 .idea_modules/
 
 # Briefcase log files
-logs/
+#logs/

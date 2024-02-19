@@ -1,0 +1,249 @@
+Date/Time:       2024-02-17 17:37:33 
+Command line:    C:\Users\USER\AppData\Local\Programs\Python\Python310\Scripts\briefcase run
+
+OS Release:      Windows 10
+OS Version:      10.0.22621
+Architecture:    AMD64
+Platform:        Windows-10-10.0.22621-SP0
+
+Python exe:      C:\Users\USER\AppData\Local\Programs\Python\Python310\python.exe
+Python version:  3.10.8 (tags/v3.10.8:aaaf517, Oct 11 2022, 16:50:30) [MSC v.1933 64 bit (AMD64)]
+Virtual env:     False
+Conda env:       False
+
+Briefcase:       0.3.17
+Target platform: windows
+Target format:   app
+
+Environment Variables:
+	ALLUSERSPROFILE=C:\ProgramData
+	APPDATA=C:\Users\USER\AppData\Roaming
+	CHOCOLATEYINSTALL=C:\ProgramData\chocolatey
+	CHOCOLATEYLASTPATHUPDATE=133104585271200455
+	CHROME_CRASHPAD_PIPE_NAME=\\.\pipe\crashpad_11652_HYUFTTWRWWBAZSTS
+	COLORTERM=truecolor
+	COMMONPROGRAMFILES=C:\Program Files\Common Files
+	COMMONPROGRAMFILES(X86)=C:\Program Files (x86)\Common Files
+	COMMONPROGRAMW6432=C:\Program Files\Common Files
+	COMPUTERNAME=LAPTOP-5GSAESA1
+	COMSPEC=C:\WINDOWS\system32\cmd.exe
+	DRIVERDATA=C:\Windows\System32\Drivers\DriverData
+	GIT_ASKPASS=********************
+	HOMEDRIVE=C:
+	HOMEPATH=\Users\USER
+	LANG=en_US.UTF-8
+	LOCALAPPDATA=C:\Users\USER\AppData\Local
+	LOGONSERVER=\\LAPTOP-5GSAESA1
+	LYNX=C:\Program Files (x86)\Lynx - web browser\lynx.exe
+	NUMBER_OF_PROCESSORS=4
+	ONEDRIVE=C:\Users\USER\OneDrive
+	ORIGINAL_XDG_CURRENT_DESKTOP=undefined
+	OS=Windows_NT
+	PATH=C:\Program Files\Common Files\Oracle\Java\javapath;C:\WINDOWS\system32;C:\WINDOWS;C:\WINDOWS\System32\Wbem;C:\WINDOWS\System32\WindowsPowerShell\v1.0\;C:\WINDOWS\System32\OpenSSH\;C:\Program Files\nodejs\;C:\Program Files\Git\cmd;C:\ProgramData\chocolatey\bin;C:\Users\USER\AppData\Local\Programs\Python\Python310;C:\Users\USER\AppData\Local\Programs\Python\Python310\Scripts;C:\xampp\php;C:\ProgramData\ComposerSetup\bin;C:\Users\USER\AppData\Local\Microsoft\WindowsApps;C:\Users\USER\AppData\Local\Programs\Microsoft VS Code\bin;C:\Users\USER\AppData\Roaming\npm;C:\Users\USER\AppData\Local\GitHubDesktop\bin;C:\Users\USER\AppData\Roaming\TinyTeX\bin\win32;C:\Users\USER\AppData\Roaming\Composer\vendor\bin
+	PATHEXT=.COM;.EXE;.BAT;.CMD;.VBS;.VBE;.JS;.JSE;.WSF;.WSH;.MSC;.CPL
+	PROCESSOR_ARCHITECTURE=AMD64
+	PROCESSOR_IDENTIFIER=Intel64 Family 6 Model 140 Stepping 1, GenuineIntel
+	PROCESSOR_LEVEL=6
+	PROCESSOR_REVISION=8c01
+	PROGRAMDATA=C:\ProgramData
+	PROGRAMFILES=C:\Program Files
+	PROGRAMFILES(X86)=C:\Program Files (x86)
+	PROGRAMW6432=C:\Program Files
+	PROMPT=$P$G
+	PSMODULEPATH=C:\Users\USER\Documents\WindowsPowerShell\Modules;C:\Program Files\WindowsPowerShell\Modules;C:\WINDOWS\system32\WindowsPowerShell\v1.0\Modules
+	PUBLIC=C:\Users\Public
+	SESSIONNAME=Console
+	SYSTEMDRIVE=C:
+	SYSTEMROOT=C:\WINDOWS
+	TEMP=C:\Users\USER\AppData\Local\Temp
+	TERM_PROGRAM=vscode
+	TERM_PROGRAM_VERSION=1.86.2
+	TMP=C:\Users\USER\AppData\Local\Temp
+	USERDOMAIN=LAPTOP-5GSAESA1
+	USERDOMAIN_ROAMINGPROFILE=LAPTOP-5GSAESA1
+	USERNAME=USER
+	USERPROFILE=C:\Users\USER
+	VBOX_MSI_INSTALL_PATH=C:\Program Files\Oracle\VirtualBox\
+	VS140COMNTOOLS=C:\Program Files (x86)\Microsoft Visual Studio 14.0\Common7\Tools\
+	VSCODE_GIT_ASKPASS_EXTRA_ARGS=********************
+	VSCODE_GIT_ASKPASS_MAIN=********************
+	VSCODE_GIT_ASKPASS_NODE=********************
+	VSCODE_GIT_IPC_HANDLE=\\.\pipe\vscode-git-4166187714-sock
+	WINDIR=C:\WINDOWS
+	WSLENV=WT_SESSION:WT_PROFILE_ID:
+	WT_PROFILE_ID={0caa0dad-35be-5f56-a8ff-afceeeaa6101}
+	WT_SESSION=e44565b8-667b-4e1d-830e-0138fe975e9f
+	ZES_ENABLE_SYSMAN=1
+	__PSLOCKDOWNPOLICY=0
+
+Briefcase Log:
+[17:37:17]                                                                                                                                                                run.py:243
+           [helloworld] Starting app...                                                                                                                                   run.py:243
+                                                                                                                                                                   subprocess.py:711
+           >>> Running Command:                                                                                                                                    subprocess.py:711
+           >>>     'C:\Users\USER\Documents\GitHub\sample\sampleapp\helloworld\build\helloworld\windows\app\src\Hello World.exe'                                   subprocess.py:711
+           >>> Working Directory:                                                                                                                                  subprocess.py:711
+           >>>     C:\Users\USER                                                                                                                                   subprocess.py:711
+           ===========================================================================                                                                                    run.py:171
+           Log started: 2024-02-17 17:37:17Z                                                                                                                       subprocess.py:681
+           PreInitializing Python runtime...                                                                                                                       subprocess.py:681
+           PythonHome: C:\Users\USER\Documents\GitHub\sample\sampleapp\helloworld\build\helloworld\windows\app\src                                                 subprocess.py:681
+           PYTHONPATH:                                                                                                                                             subprocess.py:681
+           - C:\Users\USER\Documents\GitHub\sample\sampleapp\helloworld\build\helloworld\windows\app\src\python310.zip                                             subprocess.py:681
+           - C:\Users\USER\Documents\GitHub\sample\sampleapp\helloworld\build\helloworld\windows\app\src                                                           subprocess.py:681
+           - C:\Users\USER\Documents\GitHub\sample\sampleapp\helloworld\build\helloworld\windows\app\src\app_packages                                              subprocess.py:681
+           - C:\Users\USER\Documents\GitHub\sample\sampleapp\helloworld\build\helloworld\windows\app\src\app                                                       subprocess.py:681
+           Configure argc/argv...                                                                                                                                  subprocess.py:681
+           Initializing Python runtime...                                                                                                                          subprocess.py:681
+           Running app module: helloworld                                                                                                                          subprocess.py:681
+           ---------------------------------------------------------------------------                                                                             subprocess.py:681
+[17:37:18] Application quit abnormally (Exit code -6)!                                                                                                             subprocess.py:681
+           Traceback (most recent call last):                                                                                                                      subprocess.py:681
+             File "runpy.py", line 196, in _run_module_as_main                                                                                                     subprocess.py:681
+             File "runpy.py", line 86, in _run_code                                                                                                                subprocess.py:681
+             File "C:\Users\USER\Documents\GitHub\sample\sampleapp\helloworld\build\helloworld\windows\app\src\app\helloworld\__main__.py", line 4, in <module>    subprocess.py:681
+               main().main_loop()                                                                                                                                  subprocess.py:681
+             File "C:\Users\USER\Documents\GitHub\sample\sampleapp\helloworld\build\helloworld\windows\app\src\app_packages\toga\app.py", line 749, in main_loop   subprocess.py:681
+               self._impl.main_loop()                                                                                                                              subprocess.py:681
+             File "C:\Users\USER\Documents\GitHub\sample\sampleapp\helloworld\build\helloworld\windows\app\src\app_packages\toga_winforms\app.py", line 284, in    subprocess.py:681
+           main_loop                                                                                                                                                                
+               raise self._exception                                                                                                                               subprocess.py:681
+             File "C:\Users\USER\Documents\GitHub\sample\sampleapp\helloworld\build\helloworld\windows\app\src\app_packages\toga_winforms\app.py", line 257, in    subprocess.py:681
+           run_app                                                                                                                                                                  
+               self.create()                                                                                                                                       subprocess.py:681
+             File "C:\Users\USER\Documents\GitHub\sample\sampleapp\helloworld\build\helloworld\windows\app\src\app_packages\toga_winforms\app.py", line 113, in    subprocess.py:681
+           create                                                                                                                                                                   
+               self.interface._startup()                                                                                                                           subprocess.py:681
+             File "C:\Users\USER\Documents\GitHub\sample\sampleapp\helloworld\build\helloworld\windows\app\src\app_packages\toga\app.py", line 710, in _startup    subprocess.py:681
+               self.startup()                                                                                                                                      subprocess.py:681
+             File "C:\Users\USER\Documents\GitHub\sample\sampleapp\helloworld\build\helloworld\windows\app\src\app\helloworld\app.py", line 23, in startup         subprocess.py:681
+               self.create_toolbar()                                                                                                                               subprocess.py:681
+             File "C:\Users\USER\Documents\GitHub\sample\sampleapp\helloworld\build\helloworld\windows\app\src\app\helloworld\app.py", line 33, in create_toolbar  subprocess.py:681
+               plus_button_cmd = toga.Command(                                                                                                                     subprocess.py:681
+           TypeError: Command.__init__() missing 1 required positional argument: 'text'                                                                            subprocess.py:681
+[17:37:33] Traceback (most recent call last):                                                                                                                      subprocess.py:681
+             File "\app\helloworld\__main__.py", line 4, in <module>                                                                                               subprocess.py:681
+               main().main_loop()                                                                                                                                  subprocess.py:681
+             File "\app_packages\toga\app.py", line 749, in main_loop                                                                                              subprocess.py:681
+               self._impl.main_loop()                                                                                                                              subprocess.py:681
+             File "\app_packages\toga_winforms\app.py", line 284, in main_loop                                                                                     subprocess.py:681
+               raise self._exception                                                                                                                               subprocess.py:681
+             File "\app_packages\toga_winforms\app.py", line 257, in run_app                                                                                       subprocess.py:681
+               self.create()                                                                                                                                       subprocess.py:681
+             File "\app_packages\toga_winforms\app.py", line 113, in create                                                                                        subprocess.py:681
+               self.interface._startup()                                                                                                                           subprocess.py:681
+             File "\app_packages\toga\app.py", line 710, in _startup                                                                                               subprocess.py:681
+               self.startup()                                                                                                                                      subprocess.py:681
+             File "\app\helloworld\app.py", line 23, in startup                                                                                                    subprocess.py:681
+               self.create_toolbar()                                                                                                                               subprocess.py:681
+             File "\app\helloworld\app.py", line 33, in create_toolbar                                                                                             subprocess.py:681
+               plus_button_cmd = toga.Command(                                                                                                                     subprocess.py:681
+           TypeError: Command.__init__() missing 1 required positional argument: 'text'                                                                            subprocess.py:681
+                                                                                                                                                                   subprocess.py:681
+                                                                                                                                                                      __main__.py:44
+           Problem running app helloworld.                                                                                                                            __main__.py:45
+
+Main thread traceback:
+╭─────────────────────────────────────────────────────────────────────── Traceback (most recent call last) ────────────────────────────────────────────────────────────────────────╮
+│ C:\Users\USER\AppData\Local\Programs\Python\Python310\lib\site-packages\briefcase\__main__.py:29 in main                                                                         │
+│                                                                                                                                                                                  │
+│   26 │   │   │   Path.cwd() / "pyproject.toml",                                                                                                                                  │
+│   27 │   │   │   overrides=overrides,                                                                                                                                            │
+│   28 │   │   )                                                                                                                                                                   │
+│ ❱ 29 │   │   command(**options)                                                                                                                                                  │
+│   30 │   except HelpText as e:                                                                                                                                                   │
+│   31 │   │   logger.info()                                                                                                                                                       │
+│   32 │   │   logger.info(str(e))                                                                                                                                                 │
+│                                                                                                                                                                                  │
+│ ╭────────────────────────────────────────────── locals ───────────────────────────────────────────────╮                                                                          │
+│ │       command = <briefcase.platforms.windows.app.WindowsAppRunCommand object at 0x00000135DCD3BD90> │                                                                          │
+│ │       Command = <class 'briefcase.platforms.windows.app.WindowsAppRunCommand'>                      │                                                                          │
+│ │       console = <briefcase.console.Console object at 0x00000135DCC75B10>                            │                                                                          │
+│ │             e = BriefcaseCommandError('Problem running app helloworld.')                            │                                                                          │
+│ │ extra_cmdline = []                                                                                  │                                                                          │
+│ │        logger = <briefcase.console.Log object at 0x00000135DCC76740>                                │                                                                          │
+│ │       options = {                                                                                   │                                                                          │
+│ │                 │   'appname': None,                                                                │                                                                          │
+│ │                 │   'update': False,                                                                │                                                                          │
+│ │                 │   'update_requirements': False,                                                   │                                                                          │
+│ │                 │   'update_support': False,                                                        │                                                                          │
+│ │                 │   'update_resources': False,                                                      │                                                                          │
+│ │                 │   'no_update': False,                                                             │                                                                          │
+│ │                 │   'test_mode': False,                                                             │                                                                          │
+│ │                 │   'passthrough': []                                                               │                                                                          │
+│ │                 }                                                                                   │                                                                          │
+│ │     overrides = {}                                                                                  │                                                                          │
+│ │       printer = <briefcase.console.Printer object at 0x00000135D954A380>                            │                                                                          │
+│ │        result = 200                                                                                 │                                                                          │
+│ ╰─────────────────────────────────────────────────────────────────────────────────────────────────────╯                                                                          │
+│                                                                                                                                                                                  │
+│ C:\Users\USER\AppData\Local\Programs\Python\Python310\lib\site-packages\briefcase\commands\run.py:314 in __call__                                                                │
+│                                                                                                                                                                                  │
+│   311 │   │                                                                                                                                                                      │
+│   312 │   │   self.verify_app(app)                                                                                                                                               │
+│   313 │   │                                                                                                                                                                      │
+│ ❱ 314 │   │   state = self.run_app(                                                                                                                                              │
+│   315 │   │   │   app,                                                                                                                                                           │
+│   316 │   │   │   test_mode=test_mode,                                                                                                                                           │
+│   317 │   │   │   passthrough=[] if passthrough is None else passthrough,                                                                                                        │
+│                                                                                                                                                                                  │
+│ ╭───────────────────────────────────────────────────────────────────── locals ─────────────────────────────────────────────────────────────────────╮                             │
+│ │                 app = <com.example.helloworld v0.0.1 AppConfig>                                                                                  │                             │
+│ │             appname = None                                                                                                                       │                             │
+│ │         binary_file = WindowsPath('C:/Users/USER/Documents/GitHub/sample/sampleapp/helloworld/build/helloworld/windows/app/src/Hello World.exe') │                             │
+│ │           no_update = False                                                                                                                      │                             │
+│ │             options = {}                                                                                                                         │                             │
+│ │         passthrough = []                                                                                                                         │                             │
+│ │                self = <briefcase.platforms.windows.app.WindowsAppRunCommand object at 0x00000135DCD3BD90>                                        │                             │
+│ │               state = None                                                                                                                       │                             │
+│ │       template_file = WindowsPath('C:/Users/USER/Documents/GitHub/sample/sampleapp/helloworld/build/helloworld/windows/app')                     │                             │
+│ │           test_mode = False                                                                                                                      │                             │
+│ │              update = False                                                                                                                      │                             │
+│ │ update_requirements = False                                                                                                                      │                             │
+│ │    update_resources = False                                                                                                                      │                             │
+│ │      update_support = False                                                                                                                      │                             │
+│ ╰──────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────╯                             │
+│                                                                                                                                                                                  │
+│ C:\Users\USER\AppData\Local\Programs\Python\Python310\lib\site-packages\briefcase\platforms\windows\__init__.py:154 in run_app                                                   │
+│                                                                                                                                                                                  │
+│   151 │   │   )                                                                                                                                                                  │
+│   152 │   │                                                                                                                                                                      │
+│   153 │   │   # Start streaming logs for the app.                                                                                                                                │
+│ ❱ 154 │   │   self._stream_app_logs(                                                                                                                                             │
+│   155 │   │   │   app,                                                                                                                                                           │
+│   156 │   │   │   popen=app_popen,                                                                                                                                               │
+│   157 │   │   │   test_mode=test_mode,                                                                                                                                           │
+│                                                                                                                                                                                  │
+│ ╭───────────────────────────────────────────── locals ──────────────────────────────────────────────╮                                                                            │
+│ │         app = <com.example.helloworld v0.0.1 AppConfig>                                           │                                                                            │
+│ │   app_popen = <Popen: returncode: 4294967290 args: ['C:\\Users\\USER\\Documents\\GitHub\\s...>    │                                                                            │
+│ │      kwargs = {}                                                                                  │                                                                            │
+│ │ passthrough = []                                                                                  │                                                                            │
+│ │        self = <briefcase.platforms.windows.app.WindowsAppRunCommand object at 0x00000135DCD3BD90> │                                                                            │
+│ │   test_mode = False                                                                               │                                                                            │
+│ ╰───────────────────────────────────────────────────────────────────────────────────────────────────╯                                                                            │
+│                                                                                                                                                                                  │
+│ C:\Users\USER\AppData\Local\Programs\Python\Python310\lib\site-packages\briefcase\commands\run.py:202 in _stream_app_logs                                                        │
+│                                                                                                                                                                                  │
+│   199 │   │   │   │   # If we're monitoring an actual app (not just a log stream),                                                                                               │
+│   200 │   │   │   │   # and the app didn't exit cleanly, surface the error to the user.                                                                                          │
+│   201 │   │   │   │   if popen.poll() != 0:                                                                                                                                      │
+│ ❱ 202 │   │   │   │   │   raise BriefcaseCommandError(f"Problem running app {app.app_name}.")                                                                                    │
+│   203 │   │                                                                                                                                                                      │
+│   204 │   │   except KeyboardInterrupt:                                                                                                                                          │
+│   205 │   │   │   pass  # Catch CTRL-C to exit normally                                                                                                                          │
+│                                                                                                                                                                                  │
+│ ╭────────────────────────────────────────────── locals ──────────────────────────────────────────────╮                                                                           │
+│ │          app = <com.example.helloworld v0.0.1 AppConfig>                                           │                                                                           │
+│ │ clean_filter = None                                                                                │                                                                           │
+│ │ clean_output = False                                                                               │                                                                           │
+│ │  exit_filter = <function LogFilter.test_filter.<locals>.filter_func at 0x00000135DCD25BD0>         │                                                                           │
+│ │   log_filter = <briefcase.commands.run.LogFilter object at 0x00000135DCD38820>                     │                                                                           │
+│ │   log_stream = False                                                                               │                                                                           │
+│ │        popen = <Popen: returncode: 4294967290 args: ['C:\\Users\\USER\\Documents\\GitHub\\s...>    │                                                                           │
+│ │         self = <briefcase.platforms.windows.app.WindowsAppRunCommand object at 0x00000135DCD3BD90> │                                                                           │
+│ │    stop_func = <function RunAppMixin.<lambda> at 0x00000135DCC4F6D0>                               │                                                                           │
+│ │    test_mode = False                                                                               │                                                                           │
+│ ╰────────────────────────────────────────────────────────────────────────────────────────────────────╯                                                                           │
+╰──────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────╯
+BriefcaseCommandError: Problem running app helloworld.

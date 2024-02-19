@@ -1,0 +1,228 @@
+Date/Time:       2024-02-17 17:39:25 
+Command line:    C:\Users\USER\AppData\Local\Programs\Python\Python310\Scripts\briefcase dev
+
+OS Release:      Windows 10
+OS Version:      10.0.22621
+Architecture:    AMD64
+Platform:        Windows-10-10.0.22621-SP0
+
+Python exe:      C:\Users\USER\AppData\Local\Programs\Python\Python310\python.exe
+Python version:  3.10.8 (tags/v3.10.8:aaaf517, Oct 11 2022, 16:50:30) [MSC v.1933 64 bit (AMD64)]
+Virtual env:     False
+Conda env:       False
+
+Briefcase:       0.3.17
+Target platform: windows
+Target format:   None
+
+Environment Variables:
+	ALLUSERSPROFILE=C:\ProgramData
+	APPDATA=C:\Users\USER\AppData\Roaming
+	CHOCOLATEYINSTALL=C:\ProgramData\chocolatey
+	CHOCOLATEYLASTPATHUPDATE=133104585271200455
+	CHROME_CRASHPAD_PIPE_NAME=\\.\pipe\crashpad_11652_HYUFTTWRWWBAZSTS
+	COLORTERM=truecolor
+	COMMONPROGRAMFILES=C:\Program Files\Common Files
+	COMMONPROGRAMFILES(X86)=C:\Program Files (x86)\Common Files
+	COMMONPROGRAMW6432=C:\Program Files\Common Files
+	COMPUTERNAME=LAPTOP-5GSAESA1
+	COMSPEC=C:\WINDOWS\system32\cmd.exe
+	DRIVERDATA=C:\Windows\System32\Drivers\DriverData
+	GIT_ASKPASS=********************
+	HOMEDRIVE=C:
+	HOMEPATH=\Users\USER
+	LANG=en_US.UTF-8
+	LOCALAPPDATA=C:\Users\USER\AppData\Local
+	LOGONSERVER=\\LAPTOP-5GSAESA1
+	LYNX=C:\Program Files (x86)\Lynx - web browser\lynx.exe
+	NUMBER_OF_PROCESSORS=4
+	ONEDRIVE=C:\Users\USER\OneDrive
+	ORIGINAL_XDG_CURRENT_DESKTOP=undefined
+	OS=Windows_NT
+	PATH=C:\Program Files\Common Files\Oracle\Java\javapath;C:\WINDOWS\system32;C:\WINDOWS;C:\WINDOWS\System32\Wbem;C:\WINDOWS\System32\WindowsPowerShell\v1.0\;C:\WINDOWS\System32\OpenSSH\;C:\Program Files\nodejs\;C:\Program Files\Git\cmd;C:\ProgramData\chocolatey\bin;C:\Users\USER\AppData\Local\Programs\Python\Python310;C:\Users\USER\AppData\Local\Programs\Python\Python310\Scripts;C:\xampp\php;C:\ProgramData\ComposerSetup\bin;C:\Users\USER\AppData\Local\Microsoft\WindowsApps;C:\Users\USER\AppData\Local\Programs\Microsoft VS Code\bin;C:\Users\USER\AppData\Roaming\npm;C:\Users\USER\AppData\Local\GitHubDesktop\bin;C:\Users\USER\AppData\Roaming\TinyTeX\bin\win32;C:\Users\USER\AppData\Roaming\Composer\vendor\bin
+	PATHEXT=.COM;.EXE;.BAT;.CMD;.VBS;.VBE;.JS;.JSE;.WSF;.WSH;.MSC;.CPL
+	PROCESSOR_ARCHITECTURE=AMD64
+	PROCESSOR_IDENTIFIER=Intel64 Family 6 Model 140 Stepping 1, GenuineIntel
+	PROCESSOR_LEVEL=6
+	PROCESSOR_REVISION=8c01
+	PROGRAMDATA=C:\ProgramData
+	PROGRAMFILES=C:\Program Files
+	PROGRAMFILES(X86)=C:\Program Files (x86)
+	PROGRAMW6432=C:\Program Files
+	PROMPT=$P$G
+	PSMODULEPATH=C:\Users\USER\Documents\WindowsPowerShell\Modules;C:\Program Files\WindowsPowerShell\Modules;C:\WINDOWS\system32\WindowsPowerShell\v1.0\Modules
+	PUBLIC=C:\Users\Public
+	SESSIONNAME=Console
+	SYSTEMDRIVE=C:
+	SYSTEMROOT=C:\WINDOWS
+	TEMP=C:\Users\USER\AppData\Local\Temp
+	TERM_PROGRAM=vscode
+	TERM_PROGRAM_VERSION=1.86.2
+	TMP=C:\Users\USER\AppData\Local\Temp
+	USERDOMAIN=LAPTOP-5GSAESA1
+	USERDOMAIN_ROAMINGPROFILE=LAPTOP-5GSAESA1
+	USERNAME=USER
+	USERPROFILE=C:\Users\USER
+	VBOX_MSI_INSTALL_PATH=C:\Program Files\Oracle\VirtualBox\
+	VS140COMNTOOLS=C:\Program Files (x86)\Microsoft Visual Studio 14.0\Common7\Tools\
+	VSCODE_GIT_ASKPASS_EXTRA_ARGS=********************
+	VSCODE_GIT_ASKPASS_MAIN=********************
+	VSCODE_GIT_ASKPASS_NODE=********************
+	VSCODE_GIT_IPC_HANDLE=\\.\pipe\vscode-git-4166187714-sock
+	WINDIR=C:\WINDOWS
+	WSLENV=WT_SESSION:WT_PROFILE_ID:
+	WT_PROFILE_ID={0caa0dad-35be-5f56-a8ff-afceeeaa6101}
+	WT_SESSION=e44565b8-667b-4e1d-830e-0138fe975e9f
+	ZES_ENABLE_SYSMAN=1
+	__PSLOCKDOWNPOLICY=0
+
+Briefcase Log:
+[17:39:24]                                                                                                                                                                dev.py:229
+           [helloworld] Starting in dev mode...                                                                                                                           dev.py:229
+                                                                                                                                                                   subprocess.py:711
+           >>> Running Command:                                                                                                                                    subprocess.py:711
+           >>>     'C:\Users\USER\AppData\Local\Programs\Python\Python310\python.exe' -c 'import runpy,                                                            subprocess.py:711
+           sys;sys.path.pop(0);sys.argv.extend([]);runpy.run_module("helloworld", run_name="__main__", alter_sys=True)'                                                             
+           >>> Working Directory:                                                                                                                                  subprocess.py:711
+           >>>     C:\Users\USER                                                                                                                                   subprocess.py:711
+           >>> Environment Overrides:                                                                                                                              subprocess.py:711
+           >>>     PYTHONPATH=C:\Users\USER\Documents\GitHub\sample\sampleapp\helloworld\src                                                                       subprocess.py:711
+           >>>     PYTHONMALLOC=default                                                                                                                            subprocess.py:711
+           >>>     PYTHONUNBUFFERED=1                                                                                                                              subprocess.py:711
+           >>>     PYTHONDEVMODE=1                                                                                                                                 subprocess.py:711
+           >>>     PYTHONUTF8=1                                                                                                                                    subprocess.py:711
+           ===========================================================================                                                                                    run.py:171
+[17:39:25] WARNING: Can't find icon path\to\icon\image.png; falling back to default icon                                                                           subprocess.py:681
+           Traceback (most recent call last):                                                                                                                      subprocess.py:681
+             File "<string>", line 1, in <module>                                                                                                                  subprocess.py:681
+             File "C:\Users\USER\AppData\Local\Programs\Python\Python310\lib\runpy.py", line 224, in run_module                                                    subprocess.py:681
+               return _run_module_code(code, init_globals, run_name, mod_spec)                                                                                     subprocess.py:681
+             File "C:\Users\USER\AppData\Local\Programs\Python\Python310\lib\runpy.py", line 96, in _run_module_code                                               subprocess.py:681
+               _run_code(code, mod_globals, init_globals,                                                                                                          subprocess.py:681
+             File "C:\Users\USER\AppData\Local\Programs\Python\Python310\lib\runpy.py", line 86, in _run_code                                                      subprocess.py:681
+               exec(code, run_globals)                                                                                                                             subprocess.py:681
+             File "C:\Users\USER\Documents\GitHub\sample\sampleapp\helloworld\src\helloworld\__main__.py", line 4, in <module>                                     subprocess.py:681
+               main().main_loop()                                                                                                                                  subprocess.py:681
+             File "C:\Users\USER\AppData\Local\Programs\Python\Python310\lib\site-packages\toga\app.py", line 749, in main_loop                                    subprocess.py:681
+               self._impl.main_loop()                                                                                                                              subprocess.py:681
+             File "C:\Users\USER\AppData\Local\Programs\Python\Python310\lib\site-packages\toga_winforms\app.py", line 284, in main_loop                           subprocess.py:681
+               raise self._exception                                                                                                                               subprocess.py:681
+             File "C:\Users\USER\AppData\Local\Programs\Python\Python310\lib\site-packages\toga_winforms\app.py", line 257, in run_app                             subprocess.py:681
+               self.create()                                                                                                                                       subprocess.py:681
+             File "C:\Users\USER\AppData\Local\Programs\Python\Python310\lib\site-packages\toga_winforms\app.py", line 113, in create                              subprocess.py:681
+               self.interface._startup()                                                                                                                           subprocess.py:681
+             File "C:\Users\USER\AppData\Local\Programs\Python\Python310\lib\site-packages\toga\app.py", line 710, in _startup                                     subprocess.py:681
+               self.startup()                                                                                                                                      subprocess.py:681
+             File "C:\Users\USER\Documents\GitHub\sample\sampleapp\helloworld\src\helloworld\app.py", line 26, in startup                                          subprocess.py:681
+               self.create_toolbar()                                                                                                                               subprocess.py:681
+             File "C:\Users\USER\Documents\GitHub\sample\sampleapp\helloworld\src\helloworld\app.py", line 38, in create_toolbar                                   subprocess.py:681
+               icon=icon,  # Icon for the button                                                                                                                   subprocess.py:681
+           NameError: name 'icon' is not defined                                                                                                                   subprocess.py:681
+                                                                                                                                                                      __main__.py:44
+           Problem running app helloworld.                                                                                                                            __main__.py:45
+
+Main thread traceback:
+╭─────────────────────────────────────────────────────────────────────── Traceback (most recent call last) ────────────────────────────────────────────────────────────────────────╮
+│ C:\Users\USER\AppData\Local\Programs\Python\Python310\lib\site-packages\briefcase\__main__.py:29 in main                                                                         │
+│                                                                                                                                                                                  │
+│   26 │   │   │   Path.cwd() / "pyproject.toml",                                                                                                                                  │
+│   27 │   │   │   overrides=overrides,                                                                                                                                            │
+│   28 │   │   )                                                                                                                                                                   │
+│ ❱ 29 │   │   command(**options)                                                                                                                                                  │
+│   30 │   except HelpText as e:                                                                                                                                                   │
+│   31 │   │   logger.info()                                                                                                                                                       │
+│   32 │   │   logger.info(str(e))                                                                                                                                                 │
+│                                                                                                                                                                                  │
+│ ╭──────────────────────────────────────────────────────── locals ─────────────────────────────────────────────────────────╮                                                      │
+│ │       command = <briefcase.commands.dev.DevCommand object at 0x000001E778ACB1C0>                                        │                                                      │
+│ │       Command = <class 'briefcase.commands.dev.DevCommand'>                                                             │                                                      │
+│ │       console = <briefcase.console.Console object at 0x000001E778A85B40>                                                │                                                      │
+│ │             e = BriefcaseCommandError('Problem running app helloworld.')                                                │                                                      │
+│ │ extra_cmdline = []                                                                                                      │                                                      │
+│ │        logger = <briefcase.console.Log object at 0x000001E778A86770>                                                    │                                                      │
+│ │       options = {'appname': None, 'update_requirements': False, 'run_app': True, 'test_mode': False, 'passthrough': []} │                                                      │
+│ │     overrides = {}                                                                                                      │                                                      │
+│ │       printer = <briefcase.console.Printer object at 0x000001E7753DA380>                                                │                                                      │
+│ │        result = 200                                                                                                     │                                                      │
+│ ╰─────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────╯                                                      │
+│                                                                                                                                                                                  │
+│ C:\Users\USER\AppData\Local\Programs\Python\Python310\lib\site-packages\briefcase\commands\dev.py:231 in __call__                                                                │
+│                                                                                                                                                                                  │
+│   228 │   │   │   else:                                                                                                                                                          │
+│   229 │   │   │   │   self.logger.info("Starting in dev mode...", prefix=app.app_name)                                                                                           │
+│   230 │   │   │   env = self.get_environment(app, test_mode=test_mode)                                                                                                           │
+│ ❱ 231 │   │   │   return self.run_dev_app(                                                                                                                                       │
+│   232 │   │   │   │   app,                                                                                                                                                       │
+│   233 │   │   │   │   env,                                                                                                                                                       │
+│   234 │   │   │   │   test_mode=test_mode,                                                                                                                                       │
+│                                                                                                                                                                                  │
+│ ╭───────────────────────────────────────────────────────── locals ─────────────────────────────────────────────────────────╮                                                     │
+│ │                 app = <com.example.helloworld v0.0.1 AppConfig>                                                          │                                                     │
+│ │             appname = None                                                                                               │                                                     │
+│ │      dist_info_path = WindowsPath('C:/Users/USER/Documents/GitHub/sample/sampleapp/helloworld/src/helloworld.dist-info') │                                                     │
+│ │                 env = {                                                                                                  │                                                     │
+│ │                       │   'PYTHONPATH': 'C:\\Users\\USER\\Documents\\GitHub\\sample\\sampleapp\\helloworld\\src',        │                                                     │
+│ │                       │   'PYTHONMALLOC': 'default',                                                                     │                                                     │
+│ │                       │   'PYTHONUNBUFFERED': '1',                                                                       │                                                     │
+│ │                       │   'PYTHONDEVMODE': '1',                                                                          │                                                     │
+│ │                       │   'PYTHONUTF8': '1'                                                                              │                                                     │
+│ │                       }                                                                                                  │                                                     │
+│ │             options = {}                                                                                                 │                                                     │
+│ │         passthrough = []                                                                                                 │                                                     │
+│ │             run_app = True                                                                                               │                                                     │
+│ │                self = <briefcase.commands.dev.DevCommand object at 0x000001E778ACB1C0>                                   │                                                     │
+│ │           test_mode = False                                                                                              │                                                     │
+│ │ update_requirements = False                                                                                              │                                                     │
+│ ╰──────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────╯                                                     │
+│                                                                                                                                                                                  │
+│ C:\Users\USER\AppData\Local\Programs\Python\Python310\lib\site-packages\briefcase\commands\dev.py:152 in run_dev_app                                                             │
+│                                                                                                                                                                                  │
+│   149 │   │   )                                                                                                                                                                  │
+│   150 │   │                                                                                                                                                                      │
+│   151 │   │   # Start streaming logs for the app.                                                                                                                                │
+│ ❱ 152 │   │   self._stream_app_logs(                                                                                                                                             │
+│   153 │   │   │   app,                                                                                                                                                           │
+│   154 │   │   │   popen=app_popen,                                                                                                                                               │
+│   155 │   │   │   test_mode=test_mode,                                                                                                                                           │
+│                                                                                                                                                                                  │
+│ ╭───────────────────────────────────────────────── locals ──────────────────────────────────────────────────╮                                                                    │
+│ │         app = <com.example.helloworld v0.0.1 AppConfig>                                                   │                                                                    │
+│ │   app_popen = <Popen: returncode: 1 args: ['C:\\Users\\USER\\AppData\\Local\\Programs\\Pyt...>            │                                                                    │
+│ │         env = {                                                                                           │                                                                    │
+│ │               │   'PYTHONPATH': 'C:\\Users\\USER\\Documents\\GitHub\\sample\\sampleapp\\helloworld\\src', │                                                                    │
+│ │               │   'PYTHONMALLOC': 'default',                                                              │                                                                    │
+│ │               │   'PYTHONUNBUFFERED': '1',                                                                │                                                                    │
+│ │               │   'PYTHONDEVMODE': '1',                                                                   │                                                                    │
+│ │               │   'PYTHONUTF8': '1'                                                                       │                                                                    │
+│ │               }                                                                                           │                                                                    │
+│ │ main_module = 'helloworld'                                                                                │                                                                    │
+│ │     options = {}                                                                                          │                                                                    │
+│ │ passthrough = []                                                                                          │                                                                    │
+│ │        self = <briefcase.commands.dev.DevCommand object at 0x000001E778ACB1C0>                            │                                                                    │
+│ │   test_mode = False                                                                                       │                                                                    │
+│ ╰───────────────────────────────────────────────────────────────────────────────────────────────────────────╯                                                                    │
+│                                                                                                                                                                                  │
+│ C:\Users\USER\AppData\Local\Programs\Python\Python310\lib\site-packages\briefcase\commands\run.py:202 in _stream_app_logs                                                        │
+│                                                                                                                                                                                  │
+│   199 │   │   │   │   # If we're monitoring an actual app (not just a log stream),                                                                                               │
+│   200 │   │   │   │   # and the app didn't exit cleanly, surface the error to the user.                                                                                          │
+│   201 │   │   │   │   if popen.poll() != 0:                                                                                                                                      │
+│ ❱ 202 │   │   │   │   │   raise BriefcaseCommandError(f"Problem running app {app.app_name}.")                                                                                    │
+│   203 │   │                                                                                                                                                                      │
+│   204 │   │   except KeyboardInterrupt:                                                                                                                                          │
+│   205 │   │   │   pass  # Catch CTRL-C to exit normally                                                                                                                          │
+│                                                                                                                                                                                  │
+│ ╭──────────────────────────────────────────── locals ─────────────────────────────────────────────╮                                                                              │
+│ │          app = <com.example.helloworld v0.0.1 AppConfig>                                        │                                                                              │
+│ │ clean_filter = None                                                                             │                                                                              │
+│ │ clean_output = False                                                                            │                                                                              │
+│ │  exit_filter = <function LogFilter.test_filter.<locals>.filter_func at 0x000001E778B39870>      │                                                                              │
+│ │   log_filter = <briefcase.commands.run.LogFilter object at 0x000001E778B50C70>                  │                                                                              │
+│ │   log_stream = False                                                                            │                                                                              │
+│ │        popen = <Popen: returncode: 1 args: ['C:\\Users\\USER\\AppData\\Local\\Programs\\Pyt...> │                                                                              │
+│ │         self = <briefcase.commands.dev.DevCommand object at 0x000001E778ACB1C0>                 │                                                                              │
+│ │    stop_func = <function RunAppMixin.<lambda> at 0x000001E778A5F6D0>                            │                                                                              │
+│ │    test_mode = False                                                                            │                                                                              │
+│ ╰─────────────────────────────────────────────────────────────────────────────────────────────────╯                                                                              │
+╰──────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────╯
+BriefcaseCommandError: Problem running app helloworld.
