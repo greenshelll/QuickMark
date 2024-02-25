@@ -5,7 +5,8 @@ if run_debug:
     from matplotlib import pyplot as plt
 import copy
 def debug(text):
-    print(f"\033[95m{text}\033[0m")
+    if run_debug:
+        print(f"\033[95m{text}\033[0m")
 
 def show_img(image, **kwargs):
     # Display the image with detected rectangles using matplotlib

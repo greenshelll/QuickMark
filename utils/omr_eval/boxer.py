@@ -1,11 +1,10 @@
 import cv2
 import numpy as np
-try:
-    import helloworld.omr as omr
-except Exception:
-    import omr
+import omr
+run_debug = True
 def debug(text):
-    print(f"\033[34m{text}\033[0m")
+    if run_debug:
+        print(f"\033[34m{text}\033[0m")
 
 def get_boxes(image, boxes_num, image_is_path=False, get_plot=False, get_np_orig=True): 
     """extracts boxes

@@ -1,12 +1,8 @@
-try:
-    import helloworld.boxer as boxer
-    import helloworld.omr as omr
-except Exception:
-    import boxer
-    import omr
-import math
+import boxer
+import omr
 import cv2
-
+omr.run_debug = True
+boxer.run_debug = True
 class TestType:
     class MultipleChoice:
         def __init__(self, items):
