@@ -22,7 +22,7 @@ class TestType:
 def get_scores(target_img, ground_mc, ground_tf, target_ispath = True, return_result_image = False):
     
     # Gets boxes in image
-    rectangles, image_result, cropped_result, orig_image = boxer.get_boxes(target_img, 1,target_ispath)
+    rectangles, _, cropped_result, orig_image = boxer.get_boxes(target_img, 1,target_ispath)
 
     #omr.show_img(image_result)
     # gets first cropped image (largest box detected)

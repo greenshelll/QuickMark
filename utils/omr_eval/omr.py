@@ -1,8 +1,9 @@
 import cv2
 import numpy as np
-from matplotlib import pyplot as plt
+run_debug = True
+if run_debug:
+    from matplotlib import pyplot as plt
 import copy
-import seaborn as sns
 def debug(text):
     print(f"\033[95m{text}\033[0m")
 
