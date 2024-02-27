@@ -67,7 +67,6 @@ def process_choices(erode, image, orig_image, get_plot):
             circles.append([int(cx),int(cy)])
             #cv2.circle(image,(int(cx),int(cy)),10,255,-1)"""
 
-
     #######################
     #show_img(image)
     # Calculate the areas of rectangles
@@ -135,7 +134,7 @@ def process_choices(erode, image, orig_image, get_plot):
         # head is @ left
         debug('[process_choices] reprocessing for updated orientation')
         erode = cv2.rotate(erode, cv2.ROTATE_90_CLOCKWISE)
-        return process_choices(erode, image, orig_image, et_plot)
+        return process_choices(erode, image, orig_image, get_plot)
     elif code == 3:
         print("CODE 0")
         #print(true_rectangles)
@@ -151,7 +150,7 @@ def process_choices(erode, image, orig_image, get_plot):
         x,y,w,h = rect
         if x != xy[0] and y != xy[1]:
             output.append(rect)
-            cv2.rectangle(image,(x,y),(x+w,y+h),(255,0,0),10) if get_plot else None
+            #cv2.rectangle(image,(x,y),(x+w,y+h),(255,0,0),10) if get_plot else None
 
     return (output, image if get_plot else None, orig_image)
 
@@ -287,6 +286,7 @@ def get_by_num(circles_per_num,bubbles):
         # Combine each group of 4 into a rect object
         item_num = 0
         interval = circles_per_num
+        print(row)
         for group in row.reshape(-1,circles_per_num):
             result.append(Circle(*group))
             interval-=1

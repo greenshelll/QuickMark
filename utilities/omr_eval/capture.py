@@ -1,8 +1,17 @@
-import boxer
-import omr
+try:
+    import boxer
+except ModuleNotFoundError as e:
+    print(e, 'Getting alt path')
+    import utilities.omr_eval.boxer as boxer
+try:
+    import omr
+except ModuleNotFoundError as e:
+    print(e, 'Getting alt path')
+    import utilities.omr_eval.omr as omr
+import math
 import cv2
-omr.run_debug = True
-boxer.run_debug = True
+omr.run_debug = False
+boxer.run_debug = False
 class TestType:
     class MultipleChoice:
         def __init__(self, items):
@@ -51,7 +60,7 @@ def get_scores(target_img, ground_mc, ground_tf, target_ispath = True, return_re
                 content = result_complete[num]
                 for circles in content:
                     x, y, w, h = circles.xywh
-                    cv2.rectangle(orig_image, (x, y), (x + w, y + h), (255, 0, 0), 5)
+                    cv2.rectangle(orig_image, (x, y), (x + w, y + h), (255,255,0), 5)
                 omr.show_img(orig_image)
             return orig_image
         # -------------------(ENDIF)
@@ -59,6 +68,9 @@ def get_scores(target_img, ground_mc, ground_tf, target_ispath = True, return_re
     else:
         return None
 
-result_complete = (get_scores(r"C:\Users\USER\Downloads\samples\IMG_20240225_084909.jpg", 
-                            TestType.MultipleChoice(100), TestType.TrueOrFalse(75),target_ispath=True,return_result_image=False))
-print(result_complete.keys())
+def get_box(target_img):
+    result = boxer.get_boxes(target_img, 1 , False)
+    rectangles, img, cropped_result, orig_image = result
+    return rectangles
+
+#get_box(r"C:\Users\USER\Downloads\samples\IMG_20240225_084903.jpg")
