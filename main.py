@@ -1,6 +1,6 @@
 from kivy.app import App
 from kivy.uix.floatlayout import FloatLayout
-from screens.camera import CameraWidget
+from screens.cam2 import CameraWidget
 
 class MainApp(App):
     def build(self):
