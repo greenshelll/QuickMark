@@ -8,11 +8,16 @@
             html{
                 height: 8in;
                 width: 14in;
+                background-color: white;
             }
             
             body {
                 font-family: Arial, sans-serif;
+                
+                margin-left: 25px;
+                
             }
+            
             
             .container {
                 display: flex;
@@ -33,6 +38,7 @@
             .bottom {
                 flex: 1; /* Fill remaining vertical space */
                 display: flex;
+                color: rgba(150,150,150);
                 justify-content: space-between;
                 background-color: white;
             }
@@ -43,6 +49,7 @@
                 border-width: 5px;
                 border-style: solid;
                 display: flex;
+                border-color: black;
                 flex-direction: column;
                 
 
@@ -120,8 +127,8 @@
                 flex-direction: row;
             }
             .start{
-                width: 20px;
-                height: 20px;
+                width: 0px;
+                height: 0px;
                 background-color: black;
                 margin-right: 10px;
                 
@@ -782,7 +789,67 @@
                                 010
                                 <div class="circle">T</div>
                                 <div class="circle">F</div>
-                            </div></div></div></div>
+                            </div><div class="instance">
+                                011
+                                <div class="circle">T</div>
+                                <div class="circle">F</div>
+                            </div><div class="instance">
+                                012
+                                <div class="circle">T</div>
+                                <div class="circle">F</div>
+                            </div><div class="instance">
+                                013
+                                <div class="circle">T</div>
+                                <div class="circle">F</div>
+                            </div><div class="instance">
+                                014
+                                <div class="circle">T</div>
+                                <div class="circle">F</div>
+                            </div><div class="instance">
+                                015
+                                <div class="circle">T</div>
+                                <div class="circle">F</div>
+                            </div><div class="instance">
+                                016
+                                <div class="circle">T</div>
+                                <div class="circle">F</div>
+                            </div><div class="instance">
+                                017
+                                <div class="circle">T</div>
+                                <div class="circle">F</div>
+                            </div><div class="instance">
+                                018
+                                <div class="circle">T</div>
+                                <div class="circle">F</div>
+                            </div><div class="instance">
+                                019
+                                <div class="circle">T</div>
+                                <div class="circle">F</div>
+                            </div><div class="instance">
+                                020
+                                <div class="circle">T</div>
+                                <div class="circle">F</div>
+                            </div><div class="instance">
+                                021
+                                <div class="circle">T</div>
+                                <div class="circle">F</div>
+                            </div><div class="instance">
+                                022
+                                <div class="circle">T</div>
+                                <div class="circle">F</div>
+                            </div><div class="instance">
+                                023
+                                <div class="circle">T</div>
+                                <div class="circle">F</div>
+                            </div><div class="instance">
+                                024
+                                <div class="circle">T</div>
+                                <div class="circle">F</div>
+                            </div><div class="instance">
+                                025
+                                <div class="circle">T</div>
+                                <div class="circle">F</div>
+                            </div></div><div class="column-inner"></div></div></div>
 
                 <div class="column"><b class="type-test"><div class="start"></div>III. Identification</b><div class="column-group"><div class="column-inner"><div class="id-instance">001
                         <div class="box-instance"><div class="box"></div><div class="box"></div><div class="box"></div><div class="box"></div><div class="box"></div><div class="box"></div><div class="box"></div><div class="box"></div><div class="box"></div><div class="box"></div><div class="box"></div><div class="box"></div><div class="box"></div><div class="box"></div><div class="box"></div><div class="box"></div><div class="box"></div><div class="box"></div><div class="box"></div><div class="box"></div></div></div><div class="id-instance">002
@@ -796,6 +863,23 @@
                         <div class="box-instance"><div class="box"></div><div class="box"></div><div class="box"></div><div class="box"></div><div class="box"></div><div class="box"></div><div class="box"></div><div class="box"></div><div class="box"></div><div class="box"></div><div class="box"></div><div class="box"></div><div class="box"></div><div class="box"></div><div class="box"></div><div class="box"></div><div class="box"></div><div class="box"></div><div class="box"></div><div class="box"></div></div></div><div class="id-instance">010
                         <div class="box-instance"><div class="box"></div><div class="box"></div><div class="box"></div><div class="box"></div><div class="box"></div><div class="box"></div><div class="box"></div><div class="box"></div><div class="box"></div><div class="box"></div><div class="box"></div><div class="box"></div><div class="box"></div><div class="box"></div><div class="box"></div><div class="box"></div><div class="box"></div><div class="box"></div><div class="box"></div><div class="box"></div></div></div></div><div class="column-inner"></div></div></div>
             </div>
+            <script>
+                window.onload = function() {
+                    var elements = document.querySelectorAll('.container');
+                    var infoDiv = document.getElementById('info');
+            
+                    elements.forEach(function(element) {
+                        var rect = element.getBoundingClientRect();
+                        var info = document.createElement('div');
+                        info.innerHTML = "Element: " + element.id + "<br>" +
+                                         "Width: " + rect.width + "<br>" +
+                                         "Height: " + rect.height + "<br>" +
+                                         "X: " + rect.x + "<br>" +
+                                         "Y: " + rect.y + "<br>-----------------<br>";
+                        infoDiv.appendChild(info);
+                    });
+                };
+            </script>
         </div>
         </body>
         </html>

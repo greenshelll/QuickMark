@@ -1,29 +1,5 @@
-try:
-    import boxer
-except ModuleNotFoundError as e:
-    print(e, 'Getting alt path')
-    import utilities.omr_eval.boxer as boxer
-try:
-    import omr
-except ModuleNotFoundError as e:
-    print(e, 'Getting alt path')
-    import utilities.omr_eval.omr as omr
-import math
-import cv2
-omr.run_debug = False
-boxer.run_debug = False
-class TestType:
-    class MultipleChoice:
-        def __init__(self, items):
-            self.name = 'MULTIPLE CHOICE'
-            self.num_items = items
-            self.circles_per_num = 4
-    class TrueOrFalse:
-        def __init__(self, items):
-            self.name ='TRUE OR FALSE'
-            self.num_items = items
-            self.circles_per_num = 2
 
+#___________________________________________________________________________
 def get_scores(target_img, ground_mc, ground_tf, target_ispath = True, return_result_image = False):
     
     # Gets boxes in image
@@ -67,7 +43,7 @@ def get_scores(target_img, ground_mc, ground_tf, target_ispath = True, return_re
         return result_complete
     else:
         return None
-
+    
 def get_box(target_img):
     try:
         result = boxer.get_boxes(target_img, 1 , False)
@@ -87,10 +63,9 @@ def get_bubbles(rectangles, cropped_result,ground_mc, ground_tf):
     #omr.show_img(circle_image_result)
 
     # detects all rows
-    circles_by_row = omr.get_rows(cirzcles)
+    circles_by_row = omr.get_rows(circles)
     #print(circles_by_row)
-    print("CIRCLES")
-    print(circles)
+
     # get type of test
     test_type_inference = omr.get_type_test(circles_by_row,True,False)
     if test_type_inference == 'MULTIPLE CHOICE':
@@ -114,8 +89,8 @@ def get_bubbles(rectangles, cropped_result,ground_mc, ground_tf):
                 omr.show_img(orig_image)
             return orig_image"""
         # -------------------(ENDIF)
-        print(result_complete)
+
         return result_complete
     else:
         return None
-    
+

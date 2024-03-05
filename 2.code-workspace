@@ -1,0 +1,13 @@
+{
+	"folders": [
+		{
+			"path": "."
+		},
+		{
+			"path": "../archive-copy"
+		}
+	],
+	"settings": {
+		"git.ignoreLimitWarning": true
+	}
+}

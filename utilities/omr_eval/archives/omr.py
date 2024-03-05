@@ -8,9 +8,10 @@ def debug(text):
     if run_debug:
         print(f"\033[95m{text}\033[0m")
 
-def show_img(image, **kwargs):
+def show_img(image,title='', **kwargs):
     try:
     # Display the image with detected rectangles using matplotlib
+        plt.title(title)
         plt.imshow(image,**kwargs)
         plt.axis('off')
         plt.show()
@@ -33,7 +34,7 @@ def get_orient_marker(xy):
 
         # Example ordered pairs (points)
         ordered_pairs = np.array(xy)
-        print("RESULT")
+
         # Find the coordinate with the average farthest distance to all other coordinates
         result = find_coordinate_with_average_farthest_distance(ordered_pairs)
         if np.min(ordered_pairs.T[0]) == result[0] and np.max(ordered_pairs.T[1]) == result[1]:
@@ -45,35 +46,59 @@ def get_orient_marker(xy):
         elif np.min(ordered_pairs.T[0]) == result[0] and np.min(ordered_pairs.T[1]) == result[1]:
             code = 2
         elif np.max(ordered_pairs.T[0]) == result[0] and np.max(ordered_pairs.T[1]) == result[1]:
-            print('TOP-TOP: FLIP CLOCKWISE TWICE')
+            print('BOT-TOP: FLIP CLOCKWISE TWICE')
             code = 3
-        print("Coordinate with the average farthest distance to all other coordinates:", result)
+        #print("Coordinate with the average farthest distance to all other coordinates:", result)
 
         return result, code
     except Exception as e:
         print(e)
 
-def process_choices(erode, image, orig_image, get_plot, adjusted=False):
+def process_choices(image, BubbleGetter_obj, BoxGetter_obj,CaptureSheet_obj, box_index,adjusted=False,**kwargs):
     try:
+    
+        image2 = image.copy()
+        get_result_img = CaptureSheet_obj.get_result_img
+        show_plots = CaptureSheet_obj.show_plots and CaptureSheet_obj.get_result_img
         debug('[process_choices] initializing')
         # Find contours with cv2.RETR_CCOMP
         debug('[process_choices] finding contours')
-        contours,hierarchy = cv2.findContours(erode,cv2.RETR_CCOMP,cv2.CHAIN_APPROX_SIMPLE)
+        contours,hierarchy = cv2.findContours(image,cv2.RETR_CCOMP,cv2.CHAIN_APPROX_SIMPLE)
         code = 2
         rectangles = []
-        #circles = []
-        for i,cnt in enumerate(contours):
-            # Check if it is an external contour and its area is more than 100
-            if hierarchy[0,i,3] == -1 and cv2.contourArea(cnt)>100:
-                x,y,w,h = cv2.boundingRect(cnt)
-                rectangles.append((x,y,w,h))
-                #cv2.rectangle(image,(x,y),(x+w,y+h),(0,255,0),2)
+        xy_rect = []
+        #print(contours)
+        for i, cnt in enumerate(contours):
+            # Check if it is an external contour and its area is between 5 and 200
+            if (hierarchy[0, i, 3] == -1) and cv2.contourArea(cnt) > 50 and cv2.contourArea(cnt) < 200:
+                x, y, w, h = cv2.boundingRect(cnt)
+                xy_rect.append([x,y])
+                rectangles.append((x, y, w, h))
+                if get_result_img:
+                    cv2.rectangle(image, (x, y), (x + w, y + h), (0, 255, 0), 2)
+                 # Get the rotated bounding rectangle
+                #rect = cv2.minAreaRect(cnt)
+                #box = cv2.boxPoints(rect)
+                ##box = np.int0(box)
+                #cv2.drawContours(img_copy,[box],0,(0,0,255),2)
+
+                # Alternatively, you can get the rotated rectangle's center, size, and angle
+                #center, size, angle = rect
+                
+                # Append the rotated rectangle's properties to the list
+                #rectangles.append((center, size, angle))
+                
+                # If you want to draw the axis-aligned bounding box instead, you can use:
+               
 
                 """m = cv2.moments(cnt)
                 cx,cy = m['m10']/m['m00'],m['m01']/m['m00']
                 circles.append([int(cx),int(cy)])
                 #cv2.circle(image,(int(cx),int(cy)),10,255,-1)"""
 
+        if show_plots:
+            show_img(image)
+        """
         #######################
         #show_img(image)
         # Calculate the areas of rectangles
@@ -115,16 +140,9 @@ def process_choices(erode, image, orig_image, get_plot, adjusted=False):
         #print(overall)
         ## Calculate the ratio of width to height
         true_rectangles = []
-        
+        """
         # taking rectangles that satisfies area and shape condition
-        xy_rect = []
-        for i in range(len(rectangles)):
-            x,y,w,h = rectangles[i]
-            if overall[i] == 1:
-                true_rectangles.append(rectangles[i])
-                xy_rect.append([x,y])
-                cv2.rectangle(image,(x,y),(x+w,y+h),(255,0,0),5)
-        show_img(image)
+        
         debug('[process_choices] getting orientation')
         # returns code on its orientation and what can be done to reset into upright orientation
         xy, code = get_orient_marker(xy_rect)
@@ -133,38 +151,120 @@ def process_choices(erode, image, orig_image, get_plot, adjusted=False):
         elif code == 1:
             # head is @ right.
             debug('[process_choices] reprocessing for updated orientation')
-            erode = cv2.rotate(erode, cv2.ROTATE_90_COUNTERCLOCKWISE)
-            return process_choices(erode, image, orig_image, get_plot, True) if adjusted == False else None
+            image2 = cv2.rotate(image2, cv2.ROTATE_90_COUNTERCLOCKWISE)
+            return process_choices(image2, BubbleGetter_obj, BoxGetter_obj,CaptureSheet_obj, box_index,adjusted=True,**kwargs) if adjusted == False else None
         elif code == 0:
             print("CODE 0")
             #print(true_rectangles)
             # head is @ left
             debug('[process_choices] reprocessing for updated orientation')
-            erode = cv2.rotate(erode, cv2.ROTATE_90_CLOCKWISE)
-            return process_choices(erode, image, orig_image, get_plot, True)  if adjusted == False else None
+            image2 = cv2.rotate(image2, cv2.ROTATE_90_CLOCKWISE)
+            return process_choices(image2, BubbleGetter_obj, BoxGetter_obj,CaptureSheet_obj, box_index,adjusted=True,**kwargs) if adjusted == False else None
         elif code == 3:
             print("CODE 0")
             #print(true_rectangles)
             # head is @ below (flipped)
             debug('[process_choices] reprocessing for updated orientation')
-            debug('[process_choices] reprocessing for updated orientation')
-            erode = cv2.rotate(erode, cv2.ROTATE_90_CLOCKWISE)
-            erode = cv2.rotate(erode, cv2.ROTATE_90_CLOCKWISE)
-            return process_choices(erode, image, orig_image, get_plot, True)  if adjusted == False else None
+            image2 = cv2.rotate(image2, cv2.ROTATE_90_CLOCKWISE)
+            image2 = cv2.rotate(image2, cv2.ROTATE_90_CLOCKWISE)
+            return process_choices(image2, BubbleGetter_obj, BoxGetter_obj,CaptureSheet_obj, box_index,adjusted=True,**kwargs) if adjusted == False else None
         
         output = []
-        for rect in true_rectangles:
+        for rect in rectangles:
             x,y,w,h = rect
             if x != xy[0] and y != xy[1]:
                 output.append(rect)
                 #cv2.rectangle(image,(x,y),(x+w,y+h),(255,0,0),10) if get_plot else None
-
-        return (output, image if get_plot else None, orig_image)
+        BubbleGetter_obj.bubbles = output
+        if get_result_img:
+            BubbleGetter_obj.result_img = image
+        print('Retrieved Complete Bubbles')
     except NameError as e:
         print(e)
 
 
 
+def detect_bubbles(BoxGetter_obj,CaptureSheet_obj, boxes_num): 
+    """extracts boxes
+
+    Args:
+        image (string or array): can be np array or path
+        boxes_num (int): number of box to take. (Prioritizes biggest boxes first)
+        image_is_path (bool, optional): Specifiy if image is a path or an array. Defaults to False.
+        get_plot (bool, optional): process plot as image with box. Defaults to False.
+        get_np_orig (bool, optional): gets original image as np array. Defaults to True.
+
+    Returns:
+        tuple: (box, image, crops, original image)
+            box: xywh for each element
+            image: image with 
+    """
+    try:
+        # Load an image from file
+        #image = CaptureSheet_obj.bw_orig_img
+        get_result_img = CaptureSheet_obj.get_result_img
+        show_plots = CaptureSheet_obj.show_plots and get_result_img
+        #image = cv2.equalizeHist(image)
+        debug('[get_boxes] initializing')
+        if get_result_img:
+            result_img = CaptureSheet_obj.orig_img.copy()
+        
+        debug('[get_boxes] gettting copy of original image')
+        #print("FINISHED READING")
+        # Apply adaptive thresholding
+        debug('[get_boxes] applying adaptive thresh')
+        adaptive_thresh = cv2.adaptiveThreshold(CaptureSheet_obj.orig_img, 255, cv2.ADAPTIVE_THRESH_MEAN_C, cv2.THRESH_BINARY, 11, 2)
+
+        # Invert the thresholded image
+        debug('[get_boxes] inverting thresh')
+        adaptive_thresh = 255 - adaptive_thresh
+
+        # Apply median blur
+        debug('[get_boxes] applying median blur')
+        #blurred_image = cv2.medianBlur(adaptive_thresh, 9)
+
+        # Find contours
+        debug('[get_boxes] finding contours')
+        contours, _ = cv2.findContours(adaptive_thresh, cv2.RETR_EXTERNAL, cv2.CHAIN_APPROX_SIMPLE)
+        #omr.show_img(adaptive_thresh)
+        rectangles=[]
+        debug('[get_boxes] filtering contours')
+        # Filter contours based on area
+        # Filter quadrilaterals
+        max_rect = None
+        max_area = 0
+        for contour in contours:
+            area = cv2.contourArea(contour)
+
+            # Process the contour only if its area is greater than 50
+            if area < 1000:
+                continue
+            # Approximate contour to simplify shape
+            epsilon = 0.04 * cv2.arcLength(contour, True)
+            approx = cv2.approxPolyDP(contour, epsilon, True)
+
+            # Check if the contour has 4 vertices (a quadrilateral)
+            if len(approx) == 4:
+                if area > max_area:
+                    max_area = area
+                    max_rect =approx
+
+        
+
+        #cv2.drawContours(clone_img, rectangles, -1, (0, 255, 0), 2)
+        CaptureSheet_obj.boxes.rectangles = [max_rect]
+
+        #omr.show_img(clone_img, "COUNTORS")
+        
+        # Sort rectangles based on area
+        transform = perspective_transform(CaptureSheet_obj.orig_img, max_rect, get_output_size(max_rect))
+        transform = cv2.rotate(transform, cv2.ROTATE_90_CLOCKWISE)
+        transform = cv2.flip(transform, 1)
+        omr.show_img(transform, 'perspective transformed')
+        
+        return None
+    except Exception as e:
+        print('det',e)
 # Example usage
 """x, y, w, h = 100, 100, 200, 100
 angle_degrees = 45
@@ -172,45 +272,58 @@ x_rot, y_rot, w_rot, h_rot = rotate_rectangle_counterclockwise(x, y, w, h, angle
 print("Rotated rectangle coordinates:", x_rot, y_rot, w_rot, h_rot)
 """
 
-def get_choices(image, image_is_path = False, get_original=False, get_plot=False):
+def get_choices(BubbleGetter_obj, BoxGetter_obj,CaptureSheet_obj, box_index,**kwargs):
     try:
     # Load an image from file
-        debug('[get_choices] initializing')
-        if image_is_path:
-            image = cv2.imread(image, 0)
+        image = BoxGetter_obj.crops[box_index].copy()
         
-        debug('[get_choices] getting copy of orig image')
-        orig_image = copy.copy(image) if get_original else None
-
-        # Apply adaptive thresholding
-        debug('[get_choices] applying adaptive thresh')
-        adaptive_thresh = cv2.adaptiveThreshold(image, 255, cv2.ADAPTIVE_THRESH_MEAN_C, cv2.THRESH_BINARY, 11, 2)
-        ret, thresh = cv2.threshold(adaptive_thresh, 50, 255, 1)
-
+        get_result_img = CaptureSheet_obj.get_result_img
+        show_plots = CaptureSheet_obj.show_plots and get_result_img
         #cv2.imwrite("Final Image.jpg", thresh)
 
         # Load the noisy image
-
+        
         # Apply Median blur
-        debug('[get_choices] applying median blur')
-        blurred_image = cv2.medianBlur(thresh, 13)  # Adjust the kernel size (e.g., 5) as needed
-
-
-        # Display the original and blurred images
-        debug('[get_choices] inverting')
-        blurred_image = 255-blurred_image
-        # Normal routines
-        img = blurred_image
-        ret,thresh = cv2.threshold(img,50,255,1)
-
-        debug('[get_choices] removing small noises')
-        # Remove some small noise if any.
-        dilate = cv2.dilate(thresh,None)
-        erode = cv2.erode(dilate,None)
-
+        blurred_image = cv2.GaussianBlur(image, (7,7), 0)
+        proceed = False
+        for c_value in range(1,6):
+            adaptive_thresh = cv2.adaptiveThreshold(blurred_image, 255, cv2.ADAPTIVE_THRESH_MEAN_C, cv2.THRESH_BINARY, 3, c_value)
+            #ret, thresh = cv2.threshold(image, 50, 255, 1)
+            #blurred_image = cv2.GaussianBlur(adaptive_thresh, (3,3), 0)
+            #adaptive_thresh = cv2.adaptiveThreshold(blurred_image, 255, cv2.ADAPTIVE_THRESH_MEAN_C, cv2.THRESH_BINARY, 3, 2)
+            #cv2.imwrite("Final Image.jpg", thresh)
+            #dilate = cv2.dilate(adaptive_thresh,None)
+            #erode = cv2.erode(dilate,None
+            #thickened_image = cv2.erode(adaptive_thresh,None,iterations=1)
+            thickened_image = 255-cv2.dilate(255-adaptive_thresh,  np.ones((3, 3), np.uint8) , iterations=1)
+            #thickened_image = cv2.morphologyEx(thickened_image, cv2.MORPH_CLOSE, np.ones((3, 3)))
+            contours,hierarchy = cv2.findContours(thickened_image,cv2.RETR_CCOMP,cv2.CHAIN_APPROX_SIMPLE)
+            rectangles = []
+            #print(contours)
+            counter = 0
+            for i, cnt in enumerate(contours):
+                # Check if it is an external contour and its area is between 5 and 200
+                if (hierarchy[0, i, 3] == -1) and cv2.contourArea(cnt) > 20 and cv2.contourArea(cnt) < 200:
+                    counter+=1
+                    x, y, w, h = cv2.boundingRect(cnt)
+                    if get_result_img:
+                        cv2.rectangle(image, (x, y), (x + w, y + h), (0, 255, 0), 5)
+            show_img(image) if show_plots else None
+            print(counter)
+            if counter-1==CaptureSheet_obj.mcq.num_items*4 or counter-1 == CaptureSheet_obj.tfq.num_items*2:
+                proceed = True
+                print('OKAY_PROCEED!',c_value,counter)
+                CaptureSheet_obj.count = counter
+                break
+            else:
+                continue
+        if proceed:
+            debug('[get_choices] processing choices')
+            return process_choices(thickened_image, BubbleGetter_obj, BoxGetter_obj,CaptureSheet_obj, box_index,**kwargs)
+    
+        else:
+            return None
         # proceeds to another function (to allow reprocessing based on orientation)
-        debug('[get_choices] processing choices')
-        return process_choices(erode, image, orig_image, get_plot)
     except Exception as e:
         print(e)
     

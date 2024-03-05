@@ -4,8 +4,8 @@ import math
 
 class BubbleSheet:
     mc_col_weight = 1
-    tf_col_weight = 0.66666
-    idtf_col_weight = 1.5
+    tf_col_weight = 0.6
+    idtf_col_weight = 2.1
     def __init__(self, mc_num, tf_num, idtf_num, header_name):
         self.mc_num = mc_num
         self.tf_num = tf_num
@@ -139,11 +139,16 @@ class BubbleSheet:
             html{{
                 height: 8in;
                 width: 14in;
+                background-color: white;
             }}
             
             body {{
                 font-family: Arial, sans-serif;
+                
+                margin-left: 25px;
+                
             }}
+            
             
             .container {{
                 display: flex;
@@ -164,6 +169,7 @@ class BubbleSheet:
             .bottom {{
                 flex: 1; /* Fill remaining vertical space */
                 display: flex;
+                color: rgba(150,150,150);
                 justify-content: space-between;
                 background-color: white;
             }}
@@ -174,6 +180,7 @@ class BubbleSheet:
                 border-width: 5px;
                 border-style: solid;
                 display: flex;
+                border-color: black;
                 flex-direction: column;
                 
 
@@ -251,8 +258,8 @@ class BubbleSheet:
                 flex-direction: row;
             }}
             .start{{
-                width: 20px;
-                height: 20px;
+                width: 0px;
+                height: 0px;
                 background-color: black;
                 margin-right: 10px;
                 
@@ -277,13 +284,29 @@ class BubbleSheet:
 
                 {idf}
             </div>
+            <script>
+                window.onload = function() {{
+                    var elements = document.querySelectorAll('.container');
+                    var infoDiv = document.getElementById('info');
+            
+                    elements.forEach(function(element) {{
+                        var rect = element.getBoundingClientRect();
+                        var info = document.createElement('div');
+                        info.innerHTML = "Element: " + element.id + "<br>" +
+                                         "Width: " + rect.width + "<br>" +
+                                         "Height: " + rect.height + "<br>" +
+                                         "X: " + rect.x + "<br>" +
+                                         "Y: " + rect.y + "<br>-----------------<br>";
+                        infoDiv.appendChild(info);
+                    }});
+                }};
+            </script>
         </div>
         </body>
         </html>
 
         """
         self.html = html_string_with_size
-
         # Create PNG image with specified size
         hti = Html2Image()
         hti.screenshot(html_str=html_string_with_size, save_as=png_file, size=(width_pixels, height_pixels))

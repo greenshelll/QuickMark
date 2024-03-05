@@ -70,6 +70,10 @@ def get_scores(target_img, ground_mc, ground_tf, target_ispath = True, return_re
 
 def get_box(target_img):
     try:
+        # In the provided code, there is no variable named `res` being used or defined. If you are
+        # referring to a specific part of the code where `res` is mentioned, please provide more
+        # context or specify the exact location where `res` is used so that I can help explain its
+        # purpose.
         result = boxer.get_boxes(target_img, 1 , False)
         rectangles, img, cropped_result, orig_image = result
         #omr.show_img(image_result)
