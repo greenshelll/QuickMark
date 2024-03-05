@@ -10,8 +10,8 @@ except ModuleNotFoundError as e:
     import utilities.omr_eval.omr as omr
 import math
 import cv2
-omr.run_debug = False
-boxer.run_debug = False
+omr.run_debug = True
+boxer.run_debug = True
 class TestType:
     class MultipleChoice:
         def __init__(self, items):
@@ -87,10 +87,9 @@ def get_bubbles(rectangles, cropped_result,ground_mc, ground_tf):
     #omr.show_img(circle_image_result)
 
     # detects all rows
-    circles_by_row = omr.get_rows(cirzcles)
+    circles_by_row = omr.get_rows(circles)
     #print(circles_by_row)
-    print("CIRCLES")
-    print(circles)
+
     # get type of test
     test_type_inference = omr.get_type_test(circles_by_row,True,False)
     if test_type_inference == 'MULTIPLE CHOICE':
@@ -119,3 +118,10 @@ def get_bubbles(rectangles, cropped_result,ground_mc, ground_tf):
     else:
         return None
     
+path = r"C:\Users\USER\Documents\GitHub\archive\2\utilities\sheet\template.png"
+
+ground_mc = TestType.MultipleChoice(100)
+ground_tf = TestType.MultipleChoice(10)
+
+res = get_scores(path, ground_mc, ground_tf)
+print(res)

@@ -49,8 +49,8 @@ def get_boxes(image, boxes_num, image_is_path=False, get_plot=False, get_np_orig
 
         # Find contours
         debug('[get_boxes] finding contours')
-        contours, _ = cv2.findContours(blurred_image, cv2.RETR_EXTERNAL, cv2.CHAIN_APPROX_SIMPLE)
-
+        contours, _ = cv2.findContours(adaptive_thresh, cv2.RETR_EXTERNAL, cv2.CHAIN_APPROX_SIMPLE)
+        #omr.show_img(adaptive_thresh)
         debug('[get_boxes] filtering contours')
         # Filter contours based on area
         rectangles = []
@@ -58,6 +58,7 @@ def get_boxes(image, boxes_num, image_is_path=False, get_plot=False, get_np_orig
             x, y, w, h = cv2.boundingRect(cnt)
             if cv2.contourArea(cnt) > 100:
                 rectangles.append((x, y, w, h))
+                cv2.rectangle(orig_img, (x, y), (x + w, y + h), (255, 0, 0), 5)
 
         
         # Sort rectangles based on area
@@ -70,6 +71,7 @@ def get_boxes(image, boxes_num, image_is_path=False, get_plot=False, get_np_orig
 
         # Crop the rectangles
         debug('[get_boxes] cropping rectangles')
+        print(final_rectangles)
         crops = [orig_img[y:y+h, x:x+w] for x, y, w, h in final_rectangles]
 
         # Draw rectangles on the original image
@@ -79,10 +81,12 @@ def get_boxes(image, boxes_num, image_is_path=False, get_plot=False, get_np_orig
                 cv2.rectangle(orig_img, (x, y), (x + w, y + h), (255, 0, 0), 5)
             #omr.show_img(image)
         debug('[get_boxes] end')
+        #cv2.imwrite('hello.png', image)
         return (final_rectangles, image, crops, orig_img)
     except Exception as e:
         print(e)
         pass
+    
     #omr.show_img(orig_img)
     
 

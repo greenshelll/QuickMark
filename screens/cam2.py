@@ -18,7 +18,7 @@ class CameraWidget(FloatLayout):
         # Create a camera widget
         #highest_resolution = cam_params.get_highest_resolution()
         #print(highest_resolution)
-        self.camera = Camera(play=True, resolution=(1920, 1080), opacity=0, size_hint=(1,1))
+        self.camera = Camera(play=True, resolution=(1080,1920), opacity=100, size_hint=(1,1))
 
         # Bind the on_tex event to the update_frame method
         #self.camera.bind(texture=self.update_frame)
@@ -36,35 +36,23 @@ class CameraWidget(FloatLayout):
         self.extract_button = Button(text='Extract Frame', size_hint=(None, None), size=(150, 50), pos=(20, 20))
         self.extract_button.bind(on_press=self.extract_frame)
         self.add_widget(self.extract_button)
-        self.start_timer()
-        self.timer_value = 0
-        # Create an image widget to display the extracted frame
-        self.frame_image = Image(size_hint=(1,1), pos_hint={'center_x': 0.5, 'center_y': 0.5})
-        self.add_widget(self.frame_image)
-
-    def start_timer(self):
-        # Schedule the timer function
-        Clock.schedule_once(self.update_timer, 1/24)
-        
-    def update_timer(self, dt):
-        self.extract_frame(None)
-        self.start_timer()
 
     def process_frame(self, frame_data):
         try:
-            raise Exception
+            
             ground_mc = capture.TestType.MultipleChoice(100)
             ground_tf = capture.TestType.MultipleChoice(10)
             rect, crop = capture.get_box(frame_data)
             for x, y, w, h in rect:
+                
                 cv2.rectangle(frame_data, (x, y), (x + w, y + h), (0, 0, 255), 3)
             frame_data = cv2.flip(frame_data, 0)
             frame_data = cv2.flip(frame_data, 1)
-            capture.get_bubbles(rect, crop,ground_mc,ground_tf)
+            print(capture.get_bubbles(rect, crop,ground_mc,ground_tf))
             
         except Exception as e:
             print(e)
-        self.show_frame(frame_data)
+   
 
     def show_frame(self, frame_data):
         frame_texture = Texture.create(size=(frame_data.shape[1], frame_data.shape[0]), colorfmt='rgba')
