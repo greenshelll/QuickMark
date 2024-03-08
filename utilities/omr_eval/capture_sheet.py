@@ -1,12 +1,13 @@
 
 import cv2
+import sys
 try:
-    import omr_functions as omr_functions
-    import util4string as u4str
+    import utilities.omr_eval.omr_functions as omr_functions
+    import utilities.omr_eval.util4string as u4str
 except ModuleNotFoundError as e:
     print(e, 'Getting alt path')
-    import utilities.omr_eval.util4string as u4str
-    import utilities.omr_eval.omr_functions as omr_functions
+    import omr_functions as omr_functions
+    import util4string as u4str
 import numpy as np
 
 omr_functions.db.run_debug = True
@@ -17,11 +18,33 @@ class _TestType:
             self.name = 'MULTIPLE CHOICE'
             self.num_items = items
             self.circles_per_num = 4
+            self.correct = ['C', 'A', 'B', 'C', 'C', 'A', 'D', 'C', 'B', 'B', 'C', 'C', 'C',
+       'B', 'D', 'A', 'A', 'C', 'A', 'B', 'D', 'B', 'C', 'D', 'C', 'D',
+       'B', 'B', 'C', 'B', 'A', 'C', 'B', 'C', 'B', 'C', 'D', 'A', 'D',
+       'A', 'D', 'B', 'A', 'D', 'A', 'B', 'D', 'C', 'A', 'A', 'A', 'C',
+       'C', 'D', 'D', 'A', 'B', 'B', 'C', 'B', 'A', 'A', 'C', 'B', 'D',
+       'B', 'A', 'B', 'B', 'B', 'A', 'B', 'B', 'D', 'A', 'D', 'C', 'A',
+       'B', 'D', 'C', 'D', 'A', 'B', 'B', 'D', 'D', 'A', 'D', 'D', 'B',
+       'A', 'A', 'C', 'C', 'A', 'C', 'D', 'B', 'A']
     class TrueOrFalse:
         def __init__(self, items):
             self.name ='TRUE OR FALSE'
             self.num_items = items
             self.circles_per_num = 2
+            self.correct = ['False', 'False', 'True', 'True', 'False', 'False', 'True', 'True',
+       'False', 'False', 'False', 'False', 'True', 'False', 'False',
+       'False', 'False', 'True', 'True', 'False', 'True', 'True', 'False',
+       'False', 'False', 'False', 'False', 'True', 'True', 'True',
+       'False', 'False', 'False', 'False', 'True', 'True', 'True',
+       'False', 'True', 'True', 'True', 'True', 'True', 'False', 'True',
+       'False', 'False', 'False', 'True', 'True', 'True', 'False', 'True',
+       'True', 'True', 'False', 'True', 'False', 'True', 'False', 'False',
+       'False', 'False', 'True', 'False', 'False', 'False', 'False',
+       'True', 'True', 'True', 'True', 'True', 'True', 'True', 'True',
+       'False', 'False', 'True', 'False', 'False', 'False', 'False',
+       'True', 'True', 'True', 'False', 'True', 'False', 'False', 'True',
+       'False', 'False', 'False', 'True', 'False', 'True', 'True', 'True',
+       'False']
     class Identification:
         def __init__(self, items):
             self.name = 'IDENTIFICATION'
@@ -34,6 +57,8 @@ class _BoxGetter:
         self.crops = []
         self.bubbles = []
         self.transformed_imgs = []
+        self.orient_matrix = [] # to be taken alter
+        self.orient_operations = [] # to be taken later
     
     def retrieve(self, CaptureSheet_obj, boxes_num, **kwargs):
         omr_functions.get_boxes(BoxGetter_obj =self, 
@@ -47,8 +72,18 @@ class _BubbleGetter:
         self.bubbles = None
         self.result_img = None
         self.count = 0
+        
+        self.rectangles = [] # to be taken later
+        self.rows = None # to be taken later
+        self.choices_by_num = None # to be taken later
+        self.answers = None #later
+        self.final_score = None #later
+        self.test_type = None #later
+    
+        
+        
 
-    def retrieve(self, BoxGetter_obj, CaptureSheet_obj, box_index,**kwargs):
+    def retrieve(self, BoxGetter_obj, CaptureSheet_obj, box_index,redo,**kwargs):
         """omr.get_choices(BubbleGetter_obj=self,
                         BoxGetter_obj=BoxGetter_obj,
                         CaptureSheet_obj=CaptureSheet_obj, 
@@ -58,13 +93,19 @@ class _BubbleGetter:
                                CaptureSheet_obj=CaptureSheet_obj, 
                                boxes_num=box_index,
                                 BoxGetter_obj=BoxGetter_obj,
+                                redo=redo,
                                 **kwargs)
-        
+    def get_choices_by_num(self, BoxGetter_obj, CaptureSheet_obj, box_index, **kwargs):
+        omr_functions.get_choices_by_num(self, BoxGetter_obj, CaptureSheet_obj, box_index, **kwargs)
+
+    def get_scores(self, BoxGetter_obj, CaptureSheet_obj, box_index, **kwargs):
+        omr_functions.get_scores(self, BoxGetter_obj, CaptureSheet_obj, box_index, **kwargs)
+
 class CaptureSheet:
-    def __init__(self, mcq_items, tfq_items, idq_items, img, boxes_num,get_result_img=False, show_plots=False, ):
+    def __init__(self, mcq_items, tfq_items, idq_items, img, boxes_num,get_result_img=False, show_plots=False, on_android = True):
         self.get_result_img = get_result_img
         self.show_plots = show_plots
-    
+        self.on_android = on_android
         self.boxes_num = boxes_num
         # create questions object
         self.count = 0
@@ -76,7 +117,7 @@ class CaptureSheet:
         self.orig_img = img
         self.bw_orig_img = None
         self._get_img_array()
-
+    
         # initialization only; to be processed...
         self.boxes = _BoxGetter()
         self.bubbles = [_BubbleGetter() for x in range(boxes_num)]
@@ -120,28 +161,46 @@ class CaptureSheet:
                             boxes_num=self.boxes_num,**kwargs)
         return self
         
-    def get_bubbles(self):
-        for crop_i in range(len(self.boxes.crops)):
+    def get_bubbles(self,redo=False):
+        for crop_i in range(self.boxes_num):
             self.bubbles[crop_i].retrieve(BoxGetter_obj=self.boxes,
                                           CaptureSheet_obj=self,
-                                          box_index=crop_i)
+                                          box_index=crop_i,redo=redo)
             #self.bubbles[crop_i].img = self.boxes[crop_i].transformed_imgs
         return self
     
+    def get_choices(self, **kwargs):
+        for crop_i in range(self.boxes_num):
+            self.bubbles[crop_i].get_choices_by_num(BoxGetter_obj=self.boxes,
+                                                    CaptureSheet_obj=self,
+                                                    box_index=crop_i)
+        return self
+    
+    def get_scores(self, **kwargs):
+        for crop_i in range(self.boxes_num):
+            self.bubbles[crop_i].get_scores(BoxGetter_obj=self.boxes,
+                                                    CaptureSheet_obj=self,
+                                                    box_index=crop_i)
     
 if __name__ == "__main__":
+    # sample input
     #cs = CaptureSheet(100,10,10,r"C:\Users\USER\Downloads\WIN_20240228_07_05_54_Pro.jpg",True,True)
     cs = CaptureSheet(
         mcq_items=100,
         tfq_items=10,
+
         idq_items=10,
-        img=r"C:\Users\USER\Downloads\samples\IMG_20240225_084926.jpg",
+        img=r"C:\Users\USER\Downloads\samples\IMG_20240225_084924.jpg",
         boxes_num=1,
         get_result_img=True,
-        show_plots=True
+        show_plots=True,
+        on_android=False
     )
     cs.get_boxes()
-    cs.get_bubbles()
-    
+    cs.get_bubbles(False)
+    cs.get_choices()
+    cs.get_scores()
+    print(cs.bubbles[0].count)
+    print(cs.bubbles[0].final_score)
 else:
     pass

@@ -16,7 +16,7 @@ from PIL import Image as Pimage
 
 db = Debugger()
 db.run_debug = True
-sheet.omr_functions.db.run_debug=False
+sheet.omr_functions.db.run_debug=True
 db.start_time()
 
 ################ ANDROID INIITIALIZATION
@@ -224,76 +224,19 @@ class CameraWidget(FloatLayout):
                     cv2.drawContours(frame_data, self.cs.boxes.rectangles, -1, (0, 255, 0), 4)
                     #cv2.rectangle(frame_data, (x, y), (x + w, y + h), (0,255,0), 3)
                     #self.label.text = 'Attempting Extraction'
-                    #self.cs.get_bubbles()
-                    #self.cs.get_choices()
-                    #self.cs.get_scores()
+                    self.cs.get_bubbles()
+                    self.cs.get_choices()
+                    self.cs.get_scores()
                     db.p('getting boxes')
-                    #score = obj.bubbles[0].final_score
-                    #test_type = obj.bubbles[0].test_type
-                    #self.label.text = str(counting)
-                    #self.label.text = '\n'.join([str(counting), 'SCORE:'+str(score),'TYPE:'+str(test_type)])
+                    score = self.cs.bubbles[0].final_score
+                    test_type = self.cs.bubbles[0].test_type
+                    counting = self.cs.bubbles[0].count
+                    self.label.text = str(counting)
+                    self.label.text = '\n'.join([str(counting), 'SCORE:'+str(score),'TYPE:'+str(test_type)])
                     #_________________________________________
-                    self.cs_points.append((x,y))
-                    if len(self.cs_points) > 1:
-                        previous_cs_point = self.cs_points[-2]
-                        if self.eucdist(previous_cs_point, (x,y)) < 40:
-                            self.cs_objs.append(self.cs)
-                            if len(self.cs_points) == 5:
-                                print("EVALUATING")
-                                counts = []
-                                done=False
-                                for obj in self.cs_objs:
-                                    print("GETTTING BUBBBLES")
-                                    obj.get_bubbles()
-                                    print("DONE GETTING BUBBLES")
-                                    counting = obj.bubbles[0].count
-                                    print('DONE GETTING BUBBLES',counting)
-                                    nums = [obj.mcq.num_items*4, obj.tfq.num_items*2, obj.idq.num_items, 45*4, 30*2, 5]
-                                    if counting not in nums:
-                                        obj.get_bubbles(redo=True)
-                                        counting = obj.bubbles[0].count
-                                    if counting in [obj.mcq.num_items*4, obj.tfq.num_items*2, obj.idq.num_items, 45*4, 30*2, 5]:
-                                        #if counting in [100*4, 10*2, 10*1, 45*4, 30*2, 1*5]:
-                                        
-                                        #vibrator.vibrate(100)
-                                         # the argument is in milliseconds
-                                        
-                                        obj.get_choices()
-                                        obj.get_scores()
-                                        AP.vibrate(50) 
-                                        score = obj.bubbles[0].final_score
-                                        test_type = obj.bubbles[0].test_type
-                                        self.label.text = str(counting)
-                                        self.label.text = '\n'.join([str(counting), 'SCORE:'+str(score),'TYPE:'+str(test_type)])
-                                        self.cs_points = []
-                                        self.cs_objs = []
-                                        
-                                        
-                                        done=True
-                                        break
-
-                                    counts.append(counting)
-                                print("COUNTING ALL",counts)
-                                if done == False:
-                                    #if num in [100*4, 10*2, 10*1, 45*4, 30*2, 1*5]:
-                                    self.label.text = str(max(counts))
-                                    #vibrator.vibrate(100)
-                                    AP.vibrate(50)  # the argument is in milliseconds
-                                    self.cs_points = []
-                                    self.cs_objs = []
-                                    print(max(counts))
-                                    
-                                done=False
-                            else:
-                                pass
-                        else:
-                            self.cs_points = []
-                            self.cs_objs = []
-
-                    """self.cs.get_bubbles()
-                    self.label.text = str(self.cs.bubbles[0].count)"""
+                    
                     #___________________________________________________
-        except AttributeError as e:
+        except Exception as e:
             print(db.p('ERRROR'+str(e),rgb=[255,0,0],force_show=True))
         self.show_frame(frame_data)
     

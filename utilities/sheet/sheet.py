@@ -53,10 +53,10 @@ class BubbleSheet:
                 x_formatted = '{:03d}'.format(instance)
                 template += f"""<div class="instance">
                                 {x_formatted}
-                                <div class="circle">A</div>
-                                <div class="circle">B</div>
-                                <div class="circle">C</div>
-                                <div class="circle">D</div>
+                                <div class="circle"></div>
+                                <div class="circle"></div>
+                                <div class="circle"></div>
+                                <div class="circle"></div>
                             </div>"""
                 if counter == 25:
                     template = '<div class="column-inner">'+template+'</div>'
@@ -80,8 +80,8 @@ class BubbleSheet:
                 x_formatted = '{:03d}'.format(instance)
                 template += f"""<div class="instance">
                                 {x_formatted}
-                                <div class="circle">T</div>
-                                <div class="circle">F</div>
+                                <div class="circle"></div>
+                                <div class="circle"></div>
                             </div>"""
                 if counter == 25:
                     template = '<div class="column-inner">'+template+'</div>'

@@ -1,10 +1,11 @@
 import cv2
 import numpy as np
+import sys
 try:
-    import util4string as u4str
+    import utilities.omr_eval.util4string as u4str
 except ModuleNotFoundError as e:
     print(e, 'Getting alt path')
-    import utilities.omr_eval.util4string as u4str
+    import util4string as u4str
 #_______________________________________________________________________________________________________
 #_______________________________________________________________________________________________________
 #_______________________________________________________________________________________________________
@@ -24,8 +25,8 @@ class Debugger:
         self.p('Formatting ----\n[FUNCTION NAME] Text Message (TIME TOOK TO ARRIVE FROM PREV TIME RECORD)\n', italic=True,rgb=[100,0,0],ignore_time=True)
         self.time_base = 0
         
-    def p(self,text=None, rgb=None,bold=False,italic=False,dim=False,strike=False,underline=False,ignore_time=False):
-        if self.run_debug:
+    def p(self,text=None, rgb=None,bold=False,italic=False,dim=False,strike=False,underline=False,ignore_time=False,force_show=False):
+        if self.run_debug or force_show:
             if not ignore_time:
                 import time
                 current_time = time.time()
@@ -65,7 +66,6 @@ db.start_time()
 #_______________________________________________________________________________________________________
 #_______________________________________________________________________________________________________
 #_______________________________________________________________________________________________________
-
 
 
 
@@ -142,7 +142,54 @@ def distance(point1, point2):
     """Calculate Euclidean distance between two points."""
     return np.sqrt((point1[0] - point2[0])**2 + (point1[1] - point2[1])**2)
 
-
+def get_quad_angles(points):
+        """
+        Compute the angles of a quadrilateral given its four points.
+        
+        Args:
+        - points (list of tuples): Four points representing the quadrilateral, each tuple containing (x, y) coordinates.
+        
+        Returns:
+        - angles (list of floats): List of angles (in degrees) of the quadrilateral.
+        """
+        def compute_angle(p1, p2, p3):
+            """Compute the angle between three points."""
+            v1 = np.array(p1) - np.array(p2)
+            v2 = np.array(p3) - np.array(p2)
+            dot_product = np.dot(v1, v2)
+            magnitude_v1 = np.linalg.norm(v1)
+            magnitude_v2 = np.linalg.norm(v2)
+            angle_rad = np.arccos(dot_product / (magnitude_v1 * magnitude_v2))
+            angle_deg = np.degrees(angle_rad)
+            return angle_deg
+        
+        # Compute angles between consecutive points
+        angles = []
+        for i in range(len(points)):
+            angle = compute_angle(points[i], points[(i+1)%len(points)], points[(i+2)%len(points)])
+            angles.append(angle)
+        #print(angles)
+        return np.array(angles)
+    
+def good_angles(points, threshold = 80):
+    """
+    This Python function checks if a set of points forms a quadrilateral with no angles less than or
+    equal to 60 degrees.
+    
+    :param points: It seems like the code snippet you provided is a method called `angles_are_good`
+    that takes in a list of points as input. The method calculates the angles of the quadrilateral
+    formed by the points and checks if there is any angle less than or equal to 60 degrees. If there
+    is at
+    :return: If the `has_small_angle` variable is `True`, then `False` is being returned. Otherwise,
+    `True` is being returned.
+    """
+    angles = get_quad_angles(points)
+    # gets boolean with less than 60 degrees angle
+    has_small_angle = sum(angles <= threshold) > 0
+    if has_small_angle:
+        return False
+    else:
+        return True
 
 
 def get_bubbles(BubbleGetter_obj, BoxGetter_obj, CaptureSheet_obj, boxes_num):
@@ -173,8 +220,8 @@ def get_bubbles(BubbleGetter_obj, BoxGetter_obj, CaptureSheet_obj, boxes_num):
         image = BoxGetter_obj.crops[boxes_num]
         #
         #image = resize_image_to_max_side(image, 320)
+        #image = cv2.equalizeHist(image)
         db.p('applying adaptive thresh')
-        image = cv2.equalizeHist(image)
         adaptive_thresh = cv2.adaptiveThreshold(image, 255, cv2.ADAPTIVE_THRESH_MEAN_C, cv2.THRESH_BINARY, 11, 2)
 
         # Invert the thresholded image
@@ -183,8 +230,10 @@ def get_bubbles(BubbleGetter_obj, BoxGetter_obj, CaptureSheet_obj, boxes_num):
         adaptive_thresh = 255 - adaptive_thresh
 
         db.p('finding contours')
-        contours, hierarchy = cv2.findContours(adaptive_thresh, cv2.RETR_TREE, cv2.CHAIN_APPROX_SIMPLE)
-        
+        contours, hierarchy = cv2.findContours(adaptive_thresh, cv2.RETR_TREE, cv2.CHAIN_APPROX_NONE)
+        CaptureSheet_obj.count = len(contours)
+        if CaptureSheet_obj.count == 0:
+            CaptureSheet_obj.count = 'None'
         #
         db.p(f'contours total -- {len(contours)}')
         
@@ -206,35 +255,44 @@ def get_bubbles(BubbleGetter_obj, BoxGetter_obj, CaptureSheet_obj, boxes_num):
             epsilon = 0.04 * cv2.arcLength(contour, True)
             #print(benchmark_area)
             approx = cv2.approxPolyDP(contour, epsilon, True)
-            
-            if len(approx) == 4 and cv2.contourArea(contour) > benchmark_area-(benchmark_area*0.3) and cv2.contourArea(contour) < benchmark_area*100:
-            
+            #print(np.array(approx[0]))
+            #cv2.drawContours(image, [approx], -1, (0, 255, 0), 2) if db.show_plot else None
+            if len(approx) == 4 and ((cv2.contourArea(contour) > benchmark_area-(benchmark_area*0.3)  and cv2.contourArea(contour) < benchmark_area*100)) :
+
+                #cv2.drawContours(image, [approx], -1, (0, 255, 0), 2) if db.show_plot else None    
                 #print('stnd',(image.shape[0]*image.shape[1])/300)
                 # Check if the contour has 4 vertices (a quadrilateral)
                 x, y, w, h = cv2.boundingRect(approx)
-            
+                ok = good_angles(np.array(approx).reshape(4,2),60)
+                
+                if not ok:
+                    continue
+                
                 # Calculate width-to-height ratio
                 if h != 0:  # Avoid division by zero
                     ratio = w / h
-                    if (ratio >= 0.7 and ratio <= 1.3):
+                    if (ratio >= 0.7 and ratio <= 1.3) or (cv2.contourArea(contour) > benchmark_area*10):
                         not_inside = True
                         for rect in rectangles:
                             x_center = x + w / 2
                             y_center = y + h / 2
                             rectx_center = rect[0] + rect[2]/2
                             recty_center = rect[1] + rect[3]/2
-                            if distance((rectx_center,recty_center),(x_center,y_center)) < 20:
+                            if distance((rectx_center,recty_center),(x_center,y_center)) < 10:
                                 not_inside=False
-                                break
+                                continue
                         if not_inside:
                             rectangles.append((x,y,w,h))
                             count += 1
+
                             cv2.drawContours(image, [approx], -1, (0, 255, 0), 2) if db.show_plot else None
         #
         db.plot(image, 'perspective transformed')
         #db.p('qualified contoures ---',len(rectangles))
         #
+        BubbleGetter_obj.count = count
         db.p('numbers---'+str(count))
+        
         db.p('done',bold=True)
     except Exception as e:
         db.p(e, rgb=[255,0,0])
@@ -266,7 +324,7 @@ def resize_image_to_max_side(image, max_side_length):
         new_width = int(width * (max_side_length / height))
 
     # Resize the image
-    resized_image = cv2.resize(image, (new_width, new_height), interpolation=cv2.INTER_NEAREST)
+    resized_image = cv2.resize(image, (new_width, new_height), interpolation=cv2.INTER_LINEAR)
     
     return resized_image
 
@@ -310,12 +368,12 @@ def get_boxes(BoxGetter_obj,CaptureSheet_obj, boxes_num):
 
         db.p('Start',bold=True)
         if get_result_img:
-            result_img = CaptureSheet_obj.orig_img.copy()
+            result_img = CaptureSheet_obj.orig_img
         image = CaptureSheet_obj.orig_img
-        image = resize_image_to_max_side(image, int(1280/scaler))
+        #image = resize_image_to_max_side(image, int(1280/scaler))
         #
+        #image = cv2.equalizeHist(image)
         db.p('applying adaptive thresh',fclr)
-        
         adaptive_thresh = cv2.adaptiveThreshold(image, 255, cv2.ADAPTIVE_THRESH_MEAN_C, cv2.THRESH_BINARY, 11, 2)
 
         # Invert the thresholded image
@@ -346,18 +404,19 @@ def get_boxes(BoxGetter_obj,CaptureSheet_obj, boxes_num):
                 if area > max_area:
                     max_area = area
                     max_rect =approx
-        max_rect = np.array(max_rect)*scaler
-        max_rect = max_rect.astype(int)
+        #max_rect = np.array(max_rect)*scaler
+        #max_rect = max_rect.astype(int)
         
         CaptureSheet_obj.boxes.rectangles = [max_rect]
 
         #
         db.p('transforming image perspective', fclr)
-        transform = perspective_transform(CaptureSheet_obj.orig_img, max_rect, get_output_size(max_rect))
+        transform = perspective_transform(CaptureSheet_obj.orig_img, max_rect, (get_output_size(max_rect)))
+        
         transform = cv2.flip(transform, 1)
-        transform = resize_image_to_max_side(transform, 1280)
+        
         BoxGetter_obj.crops.append(transform)
-
+        transform = resize_image_to_max_side(image, 1280)
         #
         db.plot(transform, 'crop+perspective transformed')
         db.p('Done',bold=True)
