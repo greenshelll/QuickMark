@@ -26,6 +26,7 @@ class _TestType:
        'B', 'A', 'B', 'B', 'B', 'A', 'B', 'B', 'D', 'A', 'D', 'C', 'A',
        'B', 'D', 'C', 'D', 'A', 'B', 'B', 'D', 'D', 'A', 'D', 'D', 'B',
        'A', 'A', 'C', 'C', 'A', 'C', 'D', 'B', 'A']
+            
     class TrueOrFalse:
         def __init__(self, items):
             self.name ='TRUE OR FALSE'
@@ -190,14 +191,14 @@ if __name__ == "__main__":
         tfq_items=10,
 
         idq_items=10,
-        img=r"C:\Users\USER\Downloads\samples\IMG_20240225_084924.jpg",
+        img=r"C:\Users\USER\Downloads\430920436_1065062367937575_3927357814054852515_n.jpg",
         boxes_num=1,
         get_result_img=True,
         show_plots=True,
         on_android=False
     )
     cs.get_boxes()
-    cs.get_bubbles(False)
+    cs.get_bubbles(True)
     cs.get_choices()
     cs.get_scores()
     print(cs.bubbles[0].count)

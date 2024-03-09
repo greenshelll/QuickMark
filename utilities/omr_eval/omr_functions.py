@@ -34,7 +34,7 @@ class Debugger:
                 self.time_base = time.time()
             else:
                 diff = '?'
-            ##*print(u4str.get_asciiface(f'[{self.funcname}] {self.text if text is None else text} (+{diff})', rgb if rgb is not None else self.color,bold,italic,underline,strike,dim))
+            #print(u4str.get_asciiface(f'[{self.funcname}] {self.text if text is None else text} (+{diff})', rgb if rgb is not None else self.color,bold,italic,underline,strike,dim))
 
     def plot(self,image,title='',**kwargs):
         if self.run_debug and self.show_plot:
@@ -54,7 +54,7 @@ class Debugger:
         import time
         if self.run_debug:
             self.time_base = time.time()
-                
+
 #_______________________________________________________________________________________________________
 db = Debugger()
 db.start_time()
@@ -67,8 +67,6 @@ db.start_time()
 #_______________________________________________________________________________________________________
 #_______________________________________________________________________________________________________
 #_______________________________________________________________________________________________________
-
-
 
 
 def perspective_transform(original_image, max_rect, output_size):
@@ -295,8 +293,10 @@ def get_bubbles(BubbleGetter_obj, BoxGetter_obj, CaptureSheet_obj, boxes_num, re
         db.p('Applying transformation')
         for operation in BoxGetter_obj.orient_operations[boxes_num]:
             transform = operation(transform)
-        
+        db.p(transform.shape)
         transform = resize_image_to_max_side(transform, 1280)
+        db.plot(transform)
+        db.p(transform.shape)
         BoxGetter_obj.crops.append(transform)
         #transform = resize_image_to_max_side(image, 1280)
         #
@@ -355,7 +355,7 @@ def get_bubbles(BubbleGetter_obj, BoxGetter_obj, CaptureSheet_obj, boxes_num, re
             ##*print("SHAPE",len(approx))
             ##*print('own', (area))
             #print(benchmark_area*0.5)
-            if len(approx) == 4 and ((area > (benchmark_area*0.5)  and area < benchmark_area*200)) :
+            if len(approx) == 4 and ((area > (benchmark_area*0.9)  and area < benchmark_area*200)) :
 
                 #cv2.drawContours(image, [approx], -1, (0, 255, 0), 2) if db.show_plot else None    
                 ###*print('stnd',(image.shape[0]*image.shape[1])/300)
@@ -516,6 +516,7 @@ def get_scores(BubbleGetter_obj, BoxGetter_obj, CaptureSheet_obj, boxes_num):
         BubbleGetter_obj.answers = bin_scores
         ##*print(bin_scores)
         score = 0
+        
         ground_truth = CaptureSheet_obj.mcq.correct if BubbleGetter_obj.test_type == 'MULTIPLE CHOICE' else CaptureSheet_obj.tfq.correct
         for correct,answer in zip(ground_truth, BubbleGetter_obj.answers):
             if correct == answer:
@@ -612,7 +613,7 @@ def resize_image_to_max_side(image, max_side_length):
         new_width = int(width * (max_side_length / height))
 
     # Resize the image
-    resized_image = cv2.resize(image, (new_width, new_height), interpolation=cv2.INTER_LINEAR)
+    resized_image = cv2.resize(image, (new_width, new_height), interpolation=cv2.INTER_AREA)
     
     return resized_image
 

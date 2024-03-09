@@ -13,9 +13,10 @@ from utilities.omr_eval.omr_functions import Debugger
 import cv2
 #import screens.get_cam_params as cam_params
 from PIL import Image as Pimage
+from kivy.uix.boxlayout import BoxLayout
 
 db = Debugger()
-db.run_debug = True
+db.run_debug = False
 sheet.omr_functions.db.run_debug=False
 db.start_time()
 
@@ -52,7 +53,7 @@ AP.init_jnius()
 # Kivy's PythonActivity bootstrap:
 
 
-class CameraWidget(FloatLayout):
+class CameraWidget(BoxLayout):
     def __init__(self, **kwargs):
         self.count = 0
         super(CameraWidget, self).__init__(**kwargs)
@@ -61,7 +62,9 @@ class CameraWidget(FloatLayout):
         #highest_resolution = cam_params.get_highest_resolution()
         #print(highest_resolution)
         self.camera = Camera(play=True, resolution=(1280, 720), opacity=0, size_hint=(1,1))
-
+        #self.camera.play = True
+        self.camera_is_on = False
+        #self.camera.loaded
         # Bind the on_tex event to the update_frame method
         #self.camera.bind(texture=self.update_frame)
         self.cs_points = []
@@ -87,6 +90,12 @@ class CameraWidget(FloatLayout):
         self.frame_image = Image(size_hint=(1,1), pos_hint={'center_x': 0.5, 'center_y': 0.5})
         self.add_widget(self.frame_image)
         self.add_widget(self.label)
+
+    def turn_cam_off(self):
+        if self.camera_is_on:
+            del self.camera._camera
+            del self.camera
+        
 
     def start_timer(self):
         # Schedule the timer function
@@ -217,7 +226,6 @@ class CameraWidget(FloatLayout):
                         # Draw the text on the blank image
                         #cv2.putText(frame_data, text, (10,10), cv2.FONT_HERSHEY_SIMPLEX, 1, (255,0,150), 2
                         cv2.rectangle(frame_data, (x, y), (x + w, y + h), (255,0,175), 3)
-                       
                     #__________________________________________________
                 else:
                     db.p('drawing contours')
@@ -252,15 +260,14 @@ class CameraWidget(FloatLayout):
                                     if counting not in nums:
                                         obj.get_bubbles(redo=True)
                                         counting = obj.bubbles[0].count
-                                    if counting in [obj.mcq.num_items*4, obj.tfq.num_items*2, obj.idq.num_items, 45*4, 30*2, 5]:
+                                    if counting in nums:
                                         #if counting in [100*4, 10*2, 10*1, 45*4, 30*2, 1*5]:
-                                        
                                         #vibrator.vibrate(100)
                                          # the argument is in milliseconds
-                                        
+    
                                         obj.get_choices()
                                         obj.get_scores()
-                                        AP.vibrate(50) 
+                                        AP.vibrate(50)
                                         score = obj.bubbles[0].final_score
                                         test_type = obj.bubbles[0].test_type
                                         self.label.text = str(counting)
@@ -278,7 +285,7 @@ class CameraWidget(FloatLayout):
                                     #if num in [100*4, 10*2, 10*1, 45*4, 30*2, 1*5]:
                                     self.label.text = str(max(counts))
                                     #vibrator.vibrate(100)
-                                    AP.vibrate(50)  # the argument is in milliseconds
+                                    #AP.vibrate(50)  # the argument is in milliseconds
                                     self.cs_points = []
                                     self.cs_objs = []
                                     print(max(counts))
