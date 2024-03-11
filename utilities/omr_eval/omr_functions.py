@@ -34,7 +34,7 @@ class Debugger:
                 self.time_base = time.time()
             else:
                 diff = '?'
-            #print(u4str.get_asciiface(f'[{self.funcname}] {self.text if text is None else text} (+{diff})', rgb if rgb is not None else self.color,bold,italic,underline,strike,dim))
+            print(u4str.get_asciiface(f'[{self.funcname}] {self.text if text is None else text} (+{diff})', rgb if rgb is not None else self.color,bold,italic,underline,strike,dim))
 
     def plot(self,image,title='',**kwargs):
         if self.run_debug and self.show_plot:
@@ -613,7 +613,7 @@ def resize_image_to_max_side(image, max_side_length):
         new_width = int(width * (max_side_length / height))
 
     # Resize the image
-    resized_image = cv2.resize(image, (new_width, new_height), interpolation=cv2.INTER_AREA)
+    resized_image = cv2.resize(image, (new_width, new_height), interpolation=cv2.INTER_LINEAR)
     
     return resized_image
 
@@ -704,6 +704,34 @@ def scale_coordinates(point, original_width, new_width):
     new_y = int(original_y * scale_factor)
     return new_x, new_y
 
+def scale_coordinates(low_res_coords, low_res_dims, high_res_dims):
+    """
+    Scale coordinates from low resolution to high resolution maintaining proportionality.
+    
+    Args:
+        low_res_coords (numpy.array): Array of coordinates in the low-resolution image.
+        low_res_dims (tuple): Dimensions of the low-resolution image (width, height).
+        high_res_dims (tuple): Dimensions of the high-resolution image (width, height).
+        
+    Returns:
+        numpy.array: Array of scaled coordinates in the high-resolution image.
+    """
+    # Unpack dimensions
+    low_res_width, low_res_height = low_res_dims
+    high_res_width, high_res_height = high_res_dims
+    
+    # Calculate proportions
+    x_proportions = low_res_coords[:, :, 0] / low_res_width
+    y_proportions = low_res_coords[:, :, 1] / low_res_height
+    
+    # Scale coordinates to high-resolution image
+    high_res_x = x_proportions * high_res_width
+    high_res_y = y_proportions * high_res_height
+    
+    # Combine x and y coordinates into a single array
+    high_res_coords = np.stack((high_res_x, high_res_y), axis=2)
+    
+    return high_res_coords
 
 def get_boxes(BoxGetter_obj,CaptureSheet_obj, boxes_num): 
     """extracts boxes
@@ -733,7 +761,7 @@ def get_boxes(BoxGetter_obj,CaptureSheet_obj, boxes_num):
         if get_result_img:
             result_img = CaptureSheet_obj.orig_img
         image = CaptureSheet_obj.orig_img
-        #image = resize_image_to_max_side(image, int(1280/scaler))
+        image = resize_image_to_max_side(image.copy(), int(1280/scaler))
         #
         #image = cv2.equalizeHist(image)
         db.p('applying adaptive thresh',fclr)
@@ -768,7 +796,7 @@ def get_boxes(BoxGetter_obj,CaptureSheet_obj, boxes_num):
                     
                     max_area = area
                     max_rect=approx
-        #max_rect = np.array(max_rect)*scaler
+        max_rect = scale_coordinates(max_rect, image.shape, CaptureSheet_obj.orig_img.shape).astype(int)
         #max_rect = max_rect.astype(int)
         #max_rect=  reorder_points(max_rect)
         CaptureSheet_obj.boxes.rectangles = [max_rect]

@@ -133,6 +133,7 @@ CustomScreenManager:
 
     MDTopAppBar:
         title: "QuickMark"
+        elevation: 0
         pos_hint: {"top": 1}
 
     MDIconButton:
@@ -171,6 +172,7 @@ class CheckScreen(Screen):
         else:
             self.remove_widget(self.camera_widget)
             del self.camera_widget.camera._camera
+            
             self.cam_is_on = False
 
     def __init__(self,**kwargs):

@@ -5,6 +5,7 @@ from kivy.uix.label import Label
 from kivy.graphics import Line
 from kivy.uix.image import Image
 import numpy as np
+from kivy.core.camera import CameraBase
 from kivy.graphics.texture import Texture
 from kivy.clock import Clock
 import utilities.omr_eval.capture_sheet as sheet
@@ -53,7 +54,7 @@ AP.init_jnius()
 # Kivy's PythonActivity bootstrap:
 
 
-class CameraWidget(BoxLayout):
+class CameraWidget(FloatLayout):
     def __init__(self, **kwargs):
         self.count = 0
         super(CameraWidget, self).__init__(**kwargs)
@@ -61,9 +62,12 @@ class CameraWidget(BoxLayout):
         # Create a camera widget
         #highest_resolution = cam_params.get_highest_resolution()
         #print(highest_resolution)
-        self.camera = Camera(play=True, resolution=(1280, 720), opacity=0, size_hint=(1,1))
+        self.camera = Camera(play=True, resolution=(1280,720), opacity=0, size_hint=(1,1))
+        
+        
+        
         #self.camera.play = True
-        self.camera_is_on = False
+        #self.camera_is_on = False
         #self.camera.loaded
         # Bind the on_tex event to the update_frame method
         #self.camera.bind(texture=self.update_frame)
@@ -71,7 +75,7 @@ class CameraWidget(BoxLayout):
         self.cs_objs = []
         # Add camera widget to layout
         self.dummy_counter = 0
-        self.add_widget(self.camera)
+        #self.add_widget(self.camera)
 
         # Create lines for the initial bounding box
         self.bounding_box = Line(points=[0, 0, 0, 0, 0, 0, 0, 0, 0, 0], width=2)
@@ -90,11 +94,6 @@ class CameraWidget(BoxLayout):
         self.frame_image = Image(size_hint=(1,1), pos_hint={'center_x': 0.5, 'center_y': 0.5})
         self.add_widget(self.frame_image)
         self.add_widget(self.label)
-
-    def turn_cam_off(self):
-        if self.camera_is_on:
-            del self.camera._camera
-            del self.camera
         
 
     def start_timer(self):
@@ -342,26 +341,29 @@ class CameraWidget(BoxLayout):
         self.cs.get_bubbles()
         self.label.text = str(self.cs.bubbles[0].count)
     def extract_frame(self, instance):
-        #camera_texture = self.camera.texture
-        texture = self.camera.texture
-        
-        if texture:
-            size=texture.size
-            pixels = texture.pixels
-            # Extract frame as a NumPy array
-            #frame_data = np.frombuffer(camera_texture.pixels, dtype=np.uint8).reshape((self.camera.resolution[1], self.camera.resolution[0], 4))
-            #print("Frame extracted as array:", frame_data)
-            #texture = self.camera.texture
-            #size=texture.size
-            #pixels = texture.pixels
-            pil_image = Pimage.frombytes(mode='RGBA', size=size,data=pixels)
-
-            numpypicture=np.array(pil_image)
-            self.frame_image.texture = texture
-            # Convert the NumPy array into a texture
-            #print("CONTENT",image_np)
-            self.process_frame(numpypicture)
+        try:
+            #camera_texture = self.camera.texture
+            texture = self.camera.texture
             
-        else:
-            print("Camera texture not available.")
+            if texture:
+                size=texture.size
+                pixels = texture.pixels
+                # Extract frame as a NumPy array
+                #frame_data = np.frombuffer(camera_texture.pixels, dtype=np.uint8).reshape((self.camera.resolution[1], self.camera.resolution[0], 4))
+                #print("Frame extracted as array:", frame_data)
+                #texture = self.camera.texture
+                #size=texture.size
+                #pixels = texture.pixels
+                pil_image = Pimage.frombytes(mode='RGBA', size=size,data=pixels)
+
+                numpypicture=np.array(pil_image)
+                self.frame_image.texture = texture
+                # Convert the NumPy array into a texture
+                #print("CONTENT",image_np)
+                self.process_frame(numpypicture)
+                
+            else:
+                print("Camera texture not available.")
+        except Exception as e:
+            print(e)
         
