@@ -8,7 +8,9 @@ from kivy.uix.boxlayout import BoxLayout
 from kivymd.uix.card import MDCard
 from screens.camera import CameraWidget
 from kivymd.uix.floatlayout import MDFloatLayout
+from kivy.core.window import Window
 
+Window.size= (288,640)
 
 KV = '''
 CustomScreenManager:
