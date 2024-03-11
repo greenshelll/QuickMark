@@ -5,10 +5,12 @@ from datetime import datetime
 from kivymd.uix.button import MDFlatButton,MDRaisedButton, MDRectangleFlatButton
 from kivymd.uix.card import MDSeparator
 from kivy.uix.boxlayout import BoxLayout
+from kivymd.uix.stacklayout import MDStackLayout
 from kivymd.uix.card import MDCard
 from screens.camera import CameraWidget
 from kivymd.uix.floatlayout import MDFloatLayout
 from kivy.core.window import Window
+from kivymd.uix.list import MDList, OneLineListItem
 
 Window.size= (288,640)
 
@@ -20,30 +22,23 @@ CustomScreenManager:
 
 <HomeScreen>:
     name: 'home'
-    
-    canvas.before:
-        Color:
-            rgba: 1, 1, 1, 1  # White color
-        Rectangle:
-            size: self.size
-            pos: self.pos
-    
-    MDTopAppBar:
-        title: "QuickMark"
-        pos_hint: {"top": 1,}
-        right_action_items: [["plus-circle", lambda x: setattr(root.manager, 'current', 'name')]]
-        elevation: 0
+
+    MDStackLayout:
+        MDTopAppBar:
+            title: "QuickMark"
+            right_action_items: [["plus-circle", lambda x: setattr(root.manager, 'current', 'name')]]
+            elevation: 0
+
+        ScrollView:
+            MDList:
+                OneLineListItem:
+                    text: ""
+
+        
 
         
 <NameScreen>:
     name: 'name'
-
-    canvas.before:
-        Color:
-            rgba: 1, 1, 1, 1  # White color
-        Rectangle:
-            size: self.size
-            pos: self.pos
 
     MDLabel:
         id: display_label
@@ -135,13 +130,6 @@ CustomScreenManager:
 
 <CheckScreen>:
     name: 'check'
-
-    canvas.before:
-        Color:
-            rgba: 1, 1, 1, 1  # White color
-        Rectangle:
-            size: self.size
-            pos: self.pos
 
     MDTopAppBar:
         title: "QuickMark"
