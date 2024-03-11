@@ -95,7 +95,7 @@ fullscreen = 0
 
 # (list) Permissions
 # (See https://python-for-android.readthedocs.io/en/latest/buildoptions/#build-options-1 for all the supported syntaxes and properties)
-android.permissions = android.permission.INTERNET, VIBRATE, (name=android.permission.WRITE_EXTERNAL_STORAGE;maxSdkVersion=18), android.permission.ACCESS_FINE_LOCATION, android.permission.CAMERA
+android.permissions = android.permission.INTERNET, VIBRATE, READ_EXTERNAL_STORAGE, WRITE_EXTERNAL_STORAGE, (name=android.permission.WRITE_EXTERNAL_STORAGE;maxSdkVersion=18), android.permission.ACCESS_FINE_LOCATION, android.permission.CAMERA
 
 # (list) features (adds uses-feature -tags to manifest)
 #android.features = android.hardware.usb.host
