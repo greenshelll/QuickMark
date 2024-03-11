@@ -7,6 +7,7 @@ from kivymd.uix.card import MDSeparator
 from kivy.uix.boxlayout import BoxLayout
 from kivymd.uix.card import MDCard
 from screens.camera import CameraWidget
+from kivymd.uix.floatlayout import MDFloatLayout
 
 
 KV = '''
@@ -30,6 +31,8 @@ CustomScreenManager:
         pos_hint: {"top": 1,}
         right_action_items: [["plus-circle", lambda x: setattr(root.manager, 'current', 'name')]]
         elevation: 0
+
+        
 <NameScreen>:
     name: 'name'
 
@@ -61,11 +64,13 @@ CustomScreenManager:
         hint_text: "Name of test"
         on_text_validate: app.update_label(self)
     
-    MDRaisedButton:
-        text: "SAVE"
-        pos_hint:{"top":.85, "center_x": .7}
-        on_press: app.save_and_display_text()
-        elevation: 0
+    MDFloatLayout:
+        MDRaisedButton:
+            id: save_button
+            text: "SAVE"
+            pos_hint:{"top":.85, "center_x": .7}
+            on_press: app.save_and_display_text()
+            elevation: 0
 
     MDSeparator:
         pos_hint: {"top": .75}
@@ -101,6 +106,11 @@ CustomScreenManager:
     MDRectangleFlatButton:
         text: "GENERATE"
         pos_hint: {"top":.43, "center_x": .5}
+
+    MDSeparator:
+        pos_hint: {"top":.32, "center_x": .5}
+        size_hint_y: None
+        height: dp(1)
 
     MDLabel:
         text:"Edit Answer Key"
@@ -195,10 +205,16 @@ class App(MDApp):
         display_label.text = f"{text_input}\n{current_date}"
         text_field = self.root.get_screen('name').ids.text_field
         self.root.get_screen('name').remove_widget(text_field)
+        save_button = self.root.get_screen('name').ids.save_button
+        self.root.get_screen('name').remove_widget(save_button.parent)
 
     # Pressing save same function sa babaw
     def save_and_display_text(self):
         text_input = self.root.get_screen('name').ids.text_field.text
         self.update_label(self.root.get_screen('name').ids.text_field)
+
+        #Para madula "save" button
+        save_button = self.root.get_screen('name').ids.save_button
+        self.root.get_screen('name').remove_widget(save_button.parent)
 
 App().run()
