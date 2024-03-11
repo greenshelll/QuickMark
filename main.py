@@ -14,7 +14,7 @@ from kivymd.uix.list import MDList, OneLineListItem
 
 Window.size= (288,640)
 
-KV = '''
+KV = KV = '''
 CustomScreenManager:
     HomeScreen:
     NameScreen:
@@ -31,8 +31,8 @@ CustomScreenManager:
 
         ScrollView:
             MDList:
-                OneLineListItem:
-                    text: ""
+                id: saved_list
+                
 
         
 
@@ -59,7 +59,7 @@ CustomScreenManager:
         width: "240dp"
         pos_hint: {"top":.879, "center_x": .5}
         hint_text: "Name of test"
-        on_text_validate: app.update_label(self)
+        on_text_validate: app.update_label(self); root.add_item_to_list(self.text)
     
     MDFloatLayout:
         MDRaisedButton:
@@ -125,6 +125,12 @@ CustomScreenManager:
     MDRectangleFlatButton:
         text: "IDENTIFICATION"
         pos_hint: {"top":.1, "center_x": .5}
+
+    MDIconButton:
+        id: back_button
+        icon: "arrow-left"
+        pos_hint: {"top":.07, "center_x": .5}
+        on_press: root.manager.current = 'home'
             
 
 
@@ -150,6 +156,7 @@ CustomScreenManager:
         on_press: root.manager.current = 'name'
 '''
 
+
 class CustomScreenManager(ScreenManager):
     def __init__(self, **kwargs):
         super().__init__(**kwargs)
@@ -157,10 +164,18 @@ class CustomScreenManager(ScreenManager):
         
 
 class HomeScreen(Screen):
-    pass
+    def add_item_to_list(self, item_text):
+        saved_list = self.ids.saved_list
+        saved_list.add_widget(OneLineListItem(text=item_text))
+
 
 class NameScreen(Screen):
-    pass
+    def add_item_to_list(self, text):
+        home_screen = self.manager.get_screen('home')
+        saved_list = home_screen.ids.saved_list
+        saved_list.add_widget(OneLineListItem(text=text))
+
+
 
 class CheckScreen(Screen):
     def switch_cam(self,*args,**kwargs):
@@ -187,7 +202,6 @@ class App(MDApp):
         screen = Builder.load_string(KV)
         return screen
     
-    # Pressing enter will get the text input then display. Make the text field vanish
     def update_label(self, instance):
         text_input = instance.text
         display_label = self.root.get_screen('name').ids.display_label
@@ -198,13 +212,17 @@ class App(MDApp):
         save_button = self.root.get_screen('name').ids.save_button
         self.root.get_screen('name').remove_widget(save_button.parent)
 
-    # Pressing save same function sa babaw
     def save_and_display_text(self):
         text_input = self.root.get_screen('name').ids.text_field.text
         self.update_label(self.root.get_screen('name').ids.text_field)
 
-        #Para madula "save" button
+        # Add item to the list
+        home_screen = self.root.get_screen('home')
+        home_screen.add_item_to_list(text_input)
+
+        # Remove save button
         save_button = self.root.get_screen('name').ids.save_button
         self.root.get_screen('name').remove_widget(save_button.parent)
+
 
 App().run()
