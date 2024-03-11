@@ -102,7 +102,7 @@ class BubbleSheet:
             for instance in range(1,times+1):
                 counter+=1
                 x_formatted = '{:03d}'.format(instance)
-                box = '<div class="box"></div>'*20
+                box = '<div class="box"></div>'*15
                 template += f"""<div class="id-instance">{x_formatted}
                         <div class="box-instance">{box}</div></div>"""
                 if counter == 10:
@@ -224,20 +224,19 @@ class BubbleSheet:
                 
             }}
             .box{{
-                width: 15px;
+                width: 30px;
                 height: 40px;
                 
                 
                 border-style: solid;
-                border-width: 0;
-                border-bottom-width: 0.6px;
-                border-color: gray;
+                border-width: 3;
+                border-color: black;
             }}
             .box-instance{{
                 display: flex;
                 flex-direction: row;
                 margin-left: 10px;
-                border: 5px;
+                border: 3px;
                 border-style: solid;
                 border-color: black;
             }}

@@ -15,7 +15,7 @@ import cv2
 #import screens.get_cam_params as cam_params
 from PIL import Image as Pimage
 from kivy.uix.boxlayout import BoxLayout
-
+from kivy.graphics import Color, Rectangle
 db = Debugger()
 db.run_debug = False
 sheet.omr_functions.db.run_debug=False
@@ -54,18 +54,14 @@ AP.init_jnius()
 # Kivy's PythonActivity bootstrap:
 
 
-class CameraWidget(FloatLayout):
+class CameraWidget(BoxLayout):
     def __init__(self, **kwargs):
-        self.count = 0
         super(CameraWidget, self).__init__(**kwargs)
         
         # Create a camera widget
         #highest_resolution = cam_params.get_highest_resolution()
         #print(highest_resolution)
         self.camera = Camera(play=True, resolution=(1280,720), opacity=0, size_hint=(1,1))
-        
-        
-        
         #self.camera.play = True
         #self.camera_is_on = False
         #self.camera.loaded
@@ -79,7 +75,7 @@ class CameraWidget(FloatLayout):
 
         # Create lines for the initial bounding box
         self.bounding_box = Line(points=[0, 0, 0, 0, 0, 0, 0, 0, 0, 0], width=2)
-        self.label = Label()
+        self.label = Label(color=(1, 0, 0, 1))
         self.label.text = 'Eugene'
         # Add bounding box to layout canvas
         #self.canvas.add(self.bounding_box)
@@ -91,9 +87,13 @@ class CameraWidget(FloatLayout):
         self.start_timer()
         self.timer_value = 0
         # Create an image widget to display the extracted frame
-        self.frame_image = Image(size_hint=(1,1), pos_hint={'center_x': 0.5, 'center_y': 0.5})
+        self.frame_image = Image(size_hint=(1,1), pos_hint={'center_x': 0.5, 'center_y': 0.5},allow_stretch=True, keep_ratio=True)
         self.add_widget(self.frame_image)
         self.add_widget(self.label)
+        self.remove_camera = False
+        self.orientation = 'vertical'
+        self.size_hint = (1,1)
+        self.pos_hint = {'center_x': 0.5, 'center_y': 0.3}
         
 
     def start_timer(self):
@@ -130,7 +130,8 @@ class CameraWidget(FloatLayout):
     
     def update_timer(self, dt):
         self.extract_frame(None)
-        self.start_timer()
+        if self.remove_camera == False:
+            self.start_timer()
     
     def get_quad_angles(self, points):
         """
