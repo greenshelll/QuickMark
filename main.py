@@ -20,6 +20,8 @@ CustomScreenManager:
     NameScreen:
     CheckScreen:
     MCScreen:
+    TFScreen:
+    IDScreen:
 
 <HomeScreen>:
     name: 'home'
@@ -119,10 +121,14 @@ CustomScreenManager:
     MDRectangleFlatButton:
         text: "TRUE OR FALSE"
         pos_hint: {"top":.17, "center_x": .5}
+        on_press: root.manager.current = 'TF'
+
 
     MDRectangleFlatButton:
         text: "IDENTIFICATION"
         pos_hint: {"top":.1, "center_x": .5}
+        on_press: root.manager.current = 'ID'
+
 
     MDIconButton:
         id: back_button
@@ -161,6 +167,7 @@ CustomScreenManager:
         orientation: 'vertical'
         adaptive_height: True
         pos_hint: {'top': 1}  # Align to the top
+        spacing: dp(10)
 
         MDTopAppBar:
             title: "QuickMark"
@@ -175,31 +182,102 @@ CustomScreenManager:
 
             MDLabel:
                 text: '1.'
+                adaptive_width: True
             
             MDRoundFlatButton:
                 text:'A'
                 size_hint: None, None
-                width: root.width*0.2
+                width: root.width*0.1
                 height: root.height*0.04
 
             MDRoundFlatButton:
                 text:'B'
                 size_hint: None, None
-                width: root.width*0.2
+                width: root.width*0.1
                 height: root.height*0.04
 
             MDRoundFlatButton:
                 text:'C'
                 size_hint: None, None
-                width: root.width*0.2
+                width: root.width*0.1
                 height: root.height*0.04
 
             MDRoundFlatButton:
                 text:'D'
                 size_hint: None, None
-                width: root.width*0.2
+                width: root.width*0.1
                 height: root.height*0.04
 
+<TFScreen>:
+    name: 'TF'
+
+    MDBoxLayout:
+        orientation: 'vertical'
+        adaptive_height: True
+        pos_hint: {'top': 1}  # Align to the top
+        spacing: dp(10)
+
+        MDTopAppBar:
+            title: "QuickMark"
+            right_action_items: [["plus-circle", lambda x: setattr(root.manager, 'current', 'name')]]
+            elevation: 0
+            
+        MDBoxLayout:
+            orientation: 'horizontal'
+            spacing: dp(10)
+            size_hint_y: None
+            height: self.minimum_height
+            adaptive_width: True 
+        
+            MDLabel:
+                text: '1.'
+                adaptive_width: True 
+
+            
+            MDRoundFlatButton:
+                text:'T'
+                size_hint: None, None
+                width: root.width*0.1
+                height: root.height*0.04
+
+            MDRoundFlatButton:
+                text:'F'
+                size_hint: None, None
+                width: root.width*0.1
+                height: root.height*0.04
+
+<IDScreen>:
+    name: 'ID'
+
+    MDBoxLayout:
+        orientation: 'vertical'
+        adaptive_height: True
+        pos_hint: {'top': 1}  # Align to the top
+        spacing: dp(10)
+
+        MDTopAppBar:
+            title: "QuickMark"
+            right_action_items: [["plus-circle", lambda x: setattr(root.manager, 'current', 'name')]]
+            elevation: 0
+
+        MDBoxLayout:
+            orientation: 'horizontal'
+            spacing: dp(10)
+            size_hint_y: None
+            height: self.minimum_height
+            adaptive_width: True 
+        
+            MDLabel:
+                text: '1.'
+                adaptive_width: True 
+            
+            MDTextField:
+                mode: "rectangle"
+                size_hint: None, None
+                width: "240dp" 
+                font_size:'18dp'
+                max_text_length: 15
+  
 
 '''
 
@@ -244,8 +322,13 @@ class CheckScreen(Screen):
 class MCScreen(Screen):
     pass
 
-        
+class TFScreen(Screen):
+    pass
 
+class IDScreen(Screen):
+    pass
+
+        
 class App(MDApp):
     def build(self):
         self.theme_cls.theme_style = "Light"
@@ -271,9 +354,7 @@ class App(MDApp):
         home_screen = self.root.get_screen('home')
         home_screen.add_item_to_list(text_input)
 
-        # Remove save button
-        save_button = self.root.get_screen('name').ids.save_button
-        self.root.get_screen('name').remove_widget(save_button.parent)
+        
 
 
 App().run()
