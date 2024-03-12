@@ -168,7 +168,7 @@ class AnswerKeys:
     def __init__(self, fs_obj, **kwargs):
         self.mc = MultipleChoice(fs_obj)
         self.tf = TrueOrFalse(fs_obj)
-        self.idtf = Identification(fs)
+        self.idtf = Identification(fs_obj)
         self.fs_obj = fs_obj
 
 
@@ -254,11 +254,3 @@ class Sheets:
         self.fs_obj = fs_obj
 
 
-fs = FileSystem()
-fs.add_sheet()
-sheet = fs.get_sheet(0)
-ans_keys = sheet.answer_key
-multiple_choice = ans_keys.mc
-print(dir(multiple_choice))
-multiple_choice.set_items(75)
-print(multiple_choice.items[0])

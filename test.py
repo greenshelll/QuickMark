@@ -1,10 +1,10 @@
 
-from utilities.ocr.function import handwrite_predict
+#from utilities.ocr.function import handwrite_predict
 import cv2 as cv
 from utilities.omr_eval.capture_sheet import CaptureSheet
 
-prediction = handwrite_predict([cv.imread(r'C:\Users\USER\Documents\GitHub\QuickMark\0.png', cv.IMREAD_GRAYSCALE)])
-print('prediction',prediction)
+#prediction = handwrite_predict([cv.imread(r'C:\Users\USER\Documents\GitHub\QuickMark\0.png', cv.IMREAD_GRAYSCALE)])
+#print('prediction',prediction)
 
 if __name__ == "__main__":
     # sample input
