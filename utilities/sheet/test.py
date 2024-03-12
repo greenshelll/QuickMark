@@ -1,6 +1,6 @@
 from sheet import BubbleSheet
 
-sheet = BubbleSheet(mc_num = 100,
+sheet = BubbleSheet(mc_num = 75,
                     tf_num =25,
                     idtf_num = 10,
                     header_name = "Examination 1: Sample Exam")
