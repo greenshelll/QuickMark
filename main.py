@@ -2,7 +2,7 @@ from kivy.lang.builder import Builder
 from kivymd.app import MDApp
 from kivy.uix.screenmanager import ScreenManager, Screen, NoTransition
 from datetime import datetime
-from kivymd.uix.button import MDFlatButton,MDRaisedButton, MDRectangleFlatButton
+from kivymd.uix.button import MDFlatButton,MDRaisedButton, MDRectangleFlatButton, MDRoundFlatButton, MDFillRoundFlatButton
 from kivymd.uix.card import MDSeparator
 from kivy.uix.boxlayout import BoxLayout
 from kivymd.uix.stacklayout import MDStackLayout
@@ -14,11 +14,12 @@ from kivymd.uix.list import MDList, OneLineListItem
 
 Window.size= (288,640)
 
-KV = KV = '''
+KV = '''
 CustomScreenManager:
     HomeScreen:
     NameScreen:
     CheckScreen:
+    MCScreen:
 
 <HomeScreen>:
     name: 'home'
@@ -32,11 +33,7 @@ CustomScreenManager:
         ScrollView:
             MDList:
                 id: saved_list
-                
-
-        
-
-        
+                 
 <NameScreen>:
     name: 'name'
 
@@ -117,7 +114,8 @@ CustomScreenManager:
     MDRectangleFlatButton:
         text: "MULTIPLE CHOICE"
         pos_hint: {"top":.24, "center_x": .5}
-            
+        on_press: root.manager.current = 'MC'
+
     MDRectangleFlatButton:
         text: "TRUE OR FALSE"
         pos_hint: {"top":.17, "center_x": .5}
@@ -154,6 +152,55 @@ CustomScreenManager:
         icon: "arrow-left"
         pos_hint: {"top":.07, "center_x": .5}
         on_press: root.manager.current = 'name'
+
+
+<MCScreen>:
+    name: 'MC'
+
+    MDBoxLayout:
+        orientation: 'vertical'
+        adaptive_height: True
+        pos_hint: {'top': 1}  # Align to the top
+
+        MDTopAppBar:
+            title: "QuickMark"
+            right_action_items: [["plus-circle", lambda x: setattr(root.manager, 'current', 'name')]]
+            elevation: 0
+            
+        MDBoxLayout:
+            orientation: 'horizontal'
+            spacing: dp(10)
+            size_hint_y: None
+            height: self.minimum_height
+
+            MDLabel:
+                text: '1.'
+            
+            MDRoundFlatButton:
+                text:'A'
+                size_hint: None, None
+                width: root.width*0.2
+                height: root.height*0.04
+
+            MDRoundFlatButton:
+                text:'B'
+                size_hint: None, None
+                width: root.width*0.2
+                height: root.height*0.04
+
+            MDRoundFlatButton:
+                text:'C'
+                size_hint: None, None
+                width: root.width*0.2
+                height: root.height*0.04
+
+            MDRoundFlatButton:
+                text:'D'
+                size_hint: None, None
+                width: root.width*0.2
+                height: root.height*0.04
+
+
 '''
 
 
@@ -193,6 +240,10 @@ class CheckScreen(Screen):
     def __init__(self,**kwargs):
         super(CheckScreen, self).__init__(**kwargs)
         self.cam_is_on = False
+
+class MCScreen(Screen):
+    pass
+
         
 
 class App(MDApp):
