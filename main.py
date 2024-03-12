@@ -8,8 +8,8 @@ from kivy.uix.boxlayout import BoxLayout
 from kivymd.uix.card import MDCard
 from screens.camera import CameraWidget
 from kivymd.uix.floatlayout import MDFloatLayout
-
-
+import pickle
+from utilities.misc.filesystem import *
 KV = '''
 CustomScreenManager:
     HomeScreen:
@@ -29,7 +29,7 @@ CustomScreenManager:
     MDTopAppBar:
         title: "QuickMark"
         pos_hint: {"top": 1,}
-        right_action_items: [["plus-circle", lambda x: setattr(root.manager, 'current', 'name')]]
+        right_action_items: [["plus-circle", lambda x: print(setattr(root.manager, 'current', 'name'),root.add_new_sheet() )]]
         elevation: 0
 
         
@@ -142,6 +142,7 @@ CustomScreenManager:
             pos: self.pos
 
     MDTopAppBar:
+        
         title: "QuickMark"
         elevation: 0
         pos_hint: {"top": 1}
@@ -159,6 +160,8 @@ CustomScreenManager:
         on_press: root.manager.current = 'name'
 '''
 
+fs = FileSystem().load()
+
 class CustomScreenManager(ScreenManager):
     def __init__(self, **kwargs):
         super().__init__(**kwargs)
@@ -166,16 +169,29 @@ class CustomScreenManager(ScreenManager):
         
 
 class HomeScreen(Screen):
-    pass
+    def add_new_sheet(self):
+        
+        fs.add_sheet()
+        self.sheet = fs.get_sheet(-1)
+        self.sheet.name =  'fuckeng'
+        print(self.sheet.name)
+        name_screen = self.manager.get_screen('name')
+        name_screen.ids.text_field.text = self.sheet.name
+        
+        
 
 class NameScreen(Screen):
-    pass
+    def __init__(self, **kwargs):
+        super(NameScreen, self).__init__(**kwargs)
+        pass
+        
 
 class CheckScreen(Screen):
     def switch_cam(self,*args,**kwargs):
         if self.cam_is_on == False:
             self.camera_widget = CameraWidget()
             self.add_widget(self.camera_widget)
+           
             self.cam_is_on = True
         else:
             self.remove_widget(self.camera_widget)

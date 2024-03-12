@@ -3,7 +3,7 @@ import numpy as np
 import sys
 try:
     import utilities.omr_eval.util4string as u4str
-    from utilities.ocr.function import handwrite_predict
+    #from utilities.ocr.function import handwrite_predict
 except ModuleNotFoundError as e:
     ##*print(e, 'Getting alt path')
     import util4string as u4str
@@ -585,7 +585,7 @@ def evaluate_identification(CaptureSheet_obj, bubbles):
         cv2.imwrite('0.png',cro)
         db.plot(cro)
         #cv2.rectangle(image, (x, y), (x + w, y + h), (0,255,0), 20)
-        print(handwrite_predict([cro]))
+        #print(handwrite_predict([cro]))
 
 
 def get_choices_by_num(BubbleGetter_obj, BoxGetter_obj, CaptureSheet_obj, box_index, **kwargs):

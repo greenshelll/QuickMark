@@ -194,7 +194,7 @@ class App(MDApp):
         sheet = BubbleSheet(mc_num = mcq_questions,tf_num = tf_questions, idtf_num = ident_questions,header_name = "test")
 
         sheet.save_template_as_img(r"template.png")
-        self.root.get_screen('answer_sheet').ids.generated_image.source = r"template.png"
+        self.root.get_screen('answer_sheet').ids.generated_image.source = r"assets\template.png"
         self.root.get_screen('answer_sheet').ids.download.disabled = False
 
     def download_html(self):
