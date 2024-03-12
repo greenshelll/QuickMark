@@ -134,6 +134,12 @@ CustomScreenManager:
 
 <CheckScreen>:
     name: 'check'
+    canvas.before:
+        Color:
+            rgba: 1, 1, 1, 1  # White color
+        Rectangle:
+            size: self.size
+            pos: self.pos
 
     MDTopAppBar:
         title: "QuickMark"
@@ -144,7 +150,6 @@ CustomScreenManager:
         id: camera_icon
         icon: "camera-outline"
         pos_hint: {"top":.2, "center_x": .5}
-        #on_press: root.switch_cam()
         on_release: root.switch_cam()
 
     MDIconButton:
@@ -230,12 +235,15 @@ class CheckScreen(Screen):
             self.camera_widget = CameraWidget()
             self.add_widget(self.camera_widget)
             self.cam_is_on = True
-            
         else:
             self.remove_widget(self.camera_widget)
+            self.camera_widget.remove_camera = True
+            self.camera_widget.camera.remove_from_cache()
+            self.camera_widget.camera.play = False
             del self.camera_widget.camera._camera
-            
+            del self.camera_widget
             self.cam_is_on = False
+            
 
     def __init__(self,**kwargs):
         super(CheckScreen, self).__init__(**kwargs)

@@ -3,6 +3,7 @@ import numpy as np
 import sys
 try:
     import utilities.omr_eval.util4string as u4str
+    from utilities.ocr.function import handwrite_predict
 except ModuleNotFoundError as e:
     ##*print(e, 'Getting alt path')
     import util4string as u4str
@@ -254,9 +255,17 @@ def good_angles(points, threshold = 80):
     else:
         return True
     
+def xywh_to_points(xywh):
+    db.p('xywh to points')
+    x, y, w, h = xywh
+    x1, y1 = x, y
+    x2, y2 = x + w, y
+    x3, y3 = x + w, y + h
+    x4, y4 = x, y + h
+    db.p('xywh translated to points')
+    return [(x1, y1), (x2, y2), (x3, y3), (x4, y4)]
 
-
-def get_bubbles(BubbleGetter_obj, BoxGetter_obj, CaptureSheet_obj, boxes_num, redo=False):
+def get_bubbles(BubbleGetter_obj, BoxGetter_obj, CaptureSheet_obj, boxes_num, redo=False, use_rect=True):
     """
     The function `get_bubbles` processes an image to detect and extract bubble contours based on certain
     criteria.
@@ -355,31 +364,44 @@ def get_bubbles(BubbleGetter_obj, BoxGetter_obj, CaptureSheet_obj, boxes_num, re
             ##*print("SHAPE",len(approx))
             ##*print('own', (area))
             #print(benchmark_area*0.5)
-            if len(approx) == 4 and ((area > (benchmark_area*0.9)  and area < benchmark_area*200)) :
+            if use_rect == True:
+                approx = cv2.boundingRect(contour)
+    
+                # Draw the rectangle on the original image (optional)
+                #cv2.rectangle(image, (x, y), (x + w, y + h), (0, 255, 0), 2)
 
+            if len(approx) == 4 and ((area > (benchmark_area*0.9)  and area < benchmark_area*10)) :
+                
                 #cv2.drawContours(image, [approx], -1, (0, 255, 0), 2) if db.show_plot else None    
                 ###*print('stnd',(image.shape[0]*image.shape[1])/300)
                 # Check if the contour has 4 vertices (a quadrilateral)
-                x, y, w, h = cv2.boundingRect(approx)
-                ok = good_angles(np.array(approx).reshape(4,2),60)
+                if use_rect == False:
+                    x, y, w, h = cv2.boundingRect(approx)
+                    ok = good_angles(np.array(approx).reshape(4,2),60)
+                else:
+                    x, y, w, h = approx
+                    ok = good_angles(xywh_to_points(approx),60)
                 
                 if not ok:
                     ##*print("NOT OK")
                     continue
+                
                 ##*print("OK")
                 # Calculate width-to-height ratio
                 if h != 0:  # Avoid division by zero
                     ratio = w / h
+                    
                     ###*print(ratio)
                     valid_area = (area > benchmark_area*10)
                     ###*print(valid_area)
-                    if (ratio >= 0.7 and ratio <= 1.3) or valid_area:
+                    if (ratio >= 0.7 and ratio <= 1.3):
                         not_inside = True
                         for rect in rectangles:
                             x_center = x + w / 2
                             y_center = y + h / 2
                             rectx_center = rect[0] + rect[2]/2
                             recty_center = rect[1] + rect[3]/2
+                            
                             if distance((rectx_center,recty_center),(x_center,y_center)) < 10:
                                 ##*print("DISTANCE IS INSIDE")
                                 not_inside=False
@@ -387,13 +409,15 @@ def get_bubbles(BubbleGetter_obj, BoxGetter_obj, CaptureSheet_obj, boxes_num, re
                         if not_inside:
                             ##*print("IS NOT INSIDE")
                             rectangles.append((x,y,w,h))
+                            #cv2.rectangle(image, (x, y), (x + w, y + h), (255,0,0), 5)
+                            
                             ##*print(rectangles)
                             count += 1
                             ##*print(count)
 
-                            #cv2.drawContours(image, [approx], -1, (0, 255, 0), 2) if db.show_plot else None
+                            
         #
-        #db.plot(image, 'perspective transformed')
+        db.plot(image, 'perspective transformed')
         #db.p('qualified contoures ---',len(rectangles))
         #
         BubbleGetter_obj.count = count
@@ -469,11 +493,11 @@ def get_scores(BubbleGetter_obj, BoxGetter_obj, CaptureSheet_obj, boxes_num):
         inta = 0
         filled = []
         non_filled =[]
+        
         for number in choices_by_num.keys():
             ##*print(number)
             ##*print(choices_by_num[number])
             temp = []
-            
             for rect in choices_by_num[number]:
                 ##*print(rect.xywh)
                 rect_output = 0
@@ -482,7 +506,6 @@ def get_scores(BubbleGetter_obj, BoxGetter_obj, CaptureSheet_obj, boxes_num):
                 ##*print("RAW")
                 rate2 = np.sum(cropped_image[cropped_image >= np.mean(cropped_image)])
                 ##*print(rate2)
-                #db.plot(cropped_image)
                 cropped_image = cv2.adaptiveThreshold(cropped_image, 255, cv2.ADAPTIVE_THRESH_MEAN_C, cv2.THRESH_BINARY, cropped_image.shape[0] - 1 - cropped_image.shape[0]%2, 2)
                 rate2 = np.sum(255-cropped_image)/np.sum(np.ones(cropped_image.shape))
                 ##*print(rate2)
@@ -529,8 +552,40 @@ def get_scores(BubbleGetter_obj, BoxGetter_obj, CaptureSheet_obj, boxes_num):
 
         
             
+def evaluate_identification(CaptureSheet_obj, bubbles):
+    cropped_image = CaptureSheet_obj.boxes.crops[0]
+    sorted_indices = np.argsort(bubbles[0][:, 0])
 
+    # Sort the array based on the sorted indices
+    sorted_data = bubbles[0][sorted_indices]
+    image  = cropped_image
+    image =  cv2.adaptiveThreshold(cropped_image, 255, cv2.ADAPTIVE_THRESH_MEAN_C, cv2.THRESH_BINARY, cropped_image.shape[0] - 1 - cropped_image.shape[0]%2, 2)
+    #db.plot(image)
+    for charbox in sorted_data:
+        # Calculate the new width and height
+        x,y,w,h = charbox
+        new_w = int(w * 0.8)
+        new_h = int(h * 0.8)
 
+        # Calculate the difference in width and height
+        diff_w = w - new_w
+        diff_h = h - new_h
+
+        # Calculate the new top-left coordinates to maintain the same center
+        new_x = x + diff_w // 2
+        new_y = y + diff_h // 2
+        
+        cro = image[new_y:new_y+new_h, new_x:new_x+new_w]
+
+        # Apply the sharpening kernel to the image
+        #cro = cv2.filter2D(cro, -1, sharpening_kernel)
+        print(cro.shape)
+        #cro = cv2.GaussianBlur(cro, (5,5), 0)
+        print(np.unique(cro))
+        cv2.imwrite('0.png',cro)
+        db.plot(cro)
+        #cv2.rectangle(image, (x, y), (x + w, y + h), (0,255,0), 20)
+        print(handwrite_predict([cro]))
 
 
 def get_choices_by_num(BubbleGetter_obj, BoxGetter_obj, CaptureSheet_obj, box_index, **kwargs):
@@ -565,11 +620,16 @@ def get_choices_by_num(BubbleGetter_obj, BoxGetter_obj, CaptureSheet_obj, box_in
             test_type_str = 'MULTIPLE CHOICE'
         elif num_choices == 2:
             test_type_str = 'TRUE OR FALSE'
+        elif num_choices ==1:
+            test_type_str = 'IDENTIFICATION'
         else:
             test_type_str = 'IDENTIFICATION'
         #
         db.p(f'Test Type: {test_type_str}')
         BubbleGetter_obj.test_type = test_type_str
+        if test_type_str == 'IDENTIFICATION':
+            evaluate_identification(CaptureSheet_obj, bubbles)
+            return None
 
         result = get_by_num(num_choices, bubbles, CaptureSheet_obj)
         ##*print('RESULT',result)
@@ -577,6 +637,7 @@ def get_choices_by_num(BubbleGetter_obj, BoxGetter_obj, CaptureSheet_obj, box_in
         ##*print(result.keys())
         BubbleGetter_obj.choices_by_num = result
         return None
+        # STOP HERE
         for number in result.keys():
             ###*print(number)
             ###*print(result[number])
@@ -662,9 +723,14 @@ def get_rows(true_rectangles,CaptureSheet_obj):
         ###*print('aas')
         db.p('GETTING ROWS')
         sorted_indices = np.argsort(mat[:, 1 if CaptureSheet_obj.on_android else 0])
-        
+        image = CaptureSheet_obj.boxes.crops[0]
         sorted_mat = mat[sorted_indices]
-        
+        print(sorted_mat)
+        for rect in sorted_mat:
+            ###*print(rect.xywh)
+            x,y,w,h = rect
+            #cv2.rectangle(image, (x, y), (x + w, y + h), (255,0,0), 5)
+        db.plot(image)
         diff = np.diff(sorted_mat[:,1 if CaptureSheet_obj.on_android else 0])
         ###*print(diff)
         ###*print('diff\n',diff)
@@ -673,6 +739,7 @@ def get_rows(true_rectangles,CaptureSheet_obj):
         choices = diff > threshold
         ###*print(choices)
         ###*print(sorted_indices)
+        ###*print(choices)
         if np.any(choices):
             
             # Get the index of the first choice that satisfies the condition
@@ -683,6 +750,7 @@ def get_rows(true_rectangles,CaptureSheet_obj):
         ###*print(index)
 
         num_choices = index
+        print("NUM CHOCIES", num_choices)
         db.p(f'num choices: {num_choices}')
         ##*print("BYROWS")
         for x in by_rows:
