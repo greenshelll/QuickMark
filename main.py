@@ -359,50 +359,7 @@ CustomScreenManager:
             title: "QuickMark"
             right_action_items: [["cog-outline", lambda x: app.show_text_input_dialog()]]
             elevation: 0
-            
-        MDBoxLayout:
-            orientation: 'horizontal'
-            spacing: dp(10)
-            size_hint_y: None
-            height: self.minimum_height
-            adaptive_width: True 
-            
-            MDLabel:
-                text: '1.'
-                adaptive_width: True 
-
-            
-            MDRoundFlatButton:
-                text:'A'
-                size_hint: None, None
-                width: root.width*0.1
-                height: root.height*0.04
-                on_release: root.toggle_button_state(self)  # Toggle button state
-                md_bg_color: 1, 1, 1, 1  # Initial background color is white
-
-            MDRoundFlatButton:
-                text:'B'
-                size_hint: None, None
-                width: root.width*0.1
-                height: root.height*0.04
-                on_release: root.toggle_button_state(self)  # Toggle button state
-                md_bg_color: 1, 1, 1, 1  # Initial background color is white
-
-            MDRoundFlatButton:
-                text:'C'
-                size_hint: None, None
-                width: root.width*0.1
-                height: root.height*0.04
-                on_release: root.toggle_button_state(self)  # Toggle button state
-                md_bg_color: 1, 1, 1, 1  # Initial background color is white
-
-            MDRoundFlatButton:
-                text:'D'
-                size_hint: None, None
-                width: root.width*0.1
-                height: root.height*0.04
-                on_release: root.toggle_button_state(self)  # Toggle button state
-                md_bg_color: 1, 1, 1, 1  # Initial background color is white
+         
 
 <TFScreen>:
     name: 'TF'
@@ -418,33 +375,6 @@ CustomScreenManager:
             title: "QuickMark"
             right_action_items: [["cog-outline", lambda x: app.show_text_input_dialog()]]  # Use the same button as in MCScreen
             elevation: 0
-            
-        MDBoxLayout:
-            id: tf_buttons  # Add id to the MDBoxLayout containing buttons
-            orientation: 'horizontal'
-            spacing: dp(10)
-            size_hint_y: None
-            height: self.minimum_height
-            adaptive_width: True 
-        
-            MDLabel:
-                text: '1.'
-                adaptive_width: True 
-
-            
-            MDRoundFlatButton:
-                text:'T'
-                size_hint: None, None
-                width: root.width*0.1
-                height: root.height*0.04
-                on_release: root.toggle_button_state(self)  # Toggle button state
-
-            MDRoundFlatButton:
-                text:'F'
-                size_hint: None, None
-                width: root.width*0.1
-                height: root.height*0.04
-                on_release: root.toggle_button_state(self)  # Toggle button state
 
                 
 <AnalysisScreen>:
@@ -695,8 +625,8 @@ class TFInstanceBox(BoxLayout):
             
             
             self.buttons.append(button)
-            self.toggle_button_state(button,self.true_answer)
-            button.bind(on_release=lambda btn=button: self.toggle_button_state(btn))
+            #self.toggle_button_state(button,self.true_answer)
+            #button.bind(on_release=lambda btn=button: self.toggle_button_state(btn))
             
 
 
@@ -856,6 +786,7 @@ class NameScreen(Screen):
         print(mc_screen.instances)
 
     def prepare_tf_keys(self):
+
         tf_screen = self.manager.get_screen('TF')
         answer_key = fs.sheets[fs.open_index].answer_key.tf
         tf_screen.instances = []
@@ -871,12 +802,14 @@ class NameScreen(Screen):
         
         # Remove the widgets from tf_box_all
         for widget in widgets_to_remove:
-            tf_screen.ids.tf_box_all.remove_widget(widget)
+            Clock.schedule_once(lambda x: tf_screen.ids.tf_box_all.remove_widget(widget), 0.5)
         increment = 0
         for answer_item in answer_key.get_items():
             
             instance = TFInstanceBox(increment)
+            
             tf_screen.ids.tf_box_all.add_widget(instance)
+            
             tf_screen.instances.append(instance)
             increment += 1
         print(tf_screen.instances)
@@ -948,9 +881,7 @@ class TFScreen(Screen):
 
     def on_pre_enter(self, *args):
         # Reset button background color when screen is entered
-        buttons = self.ids.tf_buttons.children
-        for button in buttons:
-            button.md_bg_color = [1, 1, 1, 1]  # Set all buttons to white initially
+        pass
 
     def on_leave(self, *args):
         # Reset button background color when leaving the screen
@@ -996,6 +927,7 @@ class CheckScreen(Screen):
         self.camera_widget.camera.remove_from_cache()
         self.camera_widget.camera.play = False
         del self.camera_widget.camera._camera
+        del self.camera_widget
         self.cam_is_on = False
 
 
