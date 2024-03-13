@@ -7,7 +7,7 @@ from kivymd.uix.card import MDSeparator
 from kivy.uix.boxlayout import BoxLayout
 from kivymd.uix.card import MDCard
 from kivymd.uix.floatlayout import MDFloatLayout
-from utilities.sheet.sheet import BubbleSheet
+#from utilities.sheet.sheet import BubbleSheet
 
 KV = '''
 CustomScreenManager:
@@ -142,7 +142,7 @@ CustomScreenManager:
         size_hint: None, None
         size: dp(200), dp(48)
         pos_hint: {'top':0.52,'center_x': 0.5}
-        on_press: app.generate_answer_sheet()
+        #on_press: app.generate_answer_sheet()
 
     Image:
         id: generated_image
@@ -193,7 +193,7 @@ class App(MDApp):
         ident_questions = int(self.root.get_screen('answer_sheet').ids.ident_textfield.text) if self.root.get_screen('answer_sheet').ids.ident_checkbox.active else 0
         sheet = BubbleSheet(mc_num = mcq_questions,tf_num = tf_questions, idtf_num = ident_questions,header_name = "test")
 
-        sheet.save_template_as_img(r"template.png")
+        #sheet.save_template_as_img(r"template.png")
         self.root.get_screen('answer_sheet').ids.generated_image.source = r"assets\template.png"
         self.root.get_screen('answer_sheet').ids.download.disabled = False
 

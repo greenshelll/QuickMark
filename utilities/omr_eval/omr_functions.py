@@ -561,7 +561,9 @@ def evaluate_identification(CaptureSheet_obj, bubbles):
     image  = cropped_image
     image =  cv2.adaptiveThreshold(cropped_image, 255, cv2.ADAPTIVE_THRESH_MEAN_C, cv2.THRESH_BINARY, cropped_image.shape[0] - 1 - cropped_image.shape[0]%2, 2)
     #db.plot(image)
+    i = 0
     for charbox in sorted_data:
+        i+=1
         # Calculate the new width and height
         x,y,w,h = charbox
         new_w = int(w * 0.8)
@@ -582,7 +584,7 @@ def evaluate_identification(CaptureSheet_obj, bubbles):
         print(cro.shape)
         #cro = cv2.GaussianBlur(cro, (5,5), 0)
         print(np.unique(cro))
-        cv2.imwrite('0.png',cro)
+        cv2.imwrite(fr'sample\{i}.png',cro)
         db.plot(cro)
         #cv2.rectangle(image, (x, y), (x + w, y + h), (0,255,0), 20)
         #print(handwrite_predict([cro]))

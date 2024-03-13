@@ -12,7 +12,7 @@ class FileSystem:
     """
     def __init__(self, **kwargs):
         self.sheets = []
-        self.local_file_directory = r"assets\localdb.pkl"
+        self.local_file_directory = "assets/localdb.pkl"
         self.open_index = 0
 
     def add_sheet(self):
@@ -48,7 +48,7 @@ class FileSystem:
         """
         with open(self.local_file_directory, "wb") as file:
             # Serialize and write the object to the file using pickle.dump()
-            pickle.dump(self, file)
+            pickle.dump(self, file, protocol=5)
 
     def load(self):
         """
@@ -120,9 +120,7 @@ class MultipleChoice:
                 self.items.append(Item(self.fs_obj))
                 self.show_items += 1
         else:
-            diff = current_length - number
-            self.items = self.items[:diff]
-            self.show_items = diff
+            self.show_items = number
     
     def get_items(self):
         """
@@ -137,22 +135,79 @@ class MultipleChoice:
         return lis_result
 
 
-class TrueOrFalse(MultipleChoice):
+class TrueOrFalse:
     """
     Represents a true or false question.
     """
     def __init__(self,fs_obj, **kwargs):
         self.items = []
         self.fs_obj = fs_obj
+        self.show_items = 0
+
+    def set_items(self, number):
+        """
+        Sets the number of items to display.
+
+        Args:
+            number (int): The number of items to display.
+        """
+        current_length = len(self.items)
+        if number > current_length:
+            diff = number - current_length
+            for x in range(diff):
+                self.items.append(Item(self.fs_obj))
+                self.show_items += 1
+        else:
+            self.show_items = number
+    
+    def get_items(self):
+        """
+        Retrieves the items to display.
+
+        Returns:
+            list: A list of Item objects to display.
+        """
+        lis_result = []
+        for i in range(self.show_items):
+            lis_result.append(self.items[i])
+        return lis_result
 
 
-class Identification(MultipleChoice):
+class Identification:
     """
     Represents an identification question.
     """
     def __init__(self, fs_obj,**kwargs):
         self.items = []
         self.fs_obj = fs_obj
+        self.show_items = 0
+    def set_items(self, number):
+        """
+        Sets the number of items to display.
+
+        Args:
+            number (int): The number of items to display.
+        """
+        current_length = len(self.items)
+        if number > current_length:
+            diff = number - current_length
+            for x in range(diff):
+                self.items.append(Item(self.fs_obj))
+                self.show_items += 1
+        else:
+            self.show_items = number
+    
+    def get_items(self):
+        """
+        Retrieves the items to display.
+
+        Returns:
+            list: A list of Item objects to display.
+        """
+        lis_result = []
+        for i in range(self.show_items):
+            lis_result.append(self.items[i])
+        return lis_result
 
 
 class AnswerKeys:
@@ -253,4 +308,5 @@ class Sheets:
         self.check_sheets = CheckSheets(fs_obj=fs_obj)
         self.fs_obj = fs_obj
 
-
+fs = FileSystem()
+fs.add_sheet()
