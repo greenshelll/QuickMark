@@ -1,5 +1,7 @@
 import pickle
 from datetime import datetime
+import os
+
 
 class FileSystem:
     """
@@ -14,7 +16,7 @@ class FileSystem:
         self.sheets = []
         self.local_file_directory = "assets/localdb.pkl"
         self.open_index = 0
-
+        
     def add_sheet(self):
         """
         Adds a new sheet to the file system.

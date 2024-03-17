@@ -2,6 +2,13 @@
 import numpy as np
 import threading
 from datetime import datetime
+import time
+
+# LOCAL FILES/MODULES
+from utilities.misc.util4image import fit_score,stich_all_image as stitch_sheet
+from utilities.misc.filesystem import *
+from utilities.misc.searchsystem import rate_similarity
+from screens.camera import CameraWidget
 
 # KIVY/KIVYMD IMPORTS
 #kivymd misc
@@ -11,6 +18,7 @@ from kivy.clock import Clock
 from kivymd.toast import toast
 from kivy.metrics import dp
 from kivy.core.window import Window
+from kivy.core.image import Image as CoreImage
 #kivymd.uix
 from kivymd.uix.dialog import MDDialog
 from kivymd.uix.floatlayout import MDFloatLayout
@@ -22,13 +30,10 @@ from kivymd.uix.stacklayout import MDStackLayout
 from kivymd.uix.card import MDCard
 from kivymd.uix.toolbar import MDTopAppBar
 from kivymd.uix.list import MDList, TwoLineListItem
+from kivy.uix.image import Image
 #kivy.uix
 from kivy.uix.boxlayout import BoxLayout
 
-# LOCAL FILES/MODULES
-from screens.camera import CameraWidget
-from utilities.misc.filesystem import *
-from utilities.misc.search import rate_similarity
 
 KV = '''
 CustomScreenManager:
@@ -802,6 +807,9 @@ class NameScreen(Screen):
         sheet_screen.ids.tf_checkbox.active = True if len(answer_key.tf.get_items()) > 0 else False
         sheet_screen.ids.ident_checkbox.active = True if len(answer_key.idtf.get_items()) > 0 else False
 
+        name = fs.sheets[fs.open_index].name
+        sheet_screen.generate_template(len(answer_key.mc.get_items()), len(answer_key.tf.get_items()), len(answer_key.idtf.get_items()), name)
+
 
     def rename(self):
         """Renaming Function
@@ -1035,6 +1043,38 @@ class AnswerSheetScreen(Screen):
 
         answer_key.set_items(count) # setting items using method from FileSystem
         toast("Sheet Updated.")
+        return count
+    
+    #METHOD__________________________________________________
+   
+    def generate_template(self, mc, tf, idtf, name):
+        template_path = stitch_sheet(mc_num=mc,
+                     idtf_num=idtf,
+                     tf_num=tf,
+                     title=name)
+        
+        image_texture = CoreImage(template_path).texture
+        
+        # Update the texture of the Image widget
+        self.update_image_texture(image_texture,template_path)
+        
+
+    def update_image_texture(self, texture,path):
+        # Get a reference to the Image widget
+        image = self.ids.generated_image
+        
+        # Temporarily clear the source to force a texture reload
+        image.source = ''
+        
+        # Assign the new texture
+        image.texture = texture
+        
+        # Assign the source again to ensure the update is triggered
+        image.source = path
+        
+        # Trigger a layout update to force the image to redraw
+        image.reload()
+
 
 
     #METHOD__________________________________________________
@@ -1049,10 +1089,12 @@ class AnswerSheetScreen(Screen):
         Returns:
             None
         """
-        self.apply_count_for_type('mc')
-        self.apply_count_for_type('tf')
-        self.apply_count_for_type('idtf')
-
+        mc_count = self.apply_count_for_type('mc')
+        tf_count = self.apply_count_for_type('tf')
+        idtf_count = self.apply_count_for_type('idtf')
+        name = fs.sheets[fs.open_index].name
+        self.generate_template(mc_count, tf_count, idtf_count, name)
+        
 
     #METHOD_____________________________________________________
 
@@ -1194,6 +1236,6 @@ class App(MDApp):
 fs = FileSystem() # initialize filesystem
 # load filesystem previous data from permanent local storage;
 # comment out to not use previous data (warning; overwrites with empty new data because of autosave on app run)
-fs.load() 
+#fs.load() 
 
 App().run() # RUN APP; init

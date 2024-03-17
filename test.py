@@ -7,6 +7,15 @@ from utilities.omr_eval.capture_sheet import CaptureSheet
 #print('prediction',prediction)
 
 if __name__ == "__main__":
+    from utilities.misc.util4image import remove_all_images, fit_score, stich_all_image
+    #remove_all_images()
+    
+    stich_all_image(50,175,0, 'Examination 1')
+    print(fit_score(50,175,0))
+    # max mc =175
+    # tf = 275
+    # 
+    raise Exception("DONE")
     # sample input
     #cs = CaptureSheet(100,10,10,r"C:\Users\USER\Downloads\WIN_20240228_07_05_54_Pro.jpg",True,True)
     cs = CaptureSheet(
