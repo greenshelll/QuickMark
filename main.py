@@ -539,7 +539,7 @@ class MCInstanceBox(BoxLayout):
                 btn.md_bg_color = [1, 1, 1, 1]  # Revert background color to white
             else:
                 btn.md_bg_color = [0.5,0.5,0.5,1]
-                fs.sheets[fs.open_index].answer_key.mc.items[self.number].answer_key = btn.text
+                fs.sheets[fs.open_index].answer_key.mc.items[self.number].answer_key = [btn.text]
         # Highlight the pressed button
             
                 
@@ -581,7 +581,7 @@ class TFInstanceBox(BoxLayout):
                 btn.md_bg_color = [1, 1, 1, 1]  # Revert background color to white
             else:
                 btn.md_bg_color = [0.5,0.5,0.5,1]
-                fs.sheets[fs.open_index].answer_key.tf.items[self.number].answer_key = btn.text
+                fs.sheets[fs.open_index].answer_key.tf.items[self.number].answer_key = [btn.text]
         
         
         # Highlight the pressed button
