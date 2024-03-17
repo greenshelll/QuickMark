@@ -3,13 +3,22 @@ import re
 
 class SearchSystem: 
     def __init__(self, str_keys, content):
+        """Class for managing search
 
+        Args:
+            str_keys (list of strings): the basis of searching; to be used as keys. 
+            content (any): can be anything that links to str keys.  str_keys and content must have the same 1d length
+
+
+            returns sorted content
+        """
         self.keys = str_keys
         self.content = content
-        self.content_repr = [x for x in range(len(content))]
+        self.content_repr = [x for x in range(len(content))] # represent content as integers
         self.unique_keys = None # tbprocessed
         self.dict_tags = None #tbprocessed
-        self._search_result = None
+        self._search_result = None 
+        self.process()
 
     def process(self):
         self._generate_tags()
@@ -18,19 +27,25 @@ class SearchSystem:
     def search(self, string, print_result=False):
         # Split the input string into individual patterns
         splitted_pattern = self._split(string)
+        print("SPLITTED PATTERN",splitted_pattern)
+        temp = []
+        for pattern in splitted_pattern:
+            if pattern != '':
+                temp.append(pattern)
         
-        # Initialize a list to store the similarity scores for each content
+        # Initialize a list to store the sum of their similarity ranks
+        # scorer, self.content_repr, self.content corresponds to the same index for the same content 
         scorer = [0 for x in range(len(self.content))]
         
         # Iterate over each pattern in the input string
-        for pattern in splitted_pattern:
+        for pattern in temp:
             # Get the sorted keys based on the similarity to the current pattern
             sorted_keys = self._rate_similarity(pattern)
             
             # Initialize an empty list to store unique content representations for each pattern
             sorted_content = []
             
-            # Iterate over each key in the sorted keys
+            # Iterate over each key in the sorted keys 
             for key_index in range(len(sorted_keys)):
                 key = sorted_keys[key_index]
                 
@@ -40,22 +55,23 @@ class SearchSystem:
                     score_index = self.content_repr.index(content_repr)
                     
                     # Update the scorer based on the key index and content representation
-                    if content_repr not in sorted_content:
-                        scorer[score_index] += key_index
-                        sorted_content.append(content_repr)
+                    if content_repr not in sorted_content: # prevent duplicates
+                        scorer[score_index] += key_index  # key index; the smaller, the better similarity; index also represent rank
+                        sorted_content.append(content_repr) # indicator that it is done
             
         # Initialize a list to store the search results
         search_result = []
         
         # Sort the scorer list to get the indices of the content in ascending order of similarity scores
         sorted_scorer = sorted(scorer)
+
         print("SCORERS", scorer)
         # Iterate over each score in the sorted scorer list
         for score in sorted_scorer:
-            # Get the index of the current score in the scorer list
+            # Get the index of the current score in the scorer list that have the same score
             indices = [i for i, x in enumerate(scorer) if x == score]
             for x in indices:
-                search_result.append(self.content[x]) if self.content[x] not in search_result else None
+                search_result.append(self.content[x]) if self.content[x] not in search_result else None # append result using true content object; prevent duplicates
         
         # Print the search result if print_result is True
         print('SEARCH RESULT', search_result) if print_result else None
@@ -66,23 +82,23 @@ class SearchSystem:
 
 
     def _generate_tags(self):
-        str_keys = ' '.join(self.keys).lower()
-        unique_keys = np.unique(self._split(str_keys))
+        """Splits strings linked to content into unique keys and each key corresponds to a list of contents it is linked.
+        """
+        str_keys = ' '.join(self.keys).lower() # cmbine list of strings into single string
+        unique_keys = np.unique(self._split(str_keys)) # split strings using non alphanum as separator and get unique strings
         print('UNIQUE KEYS',unique_keys)
-        self.unique_keys = unique_keys
+        self.unique_keys = unique_keys 
 
-        dict_tags = {key:[] for key in unique_keys}
-        for key,content in zip(self.keys, self.content_repr):
+        dict_tags = {key:[] for key in unique_keys} # initialize unique keys
+        for key,content in zip(self.keys, self.content_repr): 
             split_keys = self._split(key.lower())
             for key in split_keys:
-                dict_tags[key].append(content)
+                dict_tags[key].append(content) # append content to list with designated unique key
         print('DICT TAGS',dict_tags)
         self.dict_tags = dict_tags
 
     def _split(self, input_string):
         # Input string
-        #input_string = "apple cidar!apple cidar:green_mango?triple-H"
-
         # Split the string using non-alphanumeric characters as separator
         split_strings = re.split(r'[^a-zA-Z0-9]+', input_string)
 
@@ -150,10 +166,22 @@ class SearchSystem:
 
 
 if __name__ == "__main__":
+    # samples
 
-    keys = ['apple cidar mango', 'apple cidar blue', 'green_mango', 'triple-H mango']
-    keys = keys + keys
+    keys = ['apple cidar mango', 'apple cidar blue', 'green_mango', 'triple-W mango']
+    keys = keys + keys # duplicates string keys
     content = ['object1','object2','object3','object4','object5', 'object6', 'object7', 'object8']
 
-    ss = SearchSystem(keys, content).process()
-    print(ss.search('apple cidar mango', False))
+    ss = SearchSystem(keys, content)
+    print(ss.search('blue apple'))
+    # result->['object2', 'object6', 'object1', 'object5', 'object4', 'object8', 'object3', 'object7']
+
+
+    ss = SearchSystem(
+        str_keys= ['Hello World', 'I love you', 'Hello!, Good Morning'],
+        content = ["HW OBJECT", "ILY OBJECT", "GM OBJECT"]
+    )
+    ss.search('I love morning',True)
+    # result->SEARCH RESULT ['ILY OBJECT', 'GM OBJECT', 'HW OBJECT'] 
+    ss.search('Hello!',True)
+    # result-> ['HW OBJECT', 'GM OBJECT', 'ILY OBJECT']
