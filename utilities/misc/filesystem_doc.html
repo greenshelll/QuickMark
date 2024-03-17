@@ -3,171 +3,128 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Python Code Documentation</title>
+    <title>FileSystem Tree</title>
     <style>
         body {
             font-family: Arial, sans-serif;
-            line-height: 1.6;
-            margin: 0;
-            padding: 0;
-            background-color: #f5f5f5;
-        }
-
-        .container {
-            max-width: 800px;
-            margin: 20px auto;
             padding: 20px;
+        }
+        .tree {
+            margin-top: 20px;
+            border: 1px solid #ccc;
+            padding: 10px;
+        }
+        .node {
+            padding-left: 20px;
+            border-left: 2px solid #999;
+            margin-bottom: 10px;
+            cursor: pointer;
+        }
+        .node:before {
+            content: "";
+            display: block;
+            width: 10px;
+            height: 10px;
+            border: 1px solid #999;
+            border-radius: 50%;
             background-color: #fff;
-            border-radius: 5px;
-            box-shadow: 0 2px 5px rgba(0, 0, 0, 0.1);
+            position: relative;
+            left: -22px;
+            top: 4px;
         }
-
-        h1, h2, h3 {
-            color: #333;
+        .node:first-child:before {
+            border: none;
         }
-
-        h1 {
-            border-bottom: 1px solid #ccc;
-            padding-bottom: 10px;
+        .expanded:before {
+            transform: rotate(-45deg);
+            bottom: 5px;
         }
-
-        h2 {
-            margin-top: 30px;
-        }
-
-        p {
-            margin-bottom: 15px;
-        }
-
-        .class-name {
-            color: #007bff;
-        }
-
-        .attribute-name {
-            color: #28a745;
-        }
-
-        .method-name {
-            color: #dc3545;
+        .attribute {
+            margin-left: 20px;
+            font-style: italic;
+            color: #555;
         }
     </style>
 </head>
 <body>
-    <div class="container">
-        <h1>Python Code Documentation</h1>
-
-        <h2>FileSystem Class</h2>
-        <p>Represents a file system.</p>
-
-        <h3 class="class-name">Attributes:</h3>
-        <ul>
-            <li><span class="attribute-name">sheets</span>: A list of Sheets objects.</li>
-            <li><span class="attribute-name">local_file_directory</span>: The directory where the local file is stored.</li>
-            <li><span class="attribute-name">open_index</span>: Index of the currently open sheet.</li>
-        </ul>
-
-        <h3 class="class-name">Methods:</h3>
-        <ul>
-            <li><span class="method-name">add_sheet</span>: Adds a new sheet to the file system.</li>
-            <li><span class="method-name">get_sheet</span>: Retrieves a sheet from the file system.</li>
-            <li><span class="method-name">save</span>: Saves the file system object to a pickle file.</li>
-            <li><span class="method-name">load</span>: Loads the file system object from a pickle file.</li>
-        </ul>
-
-        <h2>Item Class</h2>
-        <p>Represents an item.</p>
-
-        <h3 class="class-name">Attributes:</h3>
-        <ul>
-            <li><span class="attribute-name">points</span>: The points associated with the item.</li>
-            <li><span class="attribute-name">answer_key</span>: The answer key for the item.</li>
-            <li><span class="attribute-name">fs_obj</span>: The file system object associated with the item.</li>
-        </ul>
-
-        <h3 class="class-name">Methods:</h3>
-        <ul>
-            <li><span class="method-name">evaluate</span>: Evaluates the item against the provided answer.</li>
-        </ul>
-
-        <h2>MultipleChoice Class</h2>
-        <p>Represents a multiple-choice question.</p>
-
-        <h3 class="class-name">Attributes:</h3>
-        <ul>
-            <li><span class="attribute-name">items</span>: A list of Item objects representing the choices.</li>
-            <li><span class="attribute-name">show_items</span>: The number of choices to display.</li>
-            <li><span class="attribute-name">fs_obj</span>: The file system object associated with the multiple-choice question.</li>
-        </ul>
-
-        <h3 class="class-name">Methods:</h3>
-        <ul>
-            <li><span class="method-name">set_items</span>: Sets the number of choices for the question.</li>
-            <li><span class="method-name">get_items</span>: Gets the list of choices for the question.</li>
-        </ul>
-
-        <h2>TrueOrFalse Class</h2>
-        <p>Represents a true or false question.</p>
-
-        <h3 class="class-name">Attributes:</h3>
-        <ul>
-            <li><span class="attribute-name">items</span>: A list of Item objects representing the true/false choices.</li>
-            <li><span class="attribute-name">fs_obj</span>: The file system object associated with the true/false question.</li>
-        </ul>
-
-        <h2>Identification Class</h2>
-        <p>Represents an identification question.</p>
-
-        <h3 class="class-name">Attributes:</h3>
-        <ul>
-            <li><span class="attribute-name">items</span>: A list of Item objects representing the identification choices.</li>
-            <li><span class="attribute-name">fs_obj</span>: The file system object associated with the identification question.</li>
-        </ul>
-
-        <h2>AnswerKeys Class</h2>
-        <p>Represents the answer keys for different types of questions.</p>
-
-        <h3 class="class-name">Attributes:</h3>
-        <ul>
-            <li><span class="attribute-name">mc</span>: The answer key for multiple-choice questions.</li>
-            <li><span class="attribute-name">tf</span>: The answer key for true/false questions.</li>
-            <li><span class="attribute-name">idtf</span>: The answer key for identification questions.</li>
-            <li><span class="attribute-name">fs_obj</span>: The file system object associated with the answer keys.</li>
-        </ul>
-
-        <h2>CheckSession Class</h2>
-        <p>Represents a session for checking answers.</p>
-
-        <h3 class="class-name">Attributes:</h3>
-        <ul>
-            <li><span class="attribute-name">date_created</span>: The date and time when the session was created.</li>
-            <li><span class="attribute-name">fs_obj</span>: The file system object associated with the check session.</li>
-            <li><span class="attribute-name">answer_key</span>: The answer key for the session.</li>
-            <li><span class="attribute-name">mc</span>: The multiple-choice questions in the session.</li>
-            <li><span class="attribute-name">tf</span>: The true/false questions in the session.</li>
-            <li><span class="attribute-name">idtf</span>: The identification questions in the session.</li>
-            <li><span class="attribute-name">open_index</span>: Index of the currently open session.</li>
-        </ul>
-
-        <h2>CheckSheets Class</h2>
-        <p>Represents a collection of check sessions.</p>
-
-        <h3 class="class-name">Attributes:</h3>
-        <ul>
-            <li><span class="attribute-name">check_sessions</span>: A list of CheckSession objects.</li>
-            <li><span class="attribute-name">fs_obj</span>: The file system object associated with the check sheets.</li>
-        </ul>
-
-        <h2>Sheets Class</h2>
-        <p>Represents a collection of sheets.</p>
-
-        <h3 class="class-name">Attributes:</h3>
-        <ul>
-            <li><span class="attribute-name">date_created</span>: The date and time when the sheet was created.</li>
-            <li><span class="attribute-name">name</span>: The name of the sheet.</li>
-            <li><span class="attribute-name">answer_key</span>: The answer key for the sheet.</li>
-            <li><span class="attribute-name">check_sheets</span>: The check sheets associated with the sheet.</li>
-            <li><span class="attribute-name">fs_obj</span>: The file system object associated with the sheet.</li>
-        </ul>
+    <div class="tree">
+        <div class="node expanded">FileSystem
+            <div class="attribute">open_index (int)</div>
+            <div class="attribute">local_file_directory (str)</div>
+            <div class="node expanded">sheets (list)
+                <div class="node expanded">Sheets
+                    <div class="attribute">name (str) - The name of the sheet.</div>
+                    <div class="attribute">date_created (str) - The date and time when the sheet was created.</div>
+                    <div class="node">answer_key (AnswerKeys) - The answer key for the sheet.
+                        <div class="node expanded">mc (MultipleChoice)
+                            <div class="attribute">items (list) - A list of items.</div>
+                            <div class="attribute">show_items (int) - The number of items to display.</div>
+                            <div class="attribute">fs_obj (FileSystem) - The file system object associated with the multiple choice question.</div>
+                            <div class="attribute">set_items(number) - Sets the number of items to display.</div>
+                            <div class="attribute">get_items() - Retrieves the items to display.</div>
+                        </div>
+                        <div class="node expanded">tf (TrueOrFalse)
+                            <div class="attribute">items (list) - A list of items.</div>
+                            <div class="attribute">show_items (int) - The number of items to display.</div>
+                            <div class="attribute">fs_obj (FileSystem) - The file system object associated with the true or false question.</div>
+                            <div class="attribute">set_items(number) - Sets the number of items to display.</div>
+                            <div class="attribute">get_items() - Retrieves the items to display.</div>
+                        </div>
+                        <div class="node expanded">idtf (Identification)
+                            <div class="attribute">items (list) - A list of items.</div>
+                            <div class="attribute">show_items (int) - The number of items to display.</div>
+                            <div class="attribute">fs_obj (FileSystem) - The file system object associated with the identification question.</div>
+                            <div class="attribute">set_items(number) - Sets the number of items to display.</div>
+                            <div class="attribute">get_items() - Retrieves the items to display.</div>
+                        </div>
+                    </div>
+                    <div class="node expanded">check_sheets (CheckSheets) - Represents check sheets.
+                        <div class="node expanded">check_sessions (list) - A list of check sessions.
+                            <div class="node">CheckSession
+                                <div class="attribute">date_created (str) - The date and time when the session was created.</div>
+                                <div class="node">answer_key (AnswerKeys) - The answer key for the session.
+                                    <div class="node expanded">mc (MultipleChoice)
+                                        <div class="attribute">items (list) - A list of items.</div>
+                                        <div class="attribute">show_items (int) - The number of items to display.</div>
+                                        <div class="attribute">fs_obj (FileSystem) - The file system object associated with the multiple choice question.</div>
+                                        <div class="attribute">set_items(number) - Sets the number of items to display.</div>
+                                        <div class="attribute">get_items() - Retrieves the items to display.</div>
+                                    </div>
+                                    <div class="node expanded">tf (TrueOrFalse)
+                                        <div class="attribute">items (list) - A list of items.</div>
+                                        <div class="attribute">show_items (int) - The number of items to display.</div>
+                                        <div class="attribute">fs_obj (FileSystem) - The file system object associated with the true or false question.</div>
+                                        <div class="attribute">set_items(number) - Sets the number of items to display.</div>
+                                        <div class="attribute">get_items() - Retrieves the items to display.</div>
+                                    </div>
+                                    <div class="node expanded">idtf (Identification)
+                                        <div class="attribute">items (list) - A list of items.</div>
+                                        <div class="attribute">show_items (int) - The number of items to display.</div>
+                                        <div class="attribute">fs_obj (FileSystem) - The file system object associated with the identification question.</div>
+                                        <div class="attribute">set_items(number) - Sets the number of items to display.</div>
+                                        <div class="attribute">get_items() - Retrieves the items to display.</div>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
     </div>
 </body>
+<script>
+    // Function to toggle the 'expanded' class on node click
+    function toggleNode(node) {
+        node.classList.toggle('expanded');
+    }
+
+    // Add click event listener to all nodes
+    var nodes = document.querySelectorAll('.node');
+    nodes.forEach(function(node) {
+        node.addEventListener('click', function() {
+            toggleNode(node);
+        });
+    });
+</script>
 </html>

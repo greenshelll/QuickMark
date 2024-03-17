@@ -55,16 +55,9 @@ AP.init_jnius()
 # Kivy's PythonActivity bootstrap:
 
 
-def reorder_by_interval(lst, interval):
-    reordered = []
-    for i in range(interval):
-        for j in range(i, len(lst), interval):
-            reordered.append(lst[j])
-    return reordered
-
 
 class CameraWidget(BoxLayout):
-    def __init__(self, mcq_correct = None, tf_correct= None, idtf_correct = None, **kwargs):
+    def __init__(self, **kwargs):
         super(CameraWidget, self).__init__(**kwargs)
         
         # Create a camera widget
@@ -81,9 +74,7 @@ class CameraWidget(BoxLayout):
         # Add camera widget to layout
         self.dummy_counter = 0
         #self.add_widget(self.camera)
-        self.mcq_correct = mcq_correct
-        self.tf_correct = tf_correct
-        self.idtf_correct = idtf_correct
+
         # Create lines for the initial bounding box
         self.bounding_box = Line(points=[0, 0, 0, 0, 0, 0, 0, 0, 0, 0], width=2)
         self.label = Label(color=(1, 0, 0, 1))
@@ -204,14 +195,8 @@ class CameraWidget(BoxLayout):
             
             if frame_data is None:
                 return None
-            self.cs = CaptureSheet(len(self.mcq_correct), len(self.tf_correct),len(self.idtf_correct),frame_data,1,False,False)
-            self.cs.mcq.correct = reorder_by_interval(self.mcq_correct, 25)
-            self.cs.tfq.correct = reorder_by_interval(self.tf_correct,25)
-            self.cs.idq.correct = reorder_by_interval(self.idtf_correct,1)
-            print("CORRECTNESS")
-            print(self.cs.mcq.correct)
-            print(self.cs.idq.correct)
-            print(self.cs.tfq.correct)
+            self.cs = CaptureSheet(100, 25,10,frame_data,1,False,False)
+            
             self.cs.get_boxes()
             
             #__________________________________________________________
@@ -273,7 +258,7 @@ class CameraWidget(BoxLayout):
                                     print("DONE GETTING BUBBLES")
                                     counting = obj.bubbles[0].count
                                     print('DONE GETTING BUBBLES',counting)
-                                    nums = [obj.mcq.num_items*4, obj.tfq.num_items*2, obj.idq.num_items]
+                                    nums = [obj.mcq.num_items*4, obj.tfq.num_items*2, obj.idq.num_items, 45*4, 30*2, 5]
                                     if counting not in nums:
                                         obj.get_bubbles(redo=True)
                                         counting = obj.bubbles[0].count

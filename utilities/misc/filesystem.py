@@ -240,14 +240,13 @@ class CheckSession:
         idtf (Identification): The identification questions for the session.
         open_index (int): Index of the currently open session.
     """
-    def __init__(self,date_created, fs_obj,**kwargs):
+    def __init__(self,date_created, fs_obj, name, check_obj,**kwargs):
         self.date_created = date_created
+        self.name = name
         self.fs_obj = fs_obj
-        self.answer_key = fs_obj.sheets[fs_obj.open_index].answer_key
-        self.mc = self.answer_key.mc
-        self.tf = self.answer_key.tf
-        self.idtf = self.answer_key.idtf
-        self.open_index = 0
+        self.user_answer = []
+        self.user_rating = []
+
 
 
 class CheckSheets:
@@ -261,6 +260,7 @@ class CheckSheets:
     def __init__(self,fs_obj ,**kwargs):
         self.check_sessions = []
         self.fs_obj = fs_obj
+        self.session_open_index = None
 
     def add_session(self):
         """
@@ -273,7 +273,9 @@ class CheckSheets:
         formatted_date_time = current_date_time.strftime("%Y-%m-%d %H:%M")
         date = formatted_date_time
         instance = CheckSession(date_created=date, 
-                                 fs_obj=self.fs_obj)
+                                 fs_obj=self.fs_obj,
+                                 name = len(self.check_sessions),
+                                 check_obj=self)
         self.check_sessions.append(instance)
 
     def get_session(self, index):
@@ -286,8 +288,14 @@ class CheckSheets:
         Returns:
             CheckSession: The specified session object.
         """
-        self.open_index = index
+        self.session_open_index = index
         return self.check_sessions[index]
+    
+    def del_session(self):
+        """
+        Deletes last oepened check session
+        """
+        self.check_sessions = self.check_sessions.pop(self.session_open_index)
 
 
 class Sheets:

@@ -46,6 +46,7 @@ class _TestType:
        'True', 'True', 'True', 'False', 'True', 'False', 'False', 'True',
        'False', 'False', 'False', 'True', 'False', 'True', 'True', 'True',
        'False']
+            self.correct = [x[0] for x in self.correct]
     class Identification:
         def __init__(self, items):
             self.name = 'IDENTIFICATION'
@@ -80,11 +81,11 @@ class _BubbleGetter:
         self.answers = None #later
         self.final_score = None #later
         self.test_type = None #later
-    
+        self.eval_array = None
         
         
 
-    def retrieve(self, BoxGetter_obj, CaptureSheet_obj, box_index,redo,**kwargs):
+    def retrieve(self, BoxGetter_obj, CaptureSheet_obj, box_index,redo,use_rect,**kwargs):
         """omr.get_choices(BubbleGetter_obj=self,
                         BoxGetter_obj=BoxGetter_obj,
                         CaptureSheet_obj=CaptureSheet_obj, 
@@ -94,7 +95,7 @@ class _BubbleGetter:
                                CaptureSheet_obj=CaptureSheet_obj, 
                                boxes_num=box_index,
                                 BoxGetter_obj=BoxGetter_obj,
-                                redo=redo,
+                                redo=redo,use_rect=use_rect,
                                 **kwargs)
     def get_choices_by_num(self, BoxGetter_obj, CaptureSheet_obj, box_index, **kwargs):
         omr_functions.get_choices_by_num(self, BoxGetter_obj, CaptureSheet_obj, box_index, **kwargs)
@@ -162,11 +163,11 @@ class CaptureSheet:
                             boxes_num=self.boxes_num,**kwargs)
         return self
         
-    def get_bubbles(self,redo=False):
+    def get_bubbles(self,redo=False,use_rect=False):
         for crop_i in range(self.boxes_num):
             self.bubbles[crop_i].retrieve(BoxGetter_obj=self.boxes,
                                           CaptureSheet_obj=self,
-                                          box_index=crop_i,redo=redo)
+                                          box_index=crop_i,redo=redo,use_rect=use_rect)
             #self.bubbles[crop_i].img = self.boxes[crop_i].transformed_imgs
         return self
     

@@ -265,7 +265,7 @@ def xywh_to_points(xywh):
     db.p('xywh translated to points')
     return [(x1, y1), (x2, y2), (x3, y3), (x4, y4)]
 
-def get_bubbles(BubbleGetter_obj, BoxGetter_obj, CaptureSheet_obj, boxes_num, redo=False, use_rect=True):
+def get_bubbles(BubbleGetter_obj, BoxGetter_obj, CaptureSheet_obj, boxes_num, redo=False, use_rect=False):
     """
     The function `get_bubbles` processes an image to detect and extract bubble contours based on certain
     criteria.
@@ -486,7 +486,7 @@ def get_by_num(circles_per_num,bubbles,CaptureSheet_obj):
 
 def get_scores(BubbleGetter_obj, BoxGetter_obj, CaptureSheet_obj, boxes_num):
     try:
-        scores = {'0010': 'C', '0100': 'B', '0000': 'None', '1000':'A', '0001': 'D','01':'False','10':'True','00':'None'}
+        scores = {'0010': 'C', '0100': 'B', '0000': 'None', '1000':'A', '0001': 'D','01':'F','10':'T','00':'None'}
         choices_by_num = BubbleGetter_obj.choices_by_num
         image = BoxGetter_obj.crops[boxes_num]
         bin_scores = []
@@ -538,13 +538,14 @@ def get_scores(BubbleGetter_obj, BoxGetter_obj, CaptureSheet_obj, boxes_num):
             bin_scores.append(scores[temp])
         BubbleGetter_obj.answers = bin_scores
         ##*print(bin_scores)
-        score = 0
-        
+        BubbleGetter_obj.eval_array = []
         ground_truth = CaptureSheet_obj.mcq.correct if BubbleGetter_obj.test_type == 'MULTIPLE CHOICE' else CaptureSheet_obj.tfq.correct
         for correct,answer in zip(ground_truth, BubbleGetter_obj.answers):
-            if correct == answer:
-                score += 1
-        BubbleGetter_obj.final_score = score
+            #if correct == answer:
+            if answer in correct:
+                BubbleGetter_obj.eval_array.append(1)
+        BubbleGetter_obj.final_score = sum(BubbleGetter_obj.eval_array)
+        
         ##*print("SCORE:",score)
     except Exception as e:
         db.p(e)
@@ -639,15 +640,6 @@ def get_choices_by_num(BubbleGetter_obj, BoxGetter_obj, CaptureSheet_obj, box_in
         ##*print(result.keys())
         BubbleGetter_obj.choices_by_num = result
         return None
-        # STOP HERE
-        for number in result.keys():
-            ###*print(number)
-            ###*print(result[number])
-            for rect in result[number]:
-                ###*print(rect.xywh)
-                x,y,w,h = rect.xywh
-                #cv2.rectangle(image, (x, y), (x + w, y + h), (255,0,0), 5)
-            #db.plot(image)
         
     except Exception as e:
         db.p(e, rgb=[255,0,0])

@@ -1,25 +1,34 @@
+# LIBRARIES
+import numpy as np
+import threading
+from datetime import datetime
+
+# KIVY/KIVYMD IMPORTS
+#kivymd misc
 from kivy.lang.builder import Builder
 from kivymd.app import MDApp
-from kivy.uix.screenmanager import ScreenManager, Screen, NoTransition
-from datetime import datetime
-from kivymd.uix.button import MDFlatButton,MDRaisedButton, MDRectangleFlatButton, MDRoundFlatButton, MDFillRoundFlatButton
-from kivymd.uix.card import MDSeparator
-from kivy.uix.boxlayout import BoxLayout
-from kivymd.uix.stacklayout import MDStackLayout
-from kivymd.uix.card import MDCard
-from screens.camera import CameraWidget
-from kivymd.uix.floatlayout import MDFloatLayout
-from kivymd.uix.label import MDLabel
-import pickle
-from kivymd.uix.dialog import MDDialog
-from utilities.misc.filesystem import *
-from utilities.misc.search import rate_similarity
-from kivy.core.window import Window
-from kivymd.uix.list import MDList, TwoLineListItem
 from kivy.clock import Clock
 from kivymd.toast import toast
 from kivy.metrics import dp
+from kivy.core.window import Window
+#kivymd.uix
+from kivymd.uix.dialog import MDDialog
+from kivymd.uix.floatlayout import MDFloatLayout
+from kivy.uix.screenmanager import ScreenManager, Screen, NoTransition
+from kivymd.uix.label import MDLabel
+from kivymd.uix.button import MDFlatButton,MDRaisedButton, MDRectangleFlatButton, MDRoundFlatButton, MDFillRoundFlatButton
+from kivymd.uix.card import MDSeparator
+from kivymd.uix.stacklayout import MDStackLayout
+from kivymd.uix.card import MDCard
 from kivymd.uix.toolbar import MDTopAppBar
+from kivymd.uix.list import MDList, TwoLineListItem
+#kivy.uix
+from kivy.uix.boxlayout import BoxLayout
+
+# LOCAL FILES/MODULES
+from screens.camera import CameraWidget
+from utilities.misc.filesystem import *
+from utilities.misc.search import rate_similarity
 
 KV = '''
 CustomScreenManager:
@@ -71,6 +80,7 @@ CustomScreenManager:
         ScrollView:
             id: scroll_view
             size_hint: (1, None)
+            
             MDList:
                 id: saved_list
                 size_hint_y: None
@@ -349,7 +359,6 @@ CustomScreenManager:
     
     
     MDBoxLayout:
-        id: mc_box_all
         orientation: 'vertical'
         adaptive_height: True
         pos_hint: {'top': 1}  # Align to the top
@@ -359,13 +368,19 @@ CustomScreenManager:
             title: "QuickMark"
             right_action_items: [["cog-outline", lambda x: app.show_text_input_dialog()]]
             elevation: 0
+        ScrollView:
+            id: mc_scroll_view
+            size_hint: (1, None)
+            MDList:
+                id: mc_box_all
+                size_hint_y: None
+                height: self.minimum_height
          
 
 <TFScreen>:
     name: 'TF'
 
     MDBoxLayout:
-        id: tf_box_all
         orientation: 'vertical'
         adaptive_height: True
         pos_hint: {'top': 1}  # Align to the top
@@ -373,8 +388,15 @@ CustomScreenManager:
 
         MDTopAppBar:
             title: "QuickMark"
-            right_action_items: [["cog-outline", lambda x: app.show_text_input_dialog()]]  # Use the same button as in MCScreen
+            right_action_items: [["cog-outline", lambda x: app.show_text_input_dialog()]]
             elevation: 0
+        ScrollView:
+            id: tf_scroll_view
+            size_hint: (1, None)
+            MDList:
+                id: tf_box_all
+                size_hint_y: None
+                height: self.minimum_height
 
                 
 <AnalysisScreen>:
@@ -459,31 +481,6 @@ CustomScreenManager:
                 font_size:'18dp'
                 max_text_length: 15
 '''
-def scan_object(obj, visited=None):
-    if visited is None:
-        visited = set()
-
-    if id(obj) in visited:
-        return
-    visited.add(id(obj))
-
-    if isinstance(obj, dict):
-        for key, value in obj.items():
-            print(f"Dictionary key: {key}, value: {value}")
-            if isinstance(value, (list, tuple, dict, set)):
-                scan_object(value, visited)
-            elif hasattr(value, "__dict__"):
-                scan_object(vars(value), visited)
-    elif isinstance(obj, (list, tuple, set)):
-        for item in obj:
-            scan_object(item, visited)
-    elif hasattr(obj, "__dict__"):
-        for key, value in vars(obj).items():
-            print(f"Attribute: {key}, value: {value}")
-            if hasattr(value, "__dict__"):
-                scan_object(vars(value), visited)
-
-fs = FileSystem()
 
 class Instance(TwoLineListItem):
     def __init__(self, **kwargs):
@@ -503,58 +500,6 @@ class CustomScreenManager(ScreenManager):
         super().__init__(**kwargs)
         self.transition = NoTransition()
 
-import numpy as np
-import threading
-"""MDBoxLayout:
-            orientation: 'horizontal'
-            spacing: dp(10)
-            size_hint_y: None
-            height: self.minimum_height
-            adaptive_width: True 
-            id: mc_buttons  # Added an ID for accessing child buttons
-            
-            MDLabel:
-                text: '1.'
-                adaptive_width: True 
-
-            
-            MDRoundFlatButton:
-                text:'A'
-                size_hint: None, None
-                width: root.width*0.1
-                height: root.height*0.04
-                on_release: root.toggle_button_state(self)  # Toggle button state
-                md_bg_color: 1, 1, 1, 1  # Initial background color is white
-
-            MDRoundFlatButton:
-                text:'B'
-                size_hint: None, None
-                width: root.width*0.1
-                height: root.height*0.04
-                on_release: root.toggle_button_state(self)  # Toggle button state
-                md_bg_color: 1, 1, 1, 1  # Initial background color is white
-
-            MDRoundFlatButton:
-                text:'C'
-                size_hint: None, None
-                width: root.width*0.1
-                height: root.height*0.04
-                on_release: root.toggle_button_state(self)  # Toggle button state
-                md_bg_color: 1, 1, 1, 1  # Initial background color is white
-
-            MDRoundFlatButton:
-                text:'D'
-                size_hint: None, None
-                width: root.width*0.1
-                height: root.height*0.04
-                on_release: root.toggle_button_state(self)  # Toggle button state
-                md_bg_color: 1, 1, 1, 1  # Initial background color is white
-
-
-        Returns:
-            _type_: _description_
-"""
-
 
 class MCInstanceBox(BoxLayout):
     def __init__(self, number, **kwargs):
@@ -564,38 +509,37 @@ class MCInstanceBox(BoxLayout):
         self.size_hint_x = None
         self.size_hint_y = None
         self.buttons = []
+        self.padding = (10,10)
+        self.minimum_width = dp(1)
         self.number = number
+        self.width = dp(50)
         self.true_answer = fs.sheets[fs.open_index].answer_key.mc.items[self.number].answer_key
         print(self.true_answer)
         # Add label
-        label = MDLabel(text=f'  {number+1}.', adaptive_width=True)
-        self.add_widget(label)
+        
 
         # Add buttons
-        for letter in ['A','B','C','D']:
-            button = MDRoundFlatButton(text=letter, id=letter)
-            button.size_hint = (None, None)  # Ensure size_hint is set before width and height
-            button.width = self.width * 0.05  # Set button width to 10% of MCInstanceBox width
-            button.height = self.height * 0.04  # Set button height to 4% of MCInstanceBox height
-            #button.bind(size=self.update_button_size)  # Bind size changes to update_button_size method
+        for letter in ['A','B','C','D','None']:
+            button = MDFlatButton(text=letter, id=letter)
+             # Bind size changes to update_button_size method
             self.add_widget(button)
             
             
             self.buttons.append(button)
             self.toggle_button_state(button,self.true_answer)
             button.bind(on_release=lambda btn=button: self.toggle_button_state(btn))
+
     def toggle_button_state(self,button, initialize=None):
         # Deselect all buttons
         buttons = self.buttons
         #print(button.text)
         for btn in buttons:
+            btn.size_hint = (0.8,1)  # Ensure size_hint is set before width and height
             if btn.text != button.text if initialize is None else btn.text != initialize:
                 btn.md_bg_color = [1, 1, 1, 1]  # Revert background color to white
             else:
                 btn.md_bg_color = [0.5,0.5,0.5,1]
                 fs.sheets[fs.open_index].answer_key.mc.items[self.number].answer_key = btn.text
-        
-        
         # Highlight the pressed button
             
                 
@@ -615,18 +559,15 @@ class TFInstanceBox(BoxLayout):
         self.add_widget(label)
 
         # Add buttons
-        for letter in ['T','F']:
-            button = MDRoundFlatButton(text=letter, id=letter)
-            button.size_hint = (None, None)  # Ensure size_hint is set before width and height
-            button.width = self.width * 0.05  # Set button width to 10% of MCInstanceBox width
-            button.height = self.height * 0.04  # Set button height to 4% of MCInstanceBox height
+        for letter in ['T','F','None']:
+            button = MDFlatButton(text=letter, id=letter)
             #button.bind(size=self.update_button_size)  # Bind size changes to update_button_size method
             self.add_widget(button)
             
             
             self.buttons.append(button)
-            #self.toggle_button_state(button,self.true_answer)
-            #button.bind(on_release=lambda btn=button: self.toggle_button_state(btn))
+            self.toggle_button_state(button,self.true_answer)
+            button.bind(on_release=lambda btn=button: self.toggle_button_state(btn))
             
 
 
@@ -694,6 +635,11 @@ class HomeScreen(Screen):
 
         
     def add_item_to_list(self, defined_sheets=[]):
+        """Uodate list
+
+        Args:
+            defined_sheets (list, optional): _description_. Defaults to [].
+        """
         print("ADDING TO LIST")
         saved_list = self.ids.saved_list
         saved_list.clear_widgets()
@@ -708,6 +654,7 @@ class HomeScreen(Screen):
             instance.manager = self.manager
             instance.secondary_text = 'Date Created: '+ str(sheet.date_created).split(' ')[0]
             saved_list.add_widget(instance)
+        
 
         layout = BoxLayout(orientation='vertical', padding=20) # Add padding around the layout
 
@@ -731,6 +678,7 @@ class HomeScreen(Screen):
                     pos_hint={"center_y": 0.5} 
                 ))
         saved_list.add_widget(label)
+
         
         self.ids.scroll_view.height = Window.height-(130)
         
@@ -755,38 +703,62 @@ class AnalysisScreen(Screen):
         except ValueError:
             print("Invalid input. Please enter a valid percentage.")
 
+
+#CLASS____________________________________________________________-
+            
+
 class NameScreen(Screen):
+    #INIT_________________________________________________________
     def __init__(self, **kwargs):
         super(NameScreen, self).__init__(**kwargs)
 
-    def prepare_mc_keys(self):
-        mc_screen = self.manager.get_screen('MC')
-        answer_key = fs.sheets[fs.open_index].answer_key.mc
-        mc_screen.instances = []
-        #mc_screen.ids.mc_box_all.clear_widgets()
-        widgets_to_remove = []
     
-        # Iterate through the children of tf_box_all
+    #METHOD_________________________________________________________
+    def prepare_mc_keys(self):
+        
+        mc_screen = self.manager.get_screen('MC') # set variables to reference to screen attributes
+        answer_key = fs.sheets[fs.open_index].answer_key.mc # set variable for reference on file system attribute for ease
+        mc_screen.instances = [] # init instances for screen
+        #mc_screen.ids.mc_box_all.clear_widgets() # out
+        widgets_to_remove = [] # init
+    
+        # Iterate through the children of tf_box_all; which widgets to remove
         for child in mc_screen.ids.mc_box_all.children:
             # Check if the child is an instance of TopAppBar
-            if not isinstance(child, MDTopAppBar):
+            if not isinstance(child, MDTopAppBar): # exclude MDTOPAPP BAR; upd: condition not necessary
                 # If it's not a TopAppBar, add it to the list of widgets to be removed
                 widgets_to_remove.append(child)
         
         # Remove the widgets from tf_box_all
         for widget in widgets_to_remove:
             mc_screen.ids.mc_box_all.remove_widget(widget)
-        increment = 0
+
+
+        bg_color = [(1,1,1,1),(0.5,0.5,0.5,1)] # bg color constant
+        increment = 0 # init increment
+
+        # base iteration on the amount of items on answer key
+        # dynamic generation of list
         for answer_item in answer_key.get_items():
-            
-            instance = MCInstanceBox(increment)
+            label = MDLabel(text=f'{increment+1} ') # number count display
+            label.color=(0.5,0.5,0.5,1) # label color
+
+            # add on gui
+            mc_screen.ids.mc_box_all.add_widget(label) # add number count display
+            instance = MCInstanceBox(increment) # initialize box
+            instance.md_bg_color=bg_color[int((increment+1)%2)] # upd: doesnt work; make bg color different per row by odd or even row count
             mc_screen.ids.mc_box_all.add_widget(instance)
-            mc_screen.instances.append(instance)
+            mc_screen.instances.append(instance) # add box to screen
+
             increment += 1
+
+        # prevent from cutting off items from scroll view
+        mc_screen.ids.mc_scroll_view.height = Window.height - (130)
+        # debugging
         print(mc_screen.instances)
 
     def prepare_tf_keys(self):
-
+        
         tf_screen = self.manager.get_screen('TF')
         answer_key = fs.sheets[fs.open_index].answer_key.tf
         tf_screen.instances = []
@@ -802,7 +774,7 @@ class NameScreen(Screen):
         
         # Remove the widgets from tf_box_all
         for widget in widgets_to_remove:
-            Clock.schedule_once(lambda x: tf_screen.ids.tf_box_all.remove_widget(widget), 0.5)
+            tf_screen.ids.tf_box_all.remove_widget(widget)
         increment = 0
         for answer_item in answer_key.get_items():
             
@@ -812,9 +784,15 @@ class NameScreen(Screen):
             
             tf_screen.instances.append(instance)
             increment += 1
+            instance.size_hint = (1,None)
+            instance.adaptive_width = True
+        tf_screen.ids.tf_scroll_view.height = Window.height - (130)
         print(tf_screen.instances)
     
     def prepare_answer_sheet(self):
+        """FUNCTION for click event before entering answer sheet. 
+        SHow gui on sheet_screen based on registered data from filesystem
+        """
         sheet_screen = self.manager.get_screen('answer_sheet')
         answer_key = fs.sheets[fs.open_index].answer_key
         sheet_screen.ids.mcq_textfield.text = str(len(answer_key.mc.get_items()))
@@ -823,21 +801,30 @@ class NameScreen(Screen):
         sheet_screen.ids.mcq_checkbox.active = True if len(answer_key.mc.get_items()) > 0 else False
         sheet_screen.ids.tf_checkbox.active = True if len(answer_key.tf.get_items()) > 0 else False
         sheet_screen.ids.ident_checkbox.active = True if len(answer_key.idtf.get_items()) > 0 else False
-    
+
+
     def rename(self):
+        """Renaming Function
+        """
+        # debugging
         print("RENAMING")
-        index = fs.open_index
-        current_name = self.ids.text_field.text
-        fs.sheets[index].name = current_name
-        #fs.save()
+
+        index = fs.open_index # index for currently opened sheet
+        current_name = self.ids.text_field.text # use current name on text field gui
+        fs.sheets[index].name = current_name # update filesystem 
+
+        #fs.save() #out; now autosaves
         home_screen = self.manager.get_screen('home')
         home_screen.add_item_to_list()
+
+        # quick confirmation dialog
         toast("Renamed successfully.", (1,0,1,0.2), 1)
 
 
     def capitalize(self, instance, text):
         text = text.upper()
         self.ids.text_field.text = text
+
 
 class MCScreen(Screen):
     def toggle_button_state(self, button):
@@ -916,83 +903,170 @@ class TFScreen(Screen):
         dialog.dismiss()
 
 
+# CLASS_________________________________________________________
+        
 
 class IDScreen(Screen):
     pass
 
+
+#CLASS________________________________________________________
+
+
 class CheckScreen(Screen):
+
+    #METHOD________________________________________________
+
+
     def cam_off(self):
+        """Function for turning camera off
+        """
         self.remove_widget(self.camera_widget)
-        self.camera_widget.remove_camera = True
+        self.camera_widget.remove_camera = True # attribute from camera widget class; stop looping process on bg when True
         self.camera_widget.camera.remove_from_cache()
-        self.camera_widget.camera.play = False
+        self.camera_widget.camera.play = False # stop camera from playing
         del self.camera_widget.camera._camera
         del self.camera_widget
-        self.cam_is_on = False
+        self.cam_is_on = False  # status indicator
 
+
+    #METHOD____________________________________________
+        
 
     def cam_on(self):
+        """Func for turning camera on
+        """
+
+        # reference file system variables for shortening
         mc = fs.sheets[fs.open_index].answer_key.mc
         tf = fs.sheets[fs.open_index].answer_key.tf
         idtf = fs.sheets[fs.open_index].answer_key.idtf
-        mc_answers = [x.answer_key for x in mc.get_items()]
-        tf_answers = [x.answer_key for x in tf.get_items()]
+
+        # renames 'None' string to literal None object
+        mc_answers = [x.answer_key if x.answer_key != 'None' else None for x in mc.get_items()]
+        tf_answers = [x.answer_key if x.answer_key != 'None' else None for x in tf.get_items()]
         idtf_answers = [x.answer_key for x in idtf.get_items()]
+
+        # debugging
         print(mc,tf,idtf)
-        self.camera_widget = CameraWidget()
-        """self.camera_widget = CameraWidget(mcq_correct=mc_answers, 
+        
+        #self.camera_widget = CameraWidget() # out
+        # pass answer keys to camera widget as ground truth later.
+        self.camera_widget = CameraWidget(mcq_correct=mc_answers, 
                                           tf_correct=tf_answers,
-                                          idtf_correct=idtf_answers)"""
+                                          idtf_correct=idtf_answers)
         self.add_widget(self.camera_widget)
-    
+
+        # status indicator
         self.cam_is_on = True
 
 
+    #METHOD________________________________________________
+
     def switch_cam(self,*args,**kwargs):
+        """Switching cams based on status indicator
+        """
         if self.cam_is_on == False:
             self.cam_on()
         else:
             self.cam_off()
-            
-            
+    
 
+    #INIT______________________________________________________
+            
     def __init__(self,**kwargs):
         super(CheckScreen, self).__init__(**kwargs)
-        self.cam_is_on = False
+        self.cam_is_on = False # initialize status indicator
 
+
+#CLASS_________________________________________________________
+        
 
 class AnswerSheetScreen(Screen):
+    """Screen class for managing answer sheet functionalities.
+
+    Attributes:
+        None
+
+    Methods:
+        apply_count_for_type(key_type): Applies the count for a specific key type (e.g., mc, tf, idtf).
+        apply_count(): Applies the count for all key types (mc, tf, idtf).
+        show_text_field(active, checkbox_type): Enables or disables text fields based on checkbox state.
+    """
+
+    #METHOD_____________________________________________________-
+
+
     def apply_count_for_type(self, key_type):
+        """Applies the count for a specific key type.
+
+        Args:
+            key_type (str): The type of key (mc, tf, idtf).
+
+        Returns:
+            None
+        """
+         #file system obj; get sheet based on opened index (openeded sheet on gui). then get answer keys
         answer_key = fs.sheets[fs.open_index].answer_key
-        textfield = None
-        count = 0
-        if key_type=='mc':
+        textfield = None # init
+        count = 0 # init
+
+        # set variables based on key type
+        if key_type == 'mc':
             answer_key = answer_key.mc
             textfield = self.ids.mcq_textfield
-        elif key_type =='tf':
+        elif key_type == 'tf':
             answer_key = answer_key.tf
             textfield = self.ids.tf_textfield
-        elif key_type=='idtf':
+        elif key_type == 'idtf':
             answer_key = answer_key.idtf
             textfield = self.ids.ident_textfield
 
+        # if textfield is disabled. Assume 0 count
         if textfield.disabled == True or textfield.text == '':
             count = 0
         else:
             count = int(textfield.text)
+
+        # Debugging
         print(textfield.disabled)
         print(f'{key_type} item count: {count}')
-        print('showing',answer_key.show_items)
-        answer_key.set_items(count)
+        print('showing', answer_key.show_items)
+
+        answer_key.set_items(count) # setting items using method from FileSystem
         toast("Sheet Updated.")
-    
+
+
+    #METHOD__________________________________________________
+        
+
     def apply_count(self):
+        """Applies the count for all key types (mc, tf, idtf).
+
+        Args:
+            None
+
+        Returns:
+            None
+        """
         self.apply_count_for_type('mc')
         self.apply_count_for_type('tf')
         self.apply_count_for_type('idtf')
-    
+
+
+    #METHOD_____________________________________________________
+
+
     def show_text_field(self, active, checkbox_type):
-    # Enable/disable text fields based on checkbox state
+        """Enables or disables text fields based on checkbox state.
+
+        Args:
+            active (bool): Flag indicating whether the checkbox is active or not.
+            checkbox_type (str): The type of checkbox ('mcq', 'tf_textfield', 'ident').
+
+        Returns:
+            None
+        """
         if checkbox_type == 'mcq':
             self.manager.get_screen('answer_sheet').ids.mcq_textfield.disabled = not active
         elif checkbox_type == 'tf_textfield':
@@ -1001,15 +1075,37 @@ class AnswerSheetScreen(Screen):
             self.manager.get_screen('answer_sheet').ids.ident_textfield.disabled = not active
 
 
+#CLASS____________________________________________
+            
 class MCScreen(Screen):
     pass
 
+#_________________________________________________
+
+
 def autosave():
-    fs.save()
-    autosave_sched()
+    """Autosaves changes on filesystem into permanent local storage.
+
+    TODO: Prevent data corruption while saving
+
+    """
+    
+    fs.save() # saves filesystem
+    autosave_sched() # restart when done
+
+
+#_______________________________________________
+
 
 def autosave_sched():
-    Clock.schedule_once(lambda x:threading.Thread(target=lambda: autosave()).start(),0.01) 
+    """Function for scheduler on thread.
+    Used to retrigger saving only after previous saving is done.
+    """
+    Clock.schedule_once(lambda x:threading.Thread(target=lambda: autosave()).start(),0.01) # using kivy scheduler; do thread.
+
+
+#_________________________________________________
+    
 
 class App(MDApp):
     def build(self):
@@ -1018,41 +1114,55 @@ class App(MDApp):
         self.screen = Builder.load_string(KV)
         return self.screen
     
+    #________________________________________________
+
+
     def on_start(self):
-        # Run a function after the screen has been loaded
+        """on startup initiializations
+        """
         home_screen = self.root.get_screen('home')
         home_screen.add_item_to_list()
         autosave_sched()
         from kivy.base import EventLoop
         EventLoop.window.bind(on_keyboard=self.hook_keyboard)
+
+    #_____________________________________________________
     
     def screen_manager_func(self):
-        dummy = self.root.get_screen('home')
-        if dummy.manager.current == 'home':
-            self.stop()
+        """
+        Screen manager function for managing Back button event or esc keyboard event.
+        """
+        dummy = self.root.get_screen('home') # just for obvious accessing of manager attribute
+        if dummy.manager.current == 'home': # on first screen
+            self.stop() # stop app
         elif dummy.manager.current == 'name':
-            dummy.manager.current = 'home'
-        elif dummy.manager.current =='check':
+            dummy.manager.current = 'home' # go back to home
+        elif dummy.manager.current =='check': # CHecking/Scanning of sheet
             try:
-                if self.root.get_screen('check').cam_is_on == True:
+                if self.root.get_screen('check').cam_is_on == True:  # turn off camera when onn
                     self.root.get_screen('check').cam_off()
-                else:
+                else: # if camera is already off; go back screen
                     dummy.manager.current = 'name'
             except Exception as e:
                 print(e)
                 pass
             
-        else:
-            dummy.manager.current = 'name'
-            
+        else: # othere else screens unlisted: go back to name
+            dummy.manager.current = 'name' 
+    
+    #_________________________________________________________
 
     def hook_keyboard(self, window, key, *largs):
+        """Add keyboard event for back or esc
+        """
         if key == 27:
-            # do what you want, return True for stopping the propagation
             self.screen_manager_func()
             return True 
+        
+    #__________________________________________________________
 
     def update_label(self, instance):
+        """?..."""
         text_input = instance.text
         display_label = self.root.get_screen('name').ids.display_label
         current_date = datetime.now().strftime('%Y-%m-%d')
@@ -1062,7 +1172,11 @@ class App(MDApp):
         save_button = self.root.get_screen('name').ids.save_button
         self.root.get_screen('name').remove_widget(save_button.parent)
 
+    #____________________________________________________________
+
     def save_and_display_text(self):
+        """?...
+        """
         text_input = self.root.get_screen('name').ids.text_field.text
         self.update_label(self.root.get_screen('name').ids.text_field)
 
@@ -1075,4 +1189,11 @@ class App(MDApp):
         self.root.get_screen('name').remove_widget(save_button.parent)
 
 
-App().run()
+#START OF SCRIPT___________________________________________________
+        
+fs = FileSystem() # initialize filesystem
+# load filesystem previous data from permanent local storage;
+# comment out to not use previous data (warning; overwrites with empty new data because of autosave on app run)
+fs.load() 
+
+App().run() # RUN APP; init

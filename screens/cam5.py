@@ -18,7 +18,7 @@ from kivy.uix.boxlayout import BoxLayout
 from kivy.graphics import Color, Rectangle
 db = Debugger()
 db.run_debug = False
-sheet.omr_functions.db.run_debug=True
+sheet.omr_functions.db.run_debug=False
 
 db.start_time()
 
@@ -208,10 +208,10 @@ class CameraWidget(BoxLayout):
             self.cs.mcq.correct = reorder_by_interval(self.mcq_correct, 25)
             self.cs.tfq.correct = reorder_by_interval(self.tf_correct,25)
             self.cs.idq.correct = reorder_by_interval(self.idtf_correct,1)
-            #print("CORRECTNESS")
-            #print(self.cs.mcq.correct)
-            #print(self.cs.idq.correct)
-            #print(self.cs.tfq.correct)
+            print("CORRECTNESS")
+            print(self.cs.mcq.correct)
+            print(self.cs.idq.correct)
+            print(self.cs.tfq.correct)
             self.cs.get_boxes()
             
             #__________________________________________________________
@@ -271,97 +271,41 @@ class CameraWidget(BoxLayout):
                                     print("GETTTING BUBBBLES")
                                     obj.get_bubbles()
                                     print("DONE GETTING BUBBLES")
-                                    #Fcoucounting = obj.bubbles[0].count
-                                    #print('DONE GETTING BUBBLES',counting)
-                                    #nums = [obj.mcq.num_items*4, obj.tfq.num_items*2, obj.idq.num_items]
-                                    #print(0)
-                                    #print(obj.bubbles[0].test_type)
-                                    def type_mc(obj):
-                                        try:
-                                            return obj.bubbles[0].count == len(self.mcq_correct)*4
-                                        except Exception as e:
-                                            print("EXCEPTION",e)
-                                            return False
-                                    
-                                    def type_tf(obj):
-                                        try:
-                                            return obj.bubbles[0].count == len(self.tf_correct)*2
-                                        except Exception as e:
-                                            print("EXCEPTION",e)
-                                            return False
-                                    
-                                    def type_id(obj):
-                                        try:
-                                            return obj.bubbles[0].count == len(self.idtf_correct)
-                                        except Exception as e:
-                                            print("EXCEPTION",e)
-                                            return False
-                                    #print('count',obj.bubbles[0].count)
-                                
-                                    if any([func(obj) for func in [type_mc, type_tf, type_id]]) == False:
-                                        print(2)
-                                        within_3 = False
-                                        try:
-                                            counting = obj.bubbles[0].count
-                                        except Exception as e:
-                                            counting = 0
-        
-                                        if counting in [x for x in range(3)]:
-                                            obj.get_bubbles(redo=True)
-                                            try:
-                                                counting = obj.bubbles[0].count
-                                            except Exception as e:
-                                                counting = 0
-                                            within_3 = True
-                                        print(3)
-                                        if any([func(obj) for func in [type_mc, type_tf, type_id]]) == False:
-                                            if within_3:
-                                                obj.get_bubbles(use_rect=True, redo=True)
-                                            else:
-                                                obj.get_bubbles(use_rect=True)
-                                            try:
-                                                counting = obj.bubbles[0].count
-                                            except Exception as e:
-                                                counting = 0
-                                        print(4)
-                    
-                                    if any([func(obj) for func in [type_mc, type_tf, type_id]]):
+                                    counting = obj.bubbles[0].count
+                                    print('DONE GETTING BUBBLES',counting)
+                                    nums = [obj.mcq.num_items*4, obj.tfq.num_items*2, obj.idq.num_items]
+                                    if counting in nums:
+                                        obj.get_bubbles(redo=True)
+                                        counting = obj.bubbles[0].count
+                                    if counting in nums:
                                         #if counting in [100*4, 10*2, 10*1, 45*4, 30*2, 1*5]:
                                         #vibrator.vibrate(100)
                                          # the argument is in milliseconds
-                                        try:
-                                            obj.get_choices()
-                                            obj.get_scores()
-                                            AP.vibrate(50)
-                                            score = obj.bubbles[0].final_score
-                                            test_type = obj.bubbles[0].test_type
-                                            counting = obj.bubbles[0].count
-                                            self.label.text = '\n'.join([str(counting), 'SCORE:'+str(score),'TYPE:'+str(test_type)])
-                                            self.cs_points = []
-                                            self.cs_objs = []
-                                            
-                                            
-                                            done=True
-                                            break
-                                        except Exception as e:
-                                            print(e)
-                                            print('CONTINUING')
-                                    
+    
+                                        obj.get_choices()
+                                        obj.get_scores()
+                                        AP.vibrate(50)
+                                        score = obj.bubbles[0].final_score
+                                        test_type = obj.bubbles[0].test_type
+                                        self.label.text = str(counting)
+                                        self.label.text = '\n'.join([str(counting), 'SCORE:'+str(score),'TYPE:'+str(test_type)])
+                                        self.cs_points = []
+                                        self.cs_objs = []
+                                        
+                                        
+                                        done=True
+                                        break
 
-                                    counts.append(obj.bubbles[0].count)
+                                    counts.append(counting)
                                 print("COUNTING ALL",counts)
                                 if done == False:
-                                    try:
-                                        self.label.text = f'Detected {obj.bubbles[0].count} bubbles{" but valid resutls are not found" if within_3 else ""}.\n(a) Please  capture on a farther distance\nand/or parallel rotation.\n(b) Please recheck if generated  answer sheet and captured paper is correct.'
-                                    except Exception as e:
-                                        print('EXCEPTion',e)
-                                    """#if num in [100*4, 10*2, 10*1, 45*4, 30*2, 1*5]:
+                                    #if num in [100*4, 10*2, 10*1, 45*4, 30*2, 1*5]:
                                     self.label.text = str(max(counts))
                                     #vibrator.vibrate(100)
                                     #AP.vibrate(50)  # the argument is in milliseconds
                                     self.cs_points = []
                                     self.cs_objs = []
-                                    print(max(counts))"""
+                                    print(max(counts))
                                     
                                 done=False
                             else:
@@ -373,9 +317,8 @@ class CameraWidget(BoxLayout):
                     """self.cs.get_bubbles()
                     self.label.text = str(self.cs.bubbles[0].count)"""
                     #___________________________________________________
-        except TabError as e:
+        except AttributeError as e:
             print(db.p('ERRROR'+str(e),rgb=[255,0,0],force_show=True))
-            cv2.drawContours(frame_data, [], -1, (0, 255, 0), 3)
         self.show_frame(frame_data)
     
         
