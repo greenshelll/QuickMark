@@ -184,7 +184,7 @@ CustomScreenManager:
         pos_hint: {'center_x': 0.5}
         MDTopAppBar:
             title: "QuickMark"
-            left_action_items: [['chevron-left', lambda x: app.screen_manager_func()]]
+            left_action_items: [['close-box', lambda x: app.screen_manager_func()]]
             right_action_items: [["plus-circle", lambda x: print(setattr(root.manager, 'current', 'name'),root.add_new_sheet(),'hello world')]]
             elevation: 0
         BoxLayout:
@@ -201,139 +201,41 @@ CustomScreenManager:
             size_hint: (0.95,None)
 
             MDLabel:
-                text: "Home > Sheet > "
+                text: "Home > "
                 font_size: dp(10)
                 pos_hint: {'center_x':0}
-        
-        BoxLayout:
-            canvas.before:
-                Color:
-                    rgba: 1, 1, 1, 1  # Set the background color here
-                Rectangle:
-                    pos: self.pos
-                    size: root.size[0], self.size[1]
-            size_hint: (None,None)
-            orientation: 'vertical'
-            height: dp(100)
-            padding: (20,20)
-            size_hint: (0.95,None)
                 
+
+   
+
     
-            BoxLayout:
-                size_hint: 1,None
-                padding: (25,25)
-                spacing: dp(10)
-                orientation: 'horizontal'
-                MDTextField:
-                    id: text_field
-                    mode: "fill"
-                    multiline: False
-                    size_hint_y: None
-                    size_hint_x: None
-                    height: dp(20)
-                    width: "250dp"
-                    pos_hint: {"center_y":0.5, "center_x": .5}
-                    hint_text: "Sheet Name"
-                    on_text_validate: root.rename()
-                    on_text: root.capitalize(*args)
-            
-                MDIconButton:
-                    id: save_button
-                    icon: 'square-edit-outline'
-                    pos_hint:{"center_y":.5}
-                    on_release: root.rename()
-                    elevation: 0
-
-            MDLabel:
-                text: 'Date Created: YYYY-MM-DD'
-                color: (0.5,0.5,0.5,1)
-                pos_hint: {'center_x':0.5}
-                font_size: dp(10)
-        BoxLayout:
-            id: box_label
-            canvas.before:
-                Color:
-                    rgba: 0.95,0.95,0.95,1 # Set the background color here
-                Rectangle:
-                    pos: self.pos
-                    size: root.size[0], dp(10)
-            size_hint: (None,None)
+        MDBoxLayout:
+            size_hint: 1,None
+            padding: (25,25)
+            pos_hint: {"top":0.93,'center_x': 0.5}
+            spacing: dp(10)
             orientation: 'horizontal'
+            MDTextField:
+                id: text_field
+                mode: "rectangle"
+                size_hint_x: None
+                width: "200dp"
+                pos_hint: {"top":.879, "center_x": .5}
+                hint_text: "Name"
+                on_text_validate: root.rename()
+                on_text: root.capitalize(*args)
             
-            size_hint: (1,None)
-            height: dp(10)
+            MDRaisedButton:
+                id: save_button
+                text: "Rename"
+                pos_hint:{"top":.5, "center_x": .5}
+                on_release: root.rename()
+                elevation: 0
 
-        ScrollView:
-            id: scroll_view
-            size_hint: (1, 1)
-
-            MDList:
-                id: saved_list
-                size_hint_y: None
-                height: self.minimum_height
-                md_bg_color: (1,1,1,1)
-                padding: 0  # Set padding to 0
-                spacing: 0 
-                
-                TwoLineAvatarIconListItem:
-                    text: 'Check Papers'
-                    secondary_text: 'Review and record student marks.'
-                    secondary_font_style: 'Caption'
-                    on_release: root.manager.current = 'onecheck'
-                    IconLeftWidgetWithoutTouch:
-                        icon: "paperclip-check"
-                    IconRightWidgetWithoutTouch:
-                        icon: "chevron-right"
-
-                TwoLineAvatarIconListItem:
-                    text: 'Analysis'
-                    secondary_text: 'Conduct item analysis.'
-                    secondary_font_style: 'Caption'
-                    on_release: root.manager.current = 'analysis'
-                    IconLeftWidgetWithoutTouch:
-                        icon: "google-analytics"
-                    IconRightWidgetWithoutTouch:
-                        icon: "chevron-right"
-
-                TwoLineAvatarIconListItem:
-                    text: 'Answer Sheet'
-                   
-                    secondary_text: 'View and edit answer sheet.'
-                    secondary_font_style: 'Caption'
-                    on_release: root.manager.current = root.prepare_answer_sheet(); root.manager.current = 'answer_sheet'
-                    IconLeftWidgetWithoutTouch:
-                        icon: "view-dashboard-edit-outline"
-                TwoLineAvatarIconListItem:
-                    text: 'Answer Key'
-                    secondary_text: 'View or change answer keys.'
-                    bg_color: 0.95,0.95,0.95,0.95
-                    secondary_font_style: 'Caption'
-                    IconLeftWidgetWithoutTouch:
-                        icon: "key-outline"
-                    IconRightWidgetWithoutTouch:
-                        icon: "chevron-right"
-                OneLineAvatarIconListItem:
-                    text: 'Multiple Choice'
-                    IconRightWidgetWithoutTouch:
-                        icon: "chevron-right"
-                OneLineAvatarIconListItem:
-                    text: 'True or False'
-                    IconRightWidgetWithoutTouch:
-                        icon: "chevron-right"
-                OneLineAvatarIconListItem:
-                    id: idtf_key
-                    text: 'Identification'
-                
-                    on_release: lambda x: print("HELLO")
-                    IconRightWidgetWithoutTouch:
-                        id: idtf_icon
-                        icon: "chevron-right"
-                    
-                
-                
-                    
-                    
-
+        MDSeparator:
+            pos_hint: {"top": .75}
+            size_hint_y: None
+            height: dp(1)
 
         MDLabel:
             text:"Appraisal"
@@ -342,6 +244,7 @@ CustomScreenManager:
         
         MDRectangleFlatButton:
             text: "CHECK PAPERS" 
+            pos_hint: {"top":.68, "center_x": .5}
             on_release: root.manager.current = 'onecheck'
             _min_width: 200
             
@@ -403,10 +306,12 @@ CustomScreenManager:
 <AnswerSheetScreen>:
     name: 'answer_sheet'
     orientation: 'vertical'
+
     MDTopAppBar:
         title: "QuickMark"
         elevation: 0
         pos_hint: {"top": 1}
+
     ScrollView:
         do_scroll_y: False 
         pos_hint: {"top":.9, "center_x": .5}
@@ -917,8 +822,6 @@ class TFInstanceBox(BoxLayout):
 
   
 class HomeScreen(Screen):
-    def show_key_button(self):
-        pass
     def add_new_sheet(self):
         print("ADDING NEW SHEET")
         fs.add_sheet()

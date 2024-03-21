@@ -1,7 +1,7 @@
 import pickle
 from datetime import datetime
 import os
-
+import numpy as np
 
 class FileSystem:
     """
@@ -16,6 +16,8 @@ class FileSystem:
         self.sheets = []
         self.local_file_directory = "assets/localdb.pkl"
         self.open_index = 0
+        self.filemanager_last_dir = None
+        
         
     def add_sheet(self):
         """
@@ -246,8 +248,105 @@ class CheckSession:
         self.date_created = date_created
         self.name = name
         self.fs_obj = fs_obj
-        self.user_answer = []
-        self.user_rating = []
+        self.mc_answer = []
+        self.tf_answer = []
+        self.idtf_answer = []
+        self._mc_score = None
+        self._tf_score = None
+        self._idtf_score = None
+        self.mc_eval_array = []
+        self.tf_eval_array = []
+        self.idtf_eval_array = []
+        self.check_obj = check_obj
+
+    def count_tf_answer(self):
+        array = np.array(self.tf_answer)
+        return sum(array=='T'), sum(array=='F')
+    
+    def count_mc_answer(self):
+        array = np.array(self.mc_answer)
+        temp_result = []
+        for char in ['A','B','C','D']:
+            temp_result.append(sum(array==char))
+        return tuple(temp_result)
+    
+    def count_mc_stat(self):
+        class mc:
+            class stat:
+                def __init__(self):
+                    self.true = 0
+                    self.false = 0
+            def __init__(self):
+                self.a = mc.stat()
+                self.b = mc.stat()
+                self.c = mc.stat()
+                self.d = mc.stat()
+
+        mc_stat = mc()
+        for answer, eval in zip(self.mc_answer, self.mc_eval_array):
+            if answer == 'A':
+                if eval == 1:
+                    mc_stat.a.true += 1
+                else:
+                    mc_stat.a.false += 1
+            if answer == 'B':
+                if eval == 1:
+                    mc_stat.b.true += 1
+                else:
+                    mc_stat.b.false += 1
+            if answer == 'C':
+                if eval == 1:
+                    mc_stat.c.true += 1
+                else:
+                    mc_stat.c.false += 1
+            if answer == 'D':
+                if eval == 1:
+                    mc_stat.d.true += 1
+                else:
+                    mc_stat.d.false += 1
+
+    def count_tf_stat(self):
+        class tf:
+            class stat:
+                def __init__(self):
+                    self.true = 0
+                    self.false = 0
+            def __init__(self):
+                self.t = tf.stat()
+                self.f = tf.stat()
+
+        tf_stat = tf()
+        for answer, eval in zip(self.tf_answer, self.tf_eval_array):
+            if answer == 'T':
+                if eval == 1:
+                    tf_stat.t.true += 1
+                else:
+                    tf_stat.t.false += 1
+            if answer == 'F':
+                if eval == 1:
+                    tf_stat.f.true += 1
+                else:
+                    tf_stat.f.false += 1
+                    
+    def get_mc_score(self):
+        self._mc_score = sum(self.mc_eval_array)
+        return self._mc_score
+    
+    def get_tf_score(self):
+        self._tf_score = sum(self.tf_eval_array)
+        return self._tf_score
+    
+    def _reset_order(self,reordered_lst, interval):
+        original_length = len(reordered_lst)
+        original_order = [None] * original_length
+
+        for i in range(original_length):
+            original_index = (i % interval) * (original_length // interval) + (i // interval)
+            original_order[original_index] = reordered_lst[i]
+
+        return original_order
+
+    
 
 
 
@@ -316,6 +415,7 @@ class Sheets:
         self.name = ''
         self.answer_key = AnswerKeys(fs_obj=fs_obj)
         self.check_sheets = CheckSheets(fs_obj=fs_obj)
+        self.check_sheet = self.check_sheets
         self.fs_obj = fs_obj
 
 fs = FileSystem()

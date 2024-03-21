@@ -265,7 +265,7 @@ def xywh_to_points(xywh):
     db.p('xywh translated to points')
     return [(x1, y1), (x2, y2), (x3, y3), (x4, y4)]
 from datetime import datetime
-def get_bubbles(BubbleGetter_obj, BoxGetter_obj, CaptureSheet_obj, boxes_num, redo=False, use_rect=False,param_value=11):
+def get_bubbles(BubbleGetter_obj, BoxGetter_obj, CaptureSheet_obj, boxes_num, redo=False, use_rect=False,param_value=13):
     """
     The function `get_bubbles` processes an image to detect and extract bubble contours based on certain
     criteria.
@@ -359,7 +359,7 @@ def get_bubbles(BubbleGetter_obj, BoxGetter_obj, CaptureSheet_obj, boxes_num, re
             ###*print(benchmark_area)
             approx = cv2.approxPolyDP(contour, epsilon, True)
             ###*print(np.array(approx[0]))
-            #cv2.drawContours(adaptive_thresh, [approx], -1, (0, 255, 0), 5)
+            cv2.drawContours(adaptive_thresh, [approx], -1, (0, 255, 0), 5)
             
             ##*print('benchmaerk min',benchmark_area-(benchmark_area*0.7))
             ##*print('benchamerk max',benchmark_area*200)
@@ -549,15 +549,6 @@ def get_scores(BubbleGetter_obj, BoxGetter_obj, CaptureSheet_obj, boxes_num):
             if answer in correct:
                 BubbleGetter_obj.eval_array.append(1)
         BubbleGetter_obj.final_score = sum(BubbleGetter_obj.eval_array)
-        reset_eval_array = CaptureSheet_obj.check_session._reset_order(BubbleGetter_obj.eval_array,25)
-        reset_user_answer = CaptureSheet_obj.check_session._reset_order(BubbleGetter_obj.answers)
-        if BubbleGetter_obj.test_type == 'MULTIPLE CHOICE':
-            CaptureSheet_obj.check_session.mc_answer = reset_user_answer
-            CaptureSheet_obj.check_session.mc_eval_array = reset_eval_array
-        else:
-            CaptureSheet_obj.check_session.tf_answer = reset_user_answer
-            CaptureSheet_obj.check_session.tf_eval_array = reset_eval_array
-        
         
         ##*print("SCORE:",score)
     except Exception as e:

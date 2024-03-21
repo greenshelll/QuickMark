@@ -20,13 +20,35 @@ class SearchSystem:
         self._search_result = None 
         self.process()
 
+    def bigrams(self, word):
+        return []
+        # Convert the word to lowercase to ensure consistency
+        word = word.lower()
+        
+        # Initialize an empty list to store the bigrams
+        bigrams = []
+        
+        # Iterate over the characters in the word to form bigrams
+        for i in range(len(word) - 1):
+            # Get the current character and the next character
+            current_char = word[i]
+            next_char = word[i + 1]
+            
+            # Form the bigram and add it to the list
+            bigram = current_char + next_char
+            bigrams.append(bigram)
+        
+        # Return the list of bigrams
+        return bigrams
+
     def process(self):
         self._generate_tags()
         return self
     
     def search(self, string, print_result=False):
         # Split the input string into individual patterns
-        splitted_pattern = self._split(string)
+        print(self.bigrams(string))
+        splitted_pattern = self._split(string) + self.bigrams(string)
         print("SPLITTED PATTERN",splitted_pattern)
         temp = []
         for pattern in splitted_pattern:
@@ -85,13 +107,14 @@ class SearchSystem:
         """Splits strings linked to content into unique keys and each key corresponds to a list of contents it is linked.
         """
         str_keys = ' '.join(self.keys).lower() # cmbine list of strings into single string
-        unique_keys = np.unique(self._split(str_keys)) # split strings using non alphanum as separator and get unique strings
+        print(self.bigrams(str_keys))
+        unique_keys = np.unique(self._split(str_keys) + self.bigrams(str_keys)) # split strings using non alphanum as separator and get unique strings
         print('UNIQUE KEYS',unique_keys)
         self.unique_keys = unique_keys 
 
         dict_tags = {key:[] for key in unique_keys} # initialize unique keys
         for key,content in zip(self.keys, self.content_repr): 
-            split_keys = self._split(key.lower())
+            split_keys = self._split(key.lower())+self.bigrams(key.lower())
             for key in split_keys:
                 dict_tags[key].append(content) # append content to list with designated unique key
         print('DICT TAGS',dict_tags)
@@ -169,12 +192,15 @@ if __name__ == "__main__":
     # samples
 
     keys = ['apple cidar mango', 'apple cidar blue', 'green_mango', 'triple-W mango']
-    keys = keys + keys # duplicates string keys
+    keys = keys + keys # duplicates string keys and combine
     content = ['object1','object2','object3','object4','object5', 'object6', 'object7', 'object8']
 
     ss = SearchSystem(keys, content)
     print(ss.search('blue apple'))
     # result->['object2', 'object6', 'object1', 'object5', 'object4', 'object8', 'object3', 'object7']
+
+    print(ss.search('mango'))
+    # result-> ['object1', 'object3', 'object4', 'object5', 'object7', 'object8', 'object2', 'object6']
 
 
     ss = SearchSystem(

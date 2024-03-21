@@ -85,7 +85,7 @@ class _BubbleGetter:
         
         
 
-    def retrieve(self, BoxGetter_obj, CaptureSheet_obj, box_index,redo,use_rect,**kwargs):
+    def retrieve(self, BoxGetter_obj, CaptureSheet_obj, box_index,redo,use_rect,param_value,**kwargs):
         """omr.get_choices(BubbleGetter_obj=self,
                         BoxGetter_obj=BoxGetter_obj,
                         CaptureSheet_obj=CaptureSheet_obj, 
@@ -96,19 +96,25 @@ class _BubbleGetter:
                                boxes_num=box_index,
                                 BoxGetter_obj=BoxGetter_obj,
                                 redo=redo,use_rect=use_rect,
+                                param_value=param_value,
                                 **kwargs)
     def get_choices_by_num(self, BoxGetter_obj, CaptureSheet_obj, box_index, **kwargs):
         omr_functions.get_choices_by_num(self, BoxGetter_obj, CaptureSheet_obj, box_index, **kwargs)
 
     def get_scores(self, BoxGetter_obj, CaptureSheet_obj, box_index, **kwargs):
         omr_functions.get_scores(self, BoxGetter_obj, CaptureSheet_obj, box_index, **kwargs)
-
+import os
 class CaptureSheet:
-    def __init__(self, mcq_items, tfq_items, idq_items, img, boxes_num,get_result_img=False, show_plots=False, on_android = True):
+    def __init__(self, mcq_items, tfq_items, idq_items, img, boxes_num,get_result_img=False, show_plots=False, on_android = True, storage=None, check_session=None):
         self.get_result_img = get_result_img
         self.show_plots = show_plots
         self.on_android = on_android
         self.boxes_num = boxes_num
+        self.check_session = check_session
+        if storage is None:
+            self.storage = os.getcwd()
+        else:
+            self.storage = storage
         # create questions object
         self.count = 0
         self.mcq = _TestType.MultipleChoice(mcq_items)
@@ -163,11 +169,12 @@ class CaptureSheet:
                             boxes_num=self.boxes_num,**kwargs)
         return self
         
-    def get_bubbles(self,redo=False,use_rect=False):
+    def get_bubbles(self,redo=False,use_rect=False, mod_value=11):
         for crop_i in range(self.boxes_num):
             self.bubbles[crop_i].retrieve(BoxGetter_obj=self.boxes,
                                           CaptureSheet_obj=self,
-                                          box_index=crop_i,redo=redo,use_rect=use_rect)
+                                          box_index=crop_i,redo=redo,use_rect=use_rect,
+                                          param_value=mod_value)
             #self.bubbles[crop_i].img = self.boxes[crop_i].transformed_imgs
         return self
     

@@ -64,7 +64,7 @@ def reorder_by_interval(lst, interval):
 
 
 class CameraWidget(BoxLayout):
-    def __init__(self, mcq_correct = None, tf_correct= None, idtf_correct = None, **kwargs):
+    def __init__(self, mcq_correct = None, tf_correct= None, idtf_correct = None, primary_storage=None, check_session=None,checkscreen=None,**kwargs):
         super(CameraWidget, self).__init__(**kwargs)
         
         # Create a camera widget
@@ -76,8 +76,11 @@ class CameraWidget(BoxLayout):
         #self.camera.loaded
         # Bind the on_tex event to the update_frame method
         #self.camera.bind(texture=self.update_frame)
+        self.check_session = check_session
+        self.check_screen = checkscreen
         self.cs_points = []
         self.cs_objs = []
+        self.primary_storage = primary_storage
         # Add camera widget to layout
         self.dummy_counter = 0
         #self.add_widget(self.camera)
@@ -204,7 +207,7 @@ class CameraWidget(BoxLayout):
             
             if frame_data is None:
                 return None
-            self.cs = CaptureSheet(len(self.mcq_correct), len(self.tf_correct),len(self.idtf_correct),frame_data,1,False,False)
+            self.cs = CaptureSheet(len(self.mcq_correct), len(self.tf_correct),len(self.idtf_correct),frame_data,1,False,False,check_session=self.check_session)
             self.cs.mcq.correct = reorder_by_interval(self.mcq_correct, 25)
             self.cs.tfq.correct = reorder_by_interval(self.tf_correct,25)
             self.cs.idq.correct = reorder_by_interval(self.idtf_correct,1)
@@ -278,25 +281,25 @@ class CameraWidget(BoxLayout):
                                     #print(obj.bubbles[0].test_type)
                                     def type_mc(obj):
                                         try:
-                                            return obj.bubbles[0].count == len(self.mcq_correct)*4
+                                            return obj.bubbles[0].count == len(self.mcq_correct)*4 if len(self.mcq_correct) != 0 else False
                                         except Exception as e:
                                             print("EXCEPTION",e)
                                             return False
                                     
                                     def type_tf(obj):
                                         try:
-                                            return obj.bubbles[0].count == len(self.tf_correct)*2
+                                            return obj.bubbles[0].count == len(self.tf_correct)*2 if len(self.tf_correct) != 0 else False
                                         except Exception as e:
                                             print("EXCEPTION",e)
                                             return False
                                     
                                     def type_id(obj):
                                         try:
-                                            return obj.bubbles[0].count == len(self.idtf_correct)
+                                            return obj.bubbles[0].count == len(self.idtf_correct) if len(self.idtf_correct) != 0 else False
                                         except Exception as e:
                                             print("EXCEPTION",e)
                                             return False
-                                    #print('count',obj.bubbles[0].count)
+                                        #print('count',obj.bubbles[0].count)
                                 
                                     if any([func(obj) for func in [type_mc, type_tf, type_id]]) == False:
                                         print(2)
@@ -330,13 +333,19 @@ class CameraWidget(BoxLayout):
                                         #vibrator.vibrate(100)
                                          # the argument is in milliseconds
                                         try:
+                                            
                                             obj.get_choices()
                                             obj.get_scores()
                                             AP.vibrate(50)
                                             score = obj.bubbles[0].final_score
                                             test_type = obj.bubbles[0].test_type
                                             counting = obj.bubbles[0].count
+                                            test_type = obj.bubbles[0].test_type
+                                            self.check_screen.update(test_type)
+                                            self.check_session.get_mc_score() if test_type == 'MULTIPLE CHOICE' else self.check_session.get_tf_score()
+                    
                                             self.label.text = '\n'.join([str(counting), 'SCORE:'+str(score),'TYPE:'+str(test_type)])
+
                                             self.cs_points = []
                                             self.cs_objs = []
                                             
@@ -352,7 +361,7 @@ class CameraWidget(BoxLayout):
                                 print("COUNTING ALL",counts)
                                 if done == False:
                                     try:
-                                        self.label.text = f'Detected {obj.bubbles[0].count} bubbles{" but valid resutls are not found" if within_3 else ""}.\n(a) Please  capture on a farther distance\nand/or parallel rotation.\n(b) Please recheck if generated  answer sheet and captured paper is correct.'
+                                        self.label.text = f'Not Found.'
                                     except Exception as e:
                                         print('EXCEPTion',e)
                                     """#if num in [100*4, 10*2, 10*1, 45*4, 30*2, 1*5]:
