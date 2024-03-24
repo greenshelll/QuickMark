@@ -1,39 +1,81 @@
+from kivy.lang import Builder
+from kivy.uix.boxlayout import BoxLayout
+from kivymd.app import MDApp
+from kivymd.uix.button import MDRectangleFlatButton, MDIconButton
+from kivymd.uix.label import MDLabel
 
-#from utilities.ocr.function import handwrite_predict
-import cv2 as cv
-from utilities.omr_eval.capture_sheet import CaptureSheet
+KV = f'''
+Screen:
+    ScrollView:
+        id: scroll_view
+        size_hint: (1, 1)  # Changed from (1, None)
+        
+        MDList:
+            id: saved_list
+            size_hint_y: None
+            height: self.minimum_height
+            md_bg_color: (1,1,1,1)
+            padding: 0  # Set padding to 0
+            spacing: 0 
+            
+            CustomListItem:
+            CustomListItem:
+            CustomListItem:
+            CustomListItem:
+            CustomListItem:
+            CustomListItem:
+            CustomListItem:
+            CustomListItem:
+            CustomListItem:
+            CustomListItem:
+            CustomListItem:
+            CustomListItem:
+            CustomListItem:
+            CustomListItem:
+            CustomListItem:
+            CustomListItem:
+            CustomListItem:
+            CustomListItem:
+            CustomListItem:
+            CustomListItem:
+            CustomListItem:
+            CustomListItem:
+            CustomListItem:
+            CustomListItem:
+            CustomListItem:
 
-#prediction = handwrite_predict([cv.imread(r'C:\Users\USER\Documents\GitHub\QuickMark\0.png', cv.IMREAD_GRAYSCALE)])
-#print('prediction',prediction)
-
-if __name__ == "__main__":
-    from utilities.misc.util4image import remove_all_images, fit_score, stich_all_image
-    #remove_all_images()
+<CustomListItem@BoxLayout>:
+    size_hint_y: None
+    height: dp(48)  # Adjust the height as needed
     
-    stich_all_image(50,175,0, 'Examination 1')
-    print(fit_score(50,175,0))
-    # max mc =175
-    # tf = 275
-    # 
-    raise Exception("DONE")
-    # sample input
-    #cs = CaptureSheet(100,10,10,r"C:\Users\USER\Downloads\WIN_20240228_07_05_54_Pro.jpg",True,True)
-    cs = CaptureSheet(
-        mcq_items=100,
-        tfq_items=10,
+    orientation: 'horizontal'
+    spacing: '10dp'
 
-        idq_items=10,
-        img=r"C:\Users\USER\Downloads\IMG_20240311_122156.jpg",
-        boxes_num=1,
-        get_result_img=True, 
-        show_plots=True,
-        on_android=False
-    )
-    cs.get_boxes()
-    cs.get_bubbles(True)
-    cs.get_choices()
-    cs.get_scores()
-    print(cs.bubbles[0].count)
-    print(cs.bubbles[0].final_score)
-else:
-    pass
+    MDLabel:
+        text: "Custom Item"
+        halign: 'center'
+
+    MDIconButton:
+        icon: 'alpha-a'
+        size_hint_x: None
+        width: "100dp"
+    MDIconButton:
+        icon: 'alpha-b'
+        size_hint_x: None
+        width: "100dp"
+    MDIconButton:
+        icon: 'alpha-c'
+        size_hint_x: None
+        width: "100dp"
+    MDIconButton:
+        icon: 'alpha-d'
+        size_hint_x: None
+        width: "100dp"
+'''
+
+class TestApp(MDApp):
+    def build(self):
+        return Builder.load_string(KV)
+
+TestApp().run()
+

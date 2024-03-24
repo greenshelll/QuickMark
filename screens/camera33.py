@@ -64,25 +64,20 @@ def reorder_by_interval(lst, interval):
 
 
 class CameraWidget(BoxLayout):
-    def __init__(self, mcq_correct = None, tf_correct= None, idtf_correct = None, primary_storage=None, check_session=None,checkscreen=None,**kwargs):
+    def __init__(self, mcq_correct = None, tf_correct= None, idtf_correct = None, primary_storage=None,**kwargs):
         super(CameraWidget, self).__init__(**kwargs)
         
         # Create a camera widget
         #highest_resolution = cam_params.get_highest_resolution()
         #print(highest_resolution)
-
         self.camera = Camera(play=True, resolution=(1280,720), opacity=0, size_hint=(1,1))
-
         #self.camera.play = True
         #self.camera_is_on = False
         #self.camera.loaded
         # Bind the on_tex event to the update_frame method
         #self.camera.bind(texture=self.update_frame)
-        self.check_session = check_session
-        self.check_screen = checkscreen
         self.cs_points = []
         self.cs_objs = []
-
         self.primary_storage = primary_storage
         # Add camera widget to layout
         self.dummy_counter = 0
@@ -110,7 +105,7 @@ class CameraWidget(BoxLayout):
         self.remove_camera = False
         self.orientation = 'vertical'
         self.size_hint = (1,1)
-        self.pos_hint = {'center_x': 0.5, 'center_y': 0.4}
+        self.pos_hint = {'center_x': 0.5, 'center_y': 0.3}
         
 
     def start_timer(self):
@@ -210,7 +205,7 @@ class CameraWidget(BoxLayout):
             
             if frame_data is None:
                 return None
-            self.cs = CaptureSheet(len(self.mcq_correct), len(self.tf_correct),len(self.idtf_correct),frame_data,1,False,False,check_session=self.check_session)
+            self.cs = CaptureSheet(len(self.mcq_correct), len(self.tf_correct),len(self.idtf_correct),frame_data,1,False,False,storage=self.primary_storage)
             self.cs.mcq.correct = reorder_by_interval(self.mcq_correct, 25)
             self.cs.tfq.correct = reorder_by_interval(self.tf_correct,25)
             self.cs.idq.correct = reorder_by_interval(self.idtf_correct,1)
@@ -273,83 +268,78 @@ class CameraWidget(BoxLayout):
                                 print("EVALUATING")
                                 counts = []
                                 done=False
+                                counting = 0
+                                #Fcoucounting = obj.bubbles[0].count
+                                #print('DONE GETTING BUBBLES',counting)
+                                #nums = [obj.mcq.num_items*4, obj.tfq.num_items*2, obj.idq.num_items]
+                                #print(0)
+                                #print(obj.bubbles[0].test_type)
+                                def type_mc(obj):
+                                    try:
+                                        return obj.bubbles[0].count == len(self.mcq_correct)*4 if len(self.mcq_correct) != 0 else False
+                                    except Exception as e:
+                                        print("EXCEPTION",e)
+                                        return False
+                                
+                                def type_tf(obj):
+                                    try:
+                                        return obj.bubbles[0].count == len(self.tf_correct)*2 if len(self.tf_correct) != 0 else False
+                                    except Exception as e:
+                                        print("EXCEPTION",e)
+                                        return False
+                                
+                                def type_id(obj):
+                                    try:
+                                        return obj.bubbles[0].count == len(self.idtf_correct) if len(self.idtf_correct) != 0 else False
+                                    except Exception as e:
+                                        print("EXCEPTION",e)
+                                        return False
+                                
+                                def non_zeo(obj):
+                                    try:
+                                        if obj.bubbles[0].count != 0:
+                                            return True
+                                        else:
+                                            return False
+                                    except Exception as e:
+                                        print('EXCEPTION ',e)
+                                        return False
+                        
+
                                 for obj in self.cs_objs:
                                     print("GETTTING BUBBBLES")
-                                    obj.get_bubbles()
+                                    obj.get_bubbles(mod_value=15)
                                     print("DONE GETTING BUBBLES")
-                                    #Fcoucounting = obj.bubbles[0].count
-                                    #print('DONE GETTING BUBBLES',counting)
-                                    #nums = [obj.mcq.num_items*4, obj.tfq.num_items*2, obj.idq.num_items]
-                                    #print(0)
-                                    #print(obj.bubbles[0].test_type)
-                                    def type_mc(obj):
-                                        try:
-                                            return obj.bubbles[0].count == len(self.mcq_correct)*4 if len(self.mcq_correct) != 0 else False
-                                        except Exception as e:
-                                            print("EXCEPTION",e)
-                                            return False
                                     
-                                    def type_tf(obj):
-                                        try:
-                                            return obj.bubbles[0].count == len(self.tf_correct)*2 if len(self.tf_correct) != 0 else False
-                                        except Exception as e:
-                                            print("EXCEPTION",e)
-                                            return False
-                                    
-                                    def type_id(obj):
-                                        try:
-                                            return obj.bubbles[0].count == len(self.idtf_correct) if len(self.idtf_correct) != 0 else False
-                                        except Exception as e:
-                                            print("EXCEPTION",e)
-                                            return False
-                                        #print('count',obj.bubbles[0].count)
-                                
-                                    if any([func(obj) for func in [type_mc, type_tf, type_id]]) == False:
-                                        print(2)
-                                        within_3 = False
-                                        try:
-                                            counting = obj.bubbles[0].count
-                                        except Exception as e:
-                                            counting = 0
-        
-                                        if counting in [x for x in range(3)]:
-                                            obj.get_bubbles(redo=True)
-                                            try:
+                                    for iter in [15,17,19]:
+                                        print(iter)
+                                        if all([func(obj) for func in [type_mc, type_tf, type_id]]) == False:
+                                            obj.get_bubbles(use_rect=True,mod_value=iter) if iter != 15 else None # 11 is defult, used previously
+                                            print(f'default {iter} {obj.bubbles[0].count}')
+                                            if any([func(obj) for func in [type_mc, type_tf, type_id]]) == True:
                                                 counting = obj.bubbles[0].count
-                                            except Exception as e:
-                                                counting = 0
-                                            within_3 = True
-                                        print(3)
-                                        if any([func(obj) for func in [type_mc, type_tf, type_id]]) == False:
-                                            if within_3:
-                                                obj.get_bubbles(use_rect=True, redo=True)
+                                                print("HALT",counting)
+                                                break
                                             else:
-                                                obj.get_bubbles(use_rect=True)
-                                            try:
-                                                counting = obj.bubbles[0].count
-                                            except Exception as e:
-                                                counting = 0
-                                        print(4)
-                    
-                                    if any([func(obj) for func in [type_mc, type_tf, type_id]]):
-                                        #if counting in [100*4, 10*2, 10*1, 45*4, 30*2, 1*5]:
-                                        #vibrator.vibrate(100)
-                                         # the argument is in milliseconds
-                                        try:
+                                                continue
+                        
                                             
+                                        else:
+                                            break
+                                    
+                    
+                                    #if counting in [100*4, 10*2, 10*1, 45*4, 30*2, 1*5]:
+                                    #vibrator.vibrate(100)
+                                        # the argument is in milliseconds
+                                    if any([func(obj) for func in [type_mc, type_tf, type_id]]) == True:
+                                        try:
                                             obj.get_choices()
                                             obj.get_scores()
                                             AP.vibrate(50)
                                             score = obj.bubbles[0].final_score
                                             test_type = obj.bubbles[0].test_type
                                             counting = obj.bubbles[0].count
-                                            test_type = obj.bubbles[0].test_type
-                                            print('getting mc score')
-                                            self.check_session.get_mc_score() if test_type == 'MULTIPLE CHOICE' else self.check_session.get_tf_score()
-                                            print('updating score display')
-                                            self.check_screen.update(test_type)
                                             self.label.text = '\n'.join([str(counting), 'SCORE:'+str(score),'TYPE:'+str(test_type)])
-
                                             self.cs_points = []
                                             self.cs_objs = []
                                             
@@ -365,7 +355,7 @@ class CameraWidget(BoxLayout):
                                 print("COUNTING ALL",counts)
                                 if done == False:
                                     try:
-                                        self.label.text = f'Not Found.'
+                                        self.label.text = f'Detected {obj.bubbles[0].count} bubbles{" but valid resutls are not found" }.\n(a) Please  capture on a farther distance\nand/or parallel rotation.\n(b) Please recheck if generated  answer sheet and captured paper is correct.'
                                     except Exception as e:
                                         print('EXCEPTion',e)
                                     """#if num in [100*4, 10*2, 10*1, 45*4, 30*2, 1*5]:

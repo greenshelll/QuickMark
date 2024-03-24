@@ -1,6 +1,7 @@
 import pickle
 from datetime import datetime
 import os
+import math
 import numpy as np
 
 class FileSystem:
@@ -74,7 +75,7 @@ class Item:
         answer_key (str): The answer key for the item.
         fs_obj (FileSystem): The file system object associated with the item.
     """
-    def __init__(self, fs_obj, answer_key=None,**kwargs):
+    def __init__(self, fs_obj, answer_key=[],**kwargs):
         self.points = 1
         self.answer_key = answer_key
         self.fs_obj = fs_obj
@@ -261,13 +262,13 @@ class CheckSession:
 
     def count_tf_answer(self):
         array = np.array(self.tf_answer)
-        return sum(array=='T'), sum(array=='F')
+        return sum(array=='T'), np.sum(array=='F')
     
     def count_mc_answer(self):
         array = np.array(self.mc_answer)
         temp_result = []
         for char in ['A','B','C','D']:
-            temp_result.append(sum(array==char))
+            temp_result.append(np.sum(array==char))
         return tuple(temp_result)
     
     def count_mc_stat(self):
@@ -329,23 +330,34 @@ class CheckSession:
                     tf_stat.f.false += 1
                     
     def get_mc_score(self):
-        self._mc_score = sum(self.mc_eval_array)
+        self._mc_score = sum([x if x is not None else 0 for x in self.mc_eval_array])
+        print(self.mc_eval_array)
         return self._mc_score
     
     def get_tf_score(self):
-        self._tf_score = sum(self.tf_eval_array)
+        self._tf_score = sum([x if x is not None else 0 for x in self.tf_eval_array])
+        print(self._tf_score)
+        print(self.tf_eval_array)
         return self._tf_score
-    
-    def _reset_order(self,reordered_lst, interval):
-        original_length = len(reordered_lst)
-        original_order = [None] * original_length
+        
+    def _reset_order(self, reordered_lst, interval):
+        repeat_times = math.floor(len(reordered_lst)/interval)
+        result = []
+        for index in range(len(reordered_lst)):
+            temp_index = index
+            for repeat in range(0,repeat_times+1):
+                temp_index = temp_index + repeat*interval
+                result.append(temp_index)
+                if len(result) == len(reordered_lst): # stop, complete
+                    break
+            if len(result) == len(reordered_lst): #stop complete
+                break
 
-        for i in range(original_length):
-            original_index = (i % interval) * (original_length // interval) + (i // interval)
-            original_order[original_index] = reordered_lst[i]
+        
+        dic = {key:corr for key,corr in zip(result, reordered_lst)}
+        sorted_d = dict(sorted(dic.items()))
 
-        return original_order
-
+        return list(sorted_d.values())
     
 
 

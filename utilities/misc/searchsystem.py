@@ -116,7 +116,10 @@ class SearchSystem:
         for key,content in zip(self.keys, self.content_repr): 
             split_keys = self._split(key.lower())+self.bigrams(key.lower())
             for key in split_keys:
-                dict_tags[key].append(content) # append content to list with designated unique key
+                try:
+                    dict_tags[key].append(content) # append content to list with designated unique key
+                except KeyError as e:
+                    print(e)
         print('DICT TAGS',dict_tags)
         self.dict_tags = dict_tags
 

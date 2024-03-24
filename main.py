@@ -45,7 +45,7 @@ from kivymd.uix.card import MDSeparator
 from kivymd.uix.stacklayout import MDStackLayout
 from kivymd.uix.card import MDCard
 from kivymd.uix.toolbar import MDTopAppBar
-from kivymd.uix.list import MDList, TwoLineListItem, TwoLineIconListItem, TwoLineAvatarIconListItem
+from kivymd.uix.list import MDList, TwoLineListItem, TwoLineIconListItem, TwoLineAvatarIconListItem, OneLineAvatarIconListItem
 from kivy.uix.image import Image
 #kivy.uix
 from kivy.uix.boxlayout import BoxLayout
@@ -63,7 +63,151 @@ CustomScreenManager:
     AnalysisScreen:
     AnswerSheetScreen:
     OneCheckScreen:
+    NameScreenExpanded:
+    KeyScreen:
 
+<KeyScreen>:
+    name: 'keyscreen'
+    MDStackLayout:
+        md_bg_color: (0.95,0.95,0.95,1)
+        height: self.minimum_height
+        pos_hint: {'center_x': 0.5}
+        MDTopAppBar:
+            title: "QuickMark"
+            left_action_items: [['chevron-left', lambda x: app.screen_manager_func()]]
+            right_action_items: [["plus-circle", lambda x: print(setattr(root.manager, 'current', 'name'),root.add_new_sheet(),'hello world')]]
+            elevation: 0
+        BoxLayout:
+            canvas.before:
+                Color:
+                    rgba: 0.95,0.95,0.95,1 # Set the background color here
+                Rectangle:
+                    pos: self.pos
+                    size: root.size[0], self.size[1]
+            size_hint: (None,None)
+            orientation: 'horizontal'
+            height: dp(25)
+            padding: (20,10)
+            size_hint: (0.95,None)
+
+            MDLabel:
+                id: pos_nav_label
+                text: "Home > Sheet > "
+                font_size: dp(10)
+                pos_hint: {'center_x':0}
+        BoxLayout:
+            canvas.before:
+                Color:
+                    rgba: 0.5,0.5,1,1 # Set the background color here
+                Rectangle:
+                    pos: self.pos
+                    size: root.size[0], self.size[1]
+            size_hint: (None,None)
+            orientation: 'horizontal'
+            height: dp(25)
+            padding: (20,10)
+            size_hint: (0.95,None)
+
+            MDLabel:
+                id: page_num_label
+                text: "Page Number: 1 of 10"
+                font_size: dp(10)
+                halign: 'left'
+                pos_hint: {'center_x':0}
+            MDLabel:
+                id: total_items_label
+                text: "Total Items: 25"
+                halign: 'right'
+                font_size: dp(10)
+                pos_hint: {'center_x':0}
+        
+        ScrollView:
+            id: scroll_view
+            size_hint: (1, 1)  # Changed from (1, None)
+            
+            MDList:
+                id: saved_list
+                size_hint_y: None
+                height: self.minimum_height
+                md_bg_color: (1,1,1,1)
+                padding: 0  # Set padding to 0
+                spacing: 0 
+                
+                CustomListItem:
+                CustomListItem:
+                CustomListItem:
+                CustomListItem:
+                CustomListItem:
+                CustomListItem:
+                CustomListItem:
+                CustomListItem:
+                CustomListItem:
+                CustomListItem:
+                
+    MDBoxLayout:
+        orientation: 'horizontal'
+        size_hint: 1, 0.1
+        md_bg_color: (0.8,0.8,0.8,1)
+        MDIconButton:
+            id: previous
+            icon: "skip-previous"
+            line_color: 0, 0, 0, 0
+            theme_icon_color: "Custom"
+            icon_color: 'black'
+            pos_hint: {"center_x": .5, "center_y": .5}
+            on_release: root.previous()
+            size_hint: 0.35,1
+           
+        MDRectangleFlatButton:
+            id: jump
+            text: "JUMP"
+            text_color: 'black'
+            line_color: 0, 0, 0, 0
+            pos_hint: {"center_x": .5, "center_y": .5}
+            size_hint: 0.35,1
+        MDIconButton:
+            id: next
+            icon: 'skip-next'
+            theme_icon_color: "Custom"
+            icon_color: 'black'
+            on_release: root.next()
+            size_hint: 0.35,1
+
+<CustomListItem@MDStackLayout>:
+    size_hint: 1,None
+    height: dp(48)  # Adjust the height as needed
+    orientation: 'lr-tb'
+    padding: 20,20
+    
+    MDLabel:
+        text: "Custom Item"
+        halign: 'center'
+        size_hint_x: 0.2  # Adjust the width ratio as needed
+        theme_text_color: "Custom"
+        text_color: (0.5,0.5,1,1)
+        size_hint_y: 1
+
+    MDIconButton:
+        icon: 'alpha-a'
+        size_hint_x: 0.2  # Adjust the width ratio as needed
+        size_hint_y: 1
+        on_release: root.choice_click(self,app)
+    MDIconButton:
+        icon: 'alpha-b'
+        size_hint_y: 1
+        size_hint_x: 0.2  # Adjust the width ratio as needed
+        on_release: root.choice_click(self,app)
+    MDIconButton:
+        icon: 'alpha-c'
+        size_hint_x: 0.2  # Adjust the width ratio as needed
+        size_hint_y: 1
+        on_release: root.choice_click(self,app)
+    MDIconButton:
+        icon: 'alpha-d'
+        size_hint_x: 0.2  # Adjust the width ratio as needed
+        size_hint_y: 1
+        on_release: root.choice_click(self,app)
+    
 <HomeScreen>:
     name: 'home'
 
@@ -185,7 +329,7 @@ CustomScreenManager:
         MDTopAppBar:
             title: "QuickMark"
             left_action_items: [['chevron-left', lambda x: app.screen_manager_func()]]
-            right_action_items: [["plus-circle", lambda x: print(setattr(root.manager, 'current', 'name'),root.add_new_sheet(),'hello world')]]
+            right_action_items: [["trash-can-outline", lambda x: print(setattr(root.manager, 'current', 'name'),root.add_new_sheet(),'hello world')]]
             elevation: 0
         BoxLayout:
             canvas.before:
@@ -279,7 +423,7 @@ CustomScreenManager:
                     text: 'Check Papers'
                     secondary_text: 'Review and record student marks.'
                     secondary_font_style: 'Caption'
-                    on_release: root.manager.current = 'onecheck'
+                    on_release: root.manager.change_screen('onecheck')
                     IconLeftWidgetWithoutTouch:
                         icon: "paperclip-check"
                     IconRightWidgetWithoutTouch:
@@ -296,133 +440,271 @@ CustomScreenManager:
                         icon: "chevron-right"
 
                 TwoLineAvatarIconListItem:
-                    text: 'Answer Sheet'
+                    text: 'Sheet Settings'
                    
                     secondary_text: 'View and edit answer sheet.'
                     secondary_font_style: 'Caption'
-                    on_release: root.manager.current = root.prepare_answer_sheet(); root.manager.current = 'answer_sheet'
+                    on_release: print(root.prepare_answer_sheet(),root.manager.change_screen('answer_sheet'))
                     IconLeftWidgetWithoutTouch:
                         icon: "view-dashboard-edit-outline"
+                    IconRightWidgetWithoutTouch:
+                        id: btn_key_right
+                        icon: "chevron-right"
                 TwoLineAvatarIconListItem:
                     text: 'Answer Key'
+                    id: btn_key
                     secondary_text: 'View or change answer keys.'
-                    bg_color: 0.95,0.95,0.95,0.95
                     secondary_font_style: 'Caption'
+                    on_release: root.manager.change_screen('name_expanded')
                     IconLeftWidgetWithoutTouch:
                         icon: "key-outline"
                     IconRightWidgetWithoutTouch:
+                        id: btn_key_right
                         icon: "chevron-right"
+
+<NameScreenExpanded>:
+    name: 'name_expanded'
+
+    MDLabel:
+        id: display_label
+        text: ""
+        halign: "center"
+        pos_hint: {"top": 1.33}
+    
+    MDStackLayout:
+        md_bg_color: (0.95,0.95,0.95,1)
+        height: self.minimum_height
+        pos_hint: {'center_x': 0.5}
+        MDTopAppBar:
+            title: "QuickMark"
+            left_action_items: [['chevron-left', lambda x: app.screen_manager_func()]]
+            right_action_items: [["trash-can-outline", lambda x: print(setattr(root.manager, 'current', 'name'),root.add_new_sheet(),'hello world')]]
+            elevation: 0
+        BoxLayout:
+            canvas.before:
+                Color:
+                    rgba: 0.95,0.95,0.95,1 # Set the background color here
+                Rectangle:
+                    pos: self.pos
+                    size: root.size[0], self.size[1]
+            size_hint: (None,None)
+            orientation: 'horizontal'
+            height: dp(25)
+            padding: (20,10)
+            size_hint: (0.95,None)
+
+            MDLabel:
+                text: "Home > Sheet > "
+                font_size: dp(10)
+                pos_hint: {'center_x':0}
+        
+        BoxLayout:
+            canvas.before:
+                Color:
+                    rgba: 1, 1, 1, 1  # Set the background color here
+                Rectangle:
+                    pos: self.pos
+                    size: root.size[0], self.size[1]
+            size_hint: (None,None)
+            orientation: 'vertical'
+            height: dp(100)
+            padding: (20,20)
+            size_hint: (0.95,None)
+                
+    
+            BoxLayout:
+                size_hint: 1,None
+                padding: (25,25)
+                spacing: dp(10)
+                orientation: 'horizontal'
+                MDTextField:
+                    id: text_field
+                    mode: "fill"
+                    multiline: False
+                    size_hint_y: None
+                    size_hint_x: None
+                    height: dp(20)
+                    width: "250dp"
+                    pos_hint: {"center_y":0.5, "center_x": .5}
+                    hint_text: "Sheet Name"
+                    on_text_validate: root.rename()
+                    on_text: root.capitalize(*args)
+            
+                MDIconButton:
+                    id: save_button
+                    icon: 'square-edit-outline'
+                    pos_hint:{"center_y":.5}
+                    on_release: root.rename()
+                    elevation: 0
+
+            MDLabel:
+                text: 'Date Created: YYYY-MM-DD'
+                color: (0.5,0.5,0.5,1)
+                pos_hint: {'center_x':0.5}
+                font_size: dp(10)
+        BoxLayout:
+            id: box_label
+            canvas.before:
+                Color:
+                    rgba: 0.95,0.95,0.95,1 # Set the background color here
+                Rectangle:
+                    pos: self.pos
+                    size: root.size[0], dp(10)
+            size_hint: (None,None)
+            orientation: 'horizontal'
+            
+            size_hint: (1,None)
+            height: dp(10)
+
+        ScrollView:
+            id: scroll_view
+            size_hint: (1, 1)
+
+            MDList:
+                id: saved_list
+                size_hint_y: None
+                height: self.minimum_height
+                md_bg_color: (1,1,1,1)
+                padding: 0  # Set padding to 0
+                spacing: 0 
+                
+                TwoLineAvatarIconListItem:
+                    text: 'Check Papers'
+                    secondary_text: 'Review and record student marks.'
+                    secondary_font_style: 'Caption'
+                    on_release: root.manager.change_screen('onecheck')
+                    IconLeftWidgetWithoutTouch:
+                        icon: "paperclip-check"
+                    IconRightWidgetWithoutTouch:
+                        icon: "chevron-right"
+
+                TwoLineAvatarIconListItem:
+                    text: 'Analysis'
+                    secondary_text: 'Conduct item analysis.'
+                    secondary_font_style: 'Caption'
+                    on_release: root.manager.current = 'analysis'
+                    IconLeftWidgetWithoutTouch:
+                        icon: "google-analytics"
+                    IconRightWidgetWithoutTouch:
+                        icon: "chevron-right"
+
+                TwoLineAvatarIconListItem:
+                    text: 'Sheet Settings'
+                   
+                    secondary_text: 'View and edit answer sheet.'
+                    secondary_font_style: 'Caption'
+                    on_release: print(root.prepare_answer_sheet(),root.manager.change_screen('answer_sheet'))
+                    IconLeftWidgetWithoutTouch:
+                        icon: "view-dashboard-edit-outline"
+                    IconRightWidgetWithoutTouch:
+                        id: btn_key_right
+                        icon: "chevron-right"
+                TwoLineAvatarIconListItem:
+                    text: 'Answer Key'
+                    id: btn_key
+                    secondary_text: 'View or change answer keys.'
+                    secondary_font_style: 'Caption'
+                    
+                    on_release: root.manager.change_screen('name')
+                    IconLeftWidgetWithoutTouch:
+                        icon: "key-outline"
+                    IconRightWidgetWithoutTouch:
+                        id: btn_key_right
+                        icon: "chevron-down"
                 OneLineAvatarIconListItem:
                     text: 'Multiple Choice'
+                    
+                    on_release: root.manager.change_screen('keyscreen',test_type='mc')
                     IconRightWidgetWithoutTouch:
+                        id: btn_key_right
                         icon: "chevron-right"
                 OneLineAvatarIconListItem:
                     text: 'True or False'
+                    
+                    on_release: root.manager.change_screen('keyscreen',test_type='tf')
                     IconRightWidgetWithoutTouch:
+                        id: btn_key_right
                         icon: "chevron-right"
                 OneLineAvatarIconListItem:
-                    id: idtf_key
                     text: 'Identification'
-                
-                    on_release: lambda x: print("HELLO")
+                    
+                    on_release: print(root.manager.change_screen('ID'))
                     IconRightWidgetWithoutTouch:
-                        id: idtf_icon
+                        id: btn_key_right
                         icon: "chevron-right"
-                    
-                
-                
-                    
-                    
-
-
-        MDLabel:
-            text:"Appraisal"
-            halign: "center"
-            pos_hint: {"center_y":.73}
-        
-        MDRectangleFlatButton:
-            text: "CHECK PAPERS" 
-            on_release: root.manager.current = 'onecheck'
-            _min_width: 200
             
-
-        MDRectangleFlatButton:
-            text: "ANALYSIS"
-            pos_hint: {"top":.61, "center_x": .5}
-            on_release: root.manager.current = 'analysis'
-            _min_width: 200
-                
-
-        MDSeparator:
-            pos_hint: {"top":.5, "center_x": .5}
-            size_hint_y: None
-            height: dp(1)  
-
-        MDLabel:
-            text:"Answer Sheet"
-            halign: "center"
-            pos_hint: {"center_y":.48}
-
-        MDRectangleFlatButton:
-            text: "EDIT ANSWER SHEET"
-            pos_hint: {"top":.43, "center_x": .5}
-            on_release:  root.prepare_answer_sheet(); root.manager.current = 'answer_sheet'
-            _min_width: 200
-
-        MDSeparator:
-            pos_hint: {"top":.32, "center_x": .5}
-            size_hint_y: None
-            height: dp(1)
-            
-
-        MDLabel:
-            text:"Answer Key"
-            halign: "center"
-            pos_hint: {"center_y":.3}
-
-        MDRectangleFlatButton:
-            text: "MULTIPLE CHOICE"
-            pos_hint: {"top":.24, "center_x": .5}
-            on_release: root.prepare_mc_keys() ; root.manager.current = 'MC'
-            _min_width: 200
-
-        MDRectangleFlatButton:
-            text: "TRUE OR FALSE"
-            pos_hint: {"top":.17, "center_x": .5}
-            on_release: root.prepare_tf_keys() ;root.manager.current = 'TF'
-            _min_width: 200
-
-        MDRectangleFlatButton:
-            text: "IDENTIFICATION"
-            pos_hint: {"top":.1, "center_x": .5}
-            on_release: root.manager.current = 'ID'
-            _min_width: 200
-
-            CustomScreenManager:
-    
 <AnswerSheetScreen>:
     name: 'answer_sheet'
     orientation: 'vertical'
-    MDTopAppBar:
-        title: "QuickMark"
-        elevation: 0
-        pos_hint: {"top": 1}
-    ScrollView:
-        do_scroll_y: False 
-        pos_hint: {"top":.9, "center_x": .5}
-
+    MDStackLayout:
+        md_bg_color: (0.95,0.95,0.95,1)
+        height: self.minimum_height
+        pos_hint: {'center_x': 0.5}
+        MDTopAppBar:
+            title: "QuickMark"
+            left_action_items: [['chevron-left', lambda x: app.screen_manager_func()]]
+            right_action_items: [["plus-circle", lambda x: print(setattr(root.manager, 'current', 'name'),root.add_new_sheet(),'hello world')]]
+            elevation: 0
         BoxLayout:
-            orientation: 'vertical'
-            padding: dp(16)
+            canvas.before:
+                Color:
+                    rgba: 0.95,0.95,0.95,1 # Set the background color here
+                Rectangle:
+                    pos: self.pos
+                    size: root.size[0], self.size[1]
+            size_hint: (None,None)
+            orientation: 'horizontal'
+            height: dp(25)
+            padding: (20,10)
+            size_hint: (0.95,None)
+
+            MDLabel:
+                text: "Home > Sheet > "
+                font_size: dp(10)
+                pos_hint: {'center_x':0}
+        
+
+        
+
+        MDGridLayout:
+            cols: 2
             spacing: dp(10)
-            size_hint_y: None
-            height: self.minimum_height
+            size_hint: None, None
+            pos_hint: {'center_x':0.15}
+
+            MDGridLayout:
+                cols: 2
+                size_hint: None, None
+                width: dp(200) 
+                height: dp(50)
+                
+                MDCheckbox:
+                    id: mcq_checkbox
+                    size_hint: None, None
+                    size: dp(48), dp(48)
+                    on_active: root.show_text_field(self.active, 'mcq')
+
+                MDLabel:
+                    text: "Multiple Choice"
+                    size_hint: None, None
+                    halign: 'left'
+                    size: dp(200), dp(48)
+
+
+            MDTextField:
+                id: mcq_textfield
+                hint_text: "count"
+                input_filter: 'int'
+                mode: "rectangle"
+                size_hint: None, None
+                width: dp(400) 
+                height: dp(48)
+                multiline: False
+                disabled: not mcq_checkbox.active
 
             MDGridLayout:
                 cols: 2
                 spacing: dp(10)
-                size_hint: None, None
-                pos_hint: {'center_x':0.15}
 
                 MDGridLayout:
                     cols: 2
@@ -431,20 +713,20 @@ CustomScreenManager:
                     height: dp(50)
                     
                     MDCheckbox:
-                        id: mcq_checkbox
+                        id: tf_checkbox
                         size_hint: None, None
                         size: dp(48), dp(48)
-                        on_active: root.show_text_field(self.active, 'mcq')
+                        on_active: root.show_text_field(self.active, 'tf')
 
                     MDLabel:
-                        text: "Multiple Choice"
+                        text: "True or False"
                         size_hint: None, None
                         halign: 'left'
                         size: dp(200), dp(48)
 
 
                 MDTextField:
-                    id: mcq_textfield
+                    id: tf_textfield
                     hint_text: "count"
                     input_filter: 'int'
                     mode: "rectangle"
@@ -452,71 +734,37 @@ CustomScreenManager:
                     width: dp(400) 
                     height: dp(48)
                     multiline: False
-                    disabled: not mcq_checkbox.active
+                    disabled: not tf_checkbox.active
 
                 MDGridLayout:
                     cols: 2
-                    spacing: dp(10)
-
-                    MDGridLayout:
-                        cols: 2
+                    size_hint: None, None
+                    width: dp(200) 
+                    height: dp(50)
+                    
+                    MDCheckbox:
+                        id: ident_checkbox
                         size_hint: None, None
-                        width: dp(200) 
-                        height: dp(50)
-                        
-                        MDCheckbox:
-                            id: tf_checkbox
-                            size_hint: None, None
-                            size: dp(48), dp(48)
-                            on_active: root.show_text_field(self.active, 'tf')
+                        size: dp(48), dp(48)
+                        on_active: root.show_text_field(self.active, 'ident')
 
-                        MDLabel:
-                            text: "True or False"
-                            size_hint: None, None
-                            halign: 'left'
-                            size: dp(200), dp(48)
-
-
-                    MDTextField:
-                        id: tf_textfield
-                        hint_text: "count"
-                        input_filter: 'int'
-                        mode: "rectangle"
+                    MDLabel:
+                        text: "Identification"
                         size_hint: None, None
-                        width: dp(400) 
-                        height: dp(48)
-                        multiline: False
-                        disabled: not tf_checkbox.active
-
-                    MDGridLayout:
-                        cols: 2
-                        size_hint: None, None
-                        width: dp(200) 
-                        height: dp(50)
-                        
-                        MDCheckbox:
-                            id: ident_checkbox
-                            size_hint: None, None
-                            size: dp(48), dp(48)
-                            on_active: root.show_text_field(self.active, 'ident')
-
-                        MDLabel:
-                            text: "Identification"
-                            size_hint: None, None
-                            halign: 'left'
-                            size: dp(200), dp(48)
+                        halign: 'left'
+                        size: dp(200), dp(48)
 
 
-                    MDTextField:
-                        id: ident_textfield
-                        hint_text: "count"
-                        input_filter: 'int'
-                        mode: "rectangle"
-                        size_hint: None, None
-                        width: dp(400) 
-                        height: dp(48)
-                        multiline: False
-                        disabled: not ident_checkbox.active
+                MDTextField:
+                    id: ident_textfield
+                    hint_text: "count"
+                    input_filter: 'int'
+                    mode: "rectangle"
+                    size_hint: None, None
+                    width: dp(400) 
+                    height: dp(48)
+                    multiline: False
+                    disabled: not ident_checkbox.active
 
     Widget:
         size_hint_y: None
@@ -564,12 +812,6 @@ CustomScreenManager:
 
 <CheckScreen>:
     name: 'check'
-    canvas.before:
-        Color:
-            rgba: 1, 1, 1, 1  # White color
-        Rectangle:
-            size: self.size
-            pos: self.pos
 
     MDTopAppBar:
         
@@ -769,16 +1011,20 @@ class OneCheckScreen(Screen):
     def add_new_sheet(self):
         print("ADDING NEW SESSION")
         check_obj = fs.get_sheet(fs.open_index).check_sheets
+        print(fs.open_index)
         check_obj.add_session()
+        
         check_obj.get_session(-1).name = str(len(check_obj.check_sessions)) # gets last added sheet (index "-1")
         instance_screen = self.manager.get_screen('check')
         check_obj.get_session(-1).name = str(f'STUDENT {len(check_obj.check_sessions)}')
         #fs.save()
         self.add_item_to_list()
+        print(self.ids.check_list.children)
         toast("New Checking Session Added.", (1,0,1,0.2), 1)
 
     def add_item_to_list(self, item_text="New Item Added"):
         check_list = self.ids.check_list
+
         check_obj = fs.get_sheet(fs.open_index).check_sheets
         sessions = check_obj.check_sessions
         
@@ -800,6 +1046,30 @@ class OneCheckScreen(Screen):
     def go_to_score_screen(self, instance):
         self.manager.current = 'check'
 
+    def on_screen(self):
+        #self.clear_widget()
+        print("opening one check screen")
+        self.ids.check_list.clear_widgets()
+        check_list = self.ids.check_list
+        check_sheets = fs.get_sheet(fs.open_index).check_sheets
+        sessions = check_sheets.check_sessions
+    
+        for index in range(len(sessions)):
+            session_last = sessions[index]
+            session_instance = InstanceCheckScreen(text=session_last.name)
+            session_instance.select_id = index #sheet_i
+            session_instance.manager = self.manager
+            session_instance.secondary_text = 'Date Created: '+ str(session_last.date_created).split(' ')[0]
+           
+            check_list.add_widget(session_instance)
+
+        
+
+
+
+
+        
+
 class InstanceCheckScreen(TwoLineListItem):
     def __init__(self, **kwargs):
         super(InstanceCheckScreen, self).__init__(**kwargs)
@@ -811,6 +1081,7 @@ class InstanceCheckScreen(TwoLineListItem):
         #fs.get_sheet(self.select_id).name = str(fs.get_sheet(self.select_id).name)
         fs.get_sheet(fs.open_index).check_sheets.session_open_index = self.select_id
         self.manager.get_screen('check').start()
+
         self.manager.current = 'check'
         
 
@@ -915,6 +1186,174 @@ class TFInstanceBox(BoxLayout):
         
         # Highlight the pressed button
 
+class CustomListItem(MDStackLayout):
+    def __init__(self, **kwargs):
+        super(CustomListItem, self).__init__(**kwargs)
+        self.icon_names = 'alpha-a alpha-b alpha-c alpha-d alpha-t alpha-f alpha-a-circle alpha-b-circle alpha-c-circle alpha-d-circle alpha-t-circle alpha-f-circle'.split(' ') 
+        self.key_equiv = {key: equivalent for key, equivalent in zip(list('ABCDTFABCDTF'), self.icon_names)}
+        self.ans_equiv = {key: equivalent for key, equivalent in zip(self.icon_names, list('ABCDTFABCDTF'))}
+        
+        
+    def choice_click(self, button,app, *args, **kwargs):
+        print("SELECTING")
+        btn=button
+        keyscreen = app.manager.get_screen('keyscreen')
+        saved_list = app.manager.get_screen('keyscreen').ids.saved_list
+        iterations = 0
+        for x in saved_list.children[::-1]:
+            index = ((keyscreen.page-1)*10)+iterations
+            iterations += 1
+            
+            
+            for choices in x.children:
+                
+                if btn == choices:
+                    print('yes')
+                    
+                    
+                    if self.ans_equiv[btn.icon] in ['T','F']:
+                        answer_keys = fs.sheets[fs.open_index].answer_key.tf
+                    else:
+                        answer_keys = fs.sheets[fs.open_index].answer_key.mc
+                    #print("INDEX",index,answer_key.items[index].answer_key)
+                    print(btn.icon.split('-'))
+                    if 'circle' not in btn.icon.split('-'):
+                    #if btn.icon == 'alpha-a':
+                        try:
+                            
+                            answer_keys.items[index].answer_key = answer_keys.items[index].answer_key + [self.ans_equiv[btn.icon]]
+                            print(len(answer_keys.items))
+                            print([x.answer_key for x in answer_keys.items])
+                            print(index)
+                            print(answer_keys.items[index].answer_key)
+                        except IndexError as e:
+                            print('error',e)
+                            break
+                        btn.icon = btn.icon+'-circle'
+                    else:
+                        btn.icon = '-'.join(btn.icon.split('-')[:-1])
+                        print(btn.icon)
+                        print(index)
+                        print([x.answer_key for x in answer_keys.items])
+                        answer_keys.items[index].answer_key.remove(self.ans_equiv[btn.icon])
+                    
+                    
+                        
+                   
+                
+
+class KeyScreen(Screen):
+    def __init__(self, **kwargs):
+        super(KeyScreen, self).__init__(**kwargs)
+        self.icon_names = 'alpha-a alpha-b alpha-c alpha-d alpha-t alpha-f alpha-a-circle alpha-b-circle alpha-c-circle alpha-d-circle alpha-t-circle alpha-f-circle'.split(' ') 
+        self.key_equiv = {key: equivalent for key, equivalent in zip(list('ABCDTFABCDTF'), self.icon_names)}
+        self.ans_equiv = {key: equivalent for key, equivalent in zip(self.icon_names, list('ABCDTFABCDTF'))}
+        self.page = 1
+        self.test_type_open = None
+
+    def next(self):
+        self.page+=1
+        self.on_screen(self.test_type_open, page=self.page)
+
+    def previous(self):
+        self.page-=1
+        self.on_screen(self.test_type_open, page=self.page)
+
+    def on_screen(self, test_type='mc',page=None):
+        self.page = self.page if page is None else page
+        if test_type=='mc':
+            answer_key = fs.sheets[fs.open_index].answer_key.mc # set variable for reference on file system attribute for ease
+            self.test_type_open = 'mc'
+        elif test_type=='tf':
+            answer_key = fs.sheets[fs.open_index].answer_key.tf # set variable for reference on file system attribute for ease
+            self.test_type_open = 'tf'
+
+        saved_list = self.ids.saved_list
+        iterations = 0
+        self.ids.page_num_label.text = f'Page Number: {self.page} of {math.ceil(len(answer_key.get_items())/10)}'
+        self.ids.total_items_label.text = f'Total Items: {(len(answer_key.get_items()))}'
+        if test_type == 'mc':
+            for x in saved_list.children[::-1]:
+                iterations+= 1
+                index = ((self.page-1)*10)+iterations - 1
+                
+                print('num',index,len(answer_key.get_items())-1)
+                if index >= len(answer_key.get_items()):
+                    print('above index')
+                    x.opacity=0
+                    for choice in x.children:
+                        choice.disabled = True
+                    continue
+                else:
+                    x.opacity=1
+                    for choice in x.children:
+                        choice.disabled = False
+                truth = answer_key.items[index].answer_key
+                for choices in x.children:
+                    if type(choices) != MDLabel:
+                        print("FUCLING")
+                        set_icon = lambda choice_str: choice_str+'-circle' if self.ans_equiv[choice_str] in truth else choice_str
+                        print('EQUIV',self.ans_equiv[choices.icon])
+                        if self.ans_equiv[choices.icon] in ['A','T']:
+                            print('is A')
+                            choices.icon = set_icon('alpha-a')
+                        elif self.ans_equiv[choices.icon] in ['B','F']:
+                            choices.icon = set_icon('alpha-b')
+                        elif self.ans_equiv[choices.icon] in ['C']:
+                            print("Setting opacity")
+                            choices.opacity = 1
+                            choices.icon = set_icon('alpha-c')
+                    else:
+                        # this one is the label
+                        print(type(choices))
+                        print(choices.text)
+                        choices.text = ''+str(index+1)+')'
+                        print(choices.text)
+                
+        elif test_type == 'tf':
+            print("OPENED TRUE FALSE")
+            for x in saved_list.children[::-1]:
+                iterations+= 1
+                index = ((self.page-1)*10)+iterations - 1
+                
+                print('num',index,len(answer_key.get_items())-1)
+                if index >= len(answer_key.get_items()):
+                    print('above index')
+                    x.opacity=0
+                    for choice in x.children:
+                        choice.disabled = True
+                    continue
+                else:
+                    x.opacity=1
+                    for choice in x.children:
+                        choice.disabled = False
+                truth = answer_key.items[index].answer_key
+                for choices in x.children:
+                    print(choices)
+                    print(type(choices))
+                    print(type(choices) != MDLabel)
+                    if type(choices) != MDLabel:
+                        print("FUCLING")
+                        set_icon = lambda choice_str: choice_str+'-circle' if self.ans_equiv[choice_str] in truth else choice_str
+                        print('EQUIV',self.ans_equiv[choices.icon])
+                        if self.ans_equiv[choices.icon] in ['A','T']:
+                            print('is A')
+                            choices.icon = set_icon('alpha-t')
+                        elif self.ans_equiv[choices.icon] in ['B','F']:
+                            choices.icon = set_icon('alpha-f')
+                        else:
+                            print("Setting opacity")
+                            choices.opacity = 0
+                    else:
+                        # this one is the label
+                        print(type(choices))
+                        print(choices.text)
+                        choices.text = ''+str(index+1)+')'
+                        print(choices.text)
+
+        #print(self.ids.previous)
+        self.ids.previous.disabled = True if self.page == 1 else False
+        self.ids.next.disabled = True if self.page == math.ceil(len(answer_key.get_items())/10) else False
   
 class HomeScreen(Screen):
     def show_key_button(self):
@@ -939,6 +1378,15 @@ class HomeScreen(Screen):
             obj_content.append([subwidget.text,subwidget.secondary_text, subwidget.select_id])
         search_system = SearchSystem(word_keys, obj_content)
         result = search_system.search(text,True)
+
+        if text in ['', ' ']:
+            obj_content = []
+            inc = 0
+            for subwidget in fs.sheets:
+                #word_keys.append(subwidget.text)
+                obj_content.append([subwidget.name ,subwidget.date_created, inc])
+                inc += 1
+            result = obj_content
 
         for subwidget, widget_detail in zip(self.ids.saved_list.children, result[::-1]):
             subwidget.text = widget_detail[0]
@@ -1064,12 +1512,28 @@ class AnalysisScreen(Screen):
 
 
 #CLASS____________________________________________________________-
-            
+
+
 
 class NameScreen(Screen):
     #INIT_________________________________________________________
     def __init__(self, **kwargs):
         super(NameScreen, self).__init__(**kwargs)
+
+    def show_btn_keys(self, *args,**kwarg):
+        print("HSOWING BTN KEYS")
+        saved_list = self.ids.saved_list
+        if len(saved_list.children) <= 4:
+            saved_list.add_widget(OneLineAvatarIconListItem(IconRightWidgetWithoutTouch(icon='chevron-right'), text='Multiple Choice',on_release= lambda x: print(self.prepare_mc_keys(),self.manager.change_screen('MC'))))
+            saved_list.add_widget(OneLineAvatarIconListItem(IconRightWidgetWithoutTouch(icon='chevron-right'), text='True or False',on_release= lambda x: print(self.prepare_tf_keys(),self.manager.change_screen('TF'))))
+            saved_list.add_widget(OneLineAvatarIconListItem(IconRightWidgetWithoutTouch(icon='chevron-right'), text='Identification',on_release= lambda x: print(self.prepare_tf_keys(),self.manager.change_screen('ID'))))
+            self.ids.btn_key_right.icon = 'chevron-down'
+        else:
+            saved_list.remove_widget(saved_list.children[0])
+            saved_list.remove_widget(saved_list.children[0])
+            saved_list.remove_widget(saved_list.children[0])
+            self.ids.btn_key_right.icon = 'chevron-right'
+
 
     def on_screen(self,*args,**kwargs):
         self.ids.text_field.text = fs.get_sheet(fs.open_index).name
@@ -1138,9 +1602,7 @@ class NameScreen(Screen):
             tf_screen.ids.tf_box_all.remove_widget(widget)
         increment = 0
         for answer_item in answer_key.get_items():
-            
             instance = TFInstanceBox(increment)
-            
             tf_screen.ids.tf_box_all.add_widget(instance)
             
             tf_screen.instances.append(instance)
@@ -1162,7 +1624,7 @@ class NameScreen(Screen):
         sheet_screen.ids.mcq_checkbox.active = True if len(answer_key.mc.get_items()) > 0 else False
         sheet_screen.ids.tf_checkbox.active = True if len(answer_key.tf.get_items()) > 0 else False
         sheet_screen.ids.ident_checkbox.active = True if len(answer_key.idtf.get_items()) > 0 else False
-
+        sheet_screen.set_hidden_field()
         name = fs.sheets[fs.open_index].name
         sheet_screen.generate_template(len(answer_key.mc.get_items()), len(answer_key.tf.get_items()), len(answer_key.idtf.get_items()), name)
 
@@ -1190,6 +1652,10 @@ class NameScreen(Screen):
     def capitalize(self, instance, text):
         self.ids.text_field.text = text
 
+class NameScreenExpanded(NameScreen):
+    def __init__(self, **kwargs):
+        super(NameScreenExpanded, self).__init__(**kwargs)
+    
 
 class MCScreen(Screen):
     def toggle_button_state(self, button):
@@ -1481,8 +1947,10 @@ class AnswerSheetScreen(Screen):
         # if textfield is disabled. Assume 0 count
         if textfield.disabled == True or textfield.text == '':
             count = 0
+            #textfield.opacity = 0
         else:
             count = int(textfield.text)
+            #textfield.opacity = 1
 
         # Debugging
         print(textfield.disabled)
@@ -1491,6 +1959,7 @@ class AnswerSheetScreen(Screen):
 
         answer_key.set_items(count) # setting items using method from FileSystem
         toast("Sheet Updated.")
+        self.set_hidden_field()
         return count
     
     #METHOD__________________________________________________
@@ -1543,10 +2012,18 @@ class AnswerSheetScreen(Screen):
         name = fs.sheets[fs.open_index].name
         self.generate_template(mc_count, tf_count, idtf_count, name)
         
+        
 
     #METHOD_____________________________________________________
-
-
+    def set_hidden_field(self):
+        print('setting hidden')
+        ansheet_ids = self.manager.get_screen('answer_sheet').ids
+        mcq_field_disabled = ansheet_ids.mcq_textfield.disabled == False
+        tf_field_disabled = ansheet_ids.tf_textfield.disabled == False
+        idtf_field_disabled = ansheet_ids.ident_textfield.disabled == False
+        ansheet_ids.mcq_textfield.opacity = 1 if mcq_field_disabled else 0
+        ansheet_ids.tf_textfield.opacity = 1 if tf_field_disabled else 0
+        ansheet_ids.ident_textfield.opacity = 1 if idtf_field_disabled else 0
     def show_text_field(self, active, checkbox_type):
         """Enables or disables text fields based on checkbox state.
 
@@ -1563,12 +2040,9 @@ class AnswerSheetScreen(Screen):
             self.manager.get_screen('answer_sheet').ids.tf_textfield.disabled = not active
         elif checkbox_type == 'ident':
             self.manager.get_screen('answer_sheet').ids.ident_textfield.disabled = not active
+        self.set_hidden_field()
 
-
-#CLASS____________________________________________
-            
-class MCScreen(Screen):
-    pass
+#CLASS_____________________
 
 #_________________________________________________
 
@@ -1603,12 +2077,12 @@ class CustomScreenManager(ScreenManager):
         self.transition = NoTransition()
         
 
-    def change_screen(self, screen_name):
+    def change_screen(self, screen_name,**kwargs):
         self.current = screen_name
         screen = self.get_screen(screen_name)
 
         try:
-            screen.on_screen()
+            screen.on_screen(**kwargs)
         except Exception as e:
             print('screen.change_screen():',e)
 
@@ -1617,6 +2091,7 @@ class App(MDApp):
         self.theme_cls.theme_style = "Light"
         self.theme_cls.primary_palette = "Indigo"
         self.screen = Builder.load_string(KV)
+        self.manager = None
         return self.screen
     
     #________________________________________________
@@ -1628,6 +2103,7 @@ class App(MDApp):
         home_screen = self.root.get_screen('home')
         #home_screen.add_item_to_list()
         home_screen.show_init_list()
+        self.manager = self.root
         autosave_sched()
         from kivy.base import EventLoop
         EventLoop.window.bind(on_keyboard=self.hook_keyboard)
@@ -1639,6 +2115,7 @@ class App(MDApp):
         Screen manager function for managing Back button event or esc keyboard event.
         """
         dummy = self.root.get_screen('home') # just for obvious accessing of manager attribute
+        
         if dummy.manager.current == 'home': # on first screen
             self.stop() # stop app
         elif dummy.manager.current == 'name':
@@ -1648,7 +2125,7 @@ class App(MDApp):
                 if self.root.get_screen('check').cam_is_on == True:  # turn off camera when onn
                     self.root.get_screen('check').cam_off()
                 else: # if camera is already off; go back screen
-                    dummy.manager.current = 'name'
+                    dummy.manager.current = 'onecheck'
             except Exception as e:
                 print(e)
                 pass
@@ -1760,7 +2237,7 @@ else:
 # comment out to not use previous data (warning; overwrites with empty new data because of autosave on app run)
 try:
     fs = FileSystem()
-    fs = fs.load() 
+    #fs = fs.load() 
 
 except Exception as e:
     fs = FileSystem()

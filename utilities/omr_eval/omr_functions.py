@@ -265,7 +265,7 @@ def xywh_to_points(xywh):
     db.p('xywh translated to points')
     return [(x1, y1), (x2, y2), (x3, y3), (x4, y4)]
 from datetime import datetime
-def get_bubbles(BubbleGetter_obj, BoxGetter_obj, CaptureSheet_obj, boxes_num, redo=False, use_rect=False,param_value=11):
+def get_bubbles(BubbleGetter_obj, BoxGetter_obj, CaptureSheet_obj, boxes_num, redo=False, use_rect=False,param_value=13):
     """
     The function `get_bubbles` processes an image to detect and extract bubble contours based on certain
     criteria.
@@ -417,9 +417,9 @@ def get_bubbles(BubbleGetter_obj, BoxGetter_obj, CaptureSheet_obj, boxes_num, re
                             count += 1
                             ##*print(count)
 
-        name = str(redo)+str(use_rect)+str(CaptureSheet_obj)[1:-1]+str(datetime.now().strftime('%Y-%m-%d-%H-%M-%S')) + '.png'
-        cv2.imwrite(str(CaptureSheet_obj.storage)+'/'+name,adaptive_thresh)
-        print("SAVED IN ",str(CaptureSheet_obj.storage)+'/'+name)         
+        #name = str(redo)+str(use_rect)+str(CaptureSheet_obj)[1:-1]+str(datetime.now().strftime('%Y-%m-%d-%H-%M-%S')) + '.png'
+        #cv2.imwrite(str(CaptureSheet_obj.storage)+'/'+name,adaptive_thresh)
+        #print("SAVED IN ",str(CaptureSheet_obj.storage)+'/'+name)         
         #
         db.plot(image, 'perspective transformed')
         #db.p('qualified contoures ---',len(rectangles))
@@ -543,14 +543,27 @@ def get_scores(BubbleGetter_obj, BoxGetter_obj, CaptureSheet_obj, boxes_num):
         BubbleGetter_obj.answers = bin_scores
         ##*print(bin_scores)
         BubbleGetter_obj.eval_array = []
+        print("RAW")
+        print(CaptureSheet_obj.tfq.correct)
+        print(BubbleGetter_obj.answers)
         ground_truth = CaptureSheet_obj.mcq.correct if BubbleGetter_obj.test_type == 'MULTIPLE CHOICE' else CaptureSheet_obj.tfq.correct
         for correct,answer in zip(ground_truth, BubbleGetter_obj.answers):
             #if correct == answer:
-            if answer in correct:
+            print(answer, correct)
+            if answer in [None, 'None']:
+                print(False)
+                BubbleGetter_obj.eval_array.append(0)
+            elif answer in correct:
+                print(True)
                 BubbleGetter_obj.eval_array.append(1)
+            else:
+                print(False)
+                BubbleGetter_obj.eval_array.append(0)
         BubbleGetter_obj.final_score = sum(BubbleGetter_obj.eval_array)
         reset_eval_array = CaptureSheet_obj.check_session._reset_order(BubbleGetter_obj.eval_array,25)
-        reset_user_answer = CaptureSheet_obj.check_session._reset_order(BubbleGetter_obj.answers)
+        reset_user_answer = CaptureSheet_obj.check_session._reset_order(BubbleGetter_obj.answers, 25)
+        print(BubbleGetter_obj.eval_array)
+        print(reset_eval_array)
         if BubbleGetter_obj.test_type == 'MULTIPLE CHOICE':
             CaptureSheet_obj.check_session.mc_answer = reset_user_answer
             CaptureSheet_obj.check_session.mc_eval_array = reset_eval_array
