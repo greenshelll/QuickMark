@@ -16,7 +16,7 @@ except Exception as e:
     on_android = False
 
 # LOCAL FILES/MODULES
-from utilities.misc.util4image import fit_score,stich_all_image as stitch_sheet
+from utilities.misc.util4image import fit_score,stich_all_image as stitch_sheet, fit_score
 from utilities.misc.filesystem import *
 from utilities.misc.searchsystem import *
 from screens.camera import CameraWidget
@@ -33,12 +33,13 @@ from kivy.core.image import Image as CoreImage
 
 
 #kivymd.uix
-from kivymd.uix.list import IconLeftWidget, IconLeftWidgetWithoutTouch, IconRightWidgetWithoutTouch
 
+from kivymd.uix.list import IconLeftWidget, IconLeftWidgetWithoutTouch, IconRightWidgetWithoutTouch
+from kivymd.uix.textfield import MDTextField
 from kivymd.uix.dialog import MDDialog
 from kivymd.uix.filemanager import MDFileManager
 from kivymd.uix.floatlayout import MDFloatLayout
-from kivy.uix.screenmanager import ScreenManager, Screen, NoTransition
+from kivy.uix.screenmanager import ScreenManager, Screen, NoTransition, FadeTransition
 from kivymd.uix.label import MDLabel
 from kivymd.uix.button import MDFlatButton,MDRaisedButton, MDRectangleFlatButton, MDRoundFlatButton, MDFillRoundFlatButton
 from kivymd.uix.card import MDSeparator
@@ -163,6 +164,7 @@ CustomScreenManager:
             text: "JUMP"
             text_color: 'black'
             line_color: 0, 0, 0, 0
+            on_release: root.jump()
             pos_hint: {"center_x": .5, "center_y": .5}
             size_hint: 0.35,1
         MDIconButton:
@@ -222,7 +224,7 @@ CustomScreenManager:
         title: "QuickMark"
         pos_hint: {"top": 1,}
         left_action_items: [['menu', lambda x: app.screen_manager_func()]]
-        right_action_items: [["plus-circle", lambda x: print(setattr(root.manager, 'current', 'name'),root.add_new_sheet(),'hello world')]]
+        right_action_items: [["plus-circle", lambda x: print(root.manager.change_screen('name'),root.add_new_sheet(),'hello world')]]
         elevation: 0
 
 
@@ -233,7 +235,7 @@ CustomScreenManager:
         MDTopAppBar:
             title: "QuickMark"
             left_action_items: [['close-box', lambda x: app.screen_manager_func()]]
-            right_action_items: [["plus-circle", lambda x: print(setattr(root.manager, 'current', 'name'),root.add_new_sheet(),'hello world')]]
+            right_action_items: [["plus-circle", lambda x: print(root.add_new_sheet(),root.manager.change_screen('name'))]]
             elevation: 0
         BoxLayout:
             canvas.before:
@@ -249,6 +251,7 @@ CustomScreenManager:
             size_hint: (0.95,None)
 
             MDLabel:
+                id: pos_nav_label
                 text: "Home > "
                 font_size: dp(10)
                 pos_hint: {'center_x':0}
@@ -329,7 +332,7 @@ CustomScreenManager:
         MDTopAppBar:
             title: "QuickMark"
             left_action_items: [['chevron-left', lambda x: app.screen_manager_func()]]
-            right_action_items: [["trash-can-outline", lambda x: print(setattr(root.manager, 'current', 'name'),root.add_new_sheet(),'hello world')]]
+            right_action_items: [["trash-can-outline", lambda x: root.delete_sheet()]]
             elevation: 0
         BoxLayout:
             canvas.before:
@@ -389,6 +392,7 @@ CustomScreenManager:
                     elevation: 0
 
             MDLabel:
+                id: date_label
                 text: 'Date Created: YYYY-MM-DD'
                 color: (0.5,0.5,0.5,1)
                 pos_hint: {'center_x':0.5}
@@ -538,6 +542,7 @@ CustomScreenManager:
                     elevation: 0
 
             MDLabel:
+                id: date_label
                 text: 'Date Created: YYYY-MM-DD'
                 color: (0.5,0.5,0.5,1)
                 pos_hint: {'center_x':0.5}
@@ -643,7 +648,7 @@ CustomScreenManager:
         MDTopAppBar:
             title: "QuickMark"
             left_action_items: [['chevron-left', lambda x: app.screen_manager_func()]]
-            right_action_items: [["plus-circle", lambda x: print(setattr(root.manager, 'current', 'name'),root.add_new_sheet(),'hello world')]]
+            right_action_items: [["",""]]
             elevation: 0
         BoxLayout:
             canvas.before:
@@ -659,13 +664,10 @@ CustomScreenManager:
             size_hint: (0.95,None)
 
             MDLabel:
-                text: "Home > Sheet > "
+                text: "Home > Sheet > Sheet Settings"
                 font_size: dp(10)
                 pos_hint: {'center_x':0}
         
-
-        
-
         MDGridLayout:
             cols: 2
             spacing: dp(10)
@@ -695,12 +697,13 @@ CustomScreenManager:
                 id: mcq_textfield
                 hint_text: "count"
                 input_filter: 'int'
-                mode: "rectangle"
+                mode: "fill"
                 size_hint: None, None
                 width: dp(400) 
                 height: dp(48)
                 multiline: False
                 disabled: not mcq_checkbox.active
+                on_text: root.get_fit()
 
             MDGridLayout:
                 cols: 2
@@ -729,12 +732,13 @@ CustomScreenManager:
                     id: tf_textfield
                     hint_text: "count"
                     input_filter: 'int'
-                    mode: "rectangle"
+                    mode: "fill"
                     size_hint: None, None
                     width: dp(400) 
                     height: dp(48)
                     multiline: False
                     disabled: not tf_checkbox.active
+                    on_text: root.get_fit()
 
                 MDGridLayout:
                     cols: 2
@@ -759,54 +763,98 @@ CustomScreenManager:
                     id: ident_textfield
                     hint_text: "count"
                     input_filter: 'int'
-                    mode: "rectangle"
+                    mode: "fill"
                     size_hint: None, None
                     width: dp(400) 
                     height: dp(48)
                     multiline: False
                     disabled: not ident_checkbox.active
+                    on_text: root.get_fit()
 
     Widget:
         size_hint_y: None
         height: dp(48)
 
-    MDRectangleFlatButton:
-        id: apply_btn
-        text: "APPLY"
-        size_hint: None, None
-        size: dp(200), dp(48)
-        pos_hint: {'top':0.52,'center_x': 0.5}
+    #MDRectangleFlatButton:
+     #   id: apply_btn
+      #  text: "APPLY"
+      #  size_hint: None, None
+       # size: dp(200), dp(48)
+       # pos_hint: {'top':0.52,'center_x': 0.5}
         
-        on_release: root.apply_count()
+        #on_release: root.apply_count()
 
     Image:
         id: generated_image
         size_hint: 1, None
         height: dp(210)  # Set the height of the image as needed
-        pos_hint: {'top':0.45,'center_x': 0.5}
+        pos_hint: {'top':0.5,'center_x': 0.5}
     
+    
+    
+    MDLabel:
+        id: fit_label
+        text: 'Fit: 0.0%'
+        size_hint: 1, None
+        height: dp(210)  # Set the height of the image as needed
+        pos_hint: {'top':0.30,'center_x': 0.5}
+        theme_text_color: 'Custom'
+        text_color: (0,0,1,0.7)
+        font_size: dp(28)
+        halign: 'center'
+        valign: 'bottom'
+
     MDBoxLayout:
         orientation: 'horizontal'
-        size_hint: None, 1
-        pos_hint: {'center_x': 0.4}
-        padding: dp(20)
-        spacing: dp(10)
-
-        MDRectangleFlatButton:
-            id: download
-            text: "Export"
-            size_hint: 1, None
-            size: dp(200), dp(36)
-            pos_hint: {'center_x': 0.5}
+        size_hint: 1, 0.1
+        md_bg_color: (0.8,0.8,0.8,1)
+        MDIconButton:
+            id: export
+            icon: "file-export-outline"
+            line_color: 0, 0, 0, 0
+            theme_icon_color: "Custom"
+            icon_color: 'black'
+            pos_hint: {"center_x": .5, "center_y": .5}
             on_release: root.open_file_manager()
-
-        MDRectangleFlatButton:
-            id: download
-            text: "Share"
-            size_hint: 1, None
-            size: dp(200), dp(36)
-            pos_hint: {'center_x': 0.5}
+            size_hint: 0.35,1
+           
+        MDIconButton:
+            id: apply
+            icon: 'content-save'
+            theme_icon_color: "Custom"
+            icon_color: 'blue'
+            on_release: root.apply_count()
+            size_hint: 0.35,1
+        MDIconButton:
+            id: share
+            icon: 'share-variant-outline'
+            theme_icon_color: "Custom"
+            icon_color: 'black'
             on_release: root.share()
+            size_hint: 0.35,1
+
+    #MDBoxLayout:
+      #  orientation: 'horizontal'
+       # size_hint: None, 1
+        #pos_hint: {'center_x': 0.4}
+        #padding: dp(20)
+        #spacing: dp(10)
+
+        #MDRectangleFlatButton:
+        #    id: download
+        #    text: "Export"
+        #    size_hint: 1, None
+         #   size: dp(200), dp(36)
+          #  pos_hint: {'center_x': 0.5}
+           # on_release: root.open_file_manager()
+
+       # MDRectangleFlatButton:
+        #    id: download
+         #   text: "Share"
+          #  size_hint: 1, None
+           # size: dp(200), dp(36)
+          #  pos_hint: {'center_x': 0.5}
+          #  on_release: root.share()
     
 
 
@@ -1033,7 +1081,7 @@ class OneCheckScreen(Screen):
             session_instance = InstanceCheckScreen(text=session_last.name)
             session_instance.select_id = len(sessions)-1 #sheet_i
             session_instance.manager = self.manager
-            session_instance.secondary_text = 'Date Created: '+ str(session_last.date_created).split(' ')[0]
+            session_instance.secondary_text = str(session_last.date_created)
            
             check_list.add_widget(session_instance)
             self.manager.current = 'check'
@@ -1059,7 +1107,7 @@ class OneCheckScreen(Screen):
             session_instance = InstanceCheckScreen(text=session_last.name)
             session_instance.select_id = index #sheet_i
             session_instance.manager = self.manager
-            session_instance.secondary_text = 'Date Created: '+ str(session_last.date_created).split(' ')[0]
+            session_instance.secondary_text =str(session_last.date_created)
            
             check_list.add_widget(session_instance)
 
@@ -1259,19 +1307,52 @@ class KeyScreen(Screen):
         self.page-=1
         self.on_screen(self.test_type_open, page=self.page)
 
+    def jump(self):
+        content = MDTextField(multiline=False,input_filter='int')
+        
+        # Customize title label
+        title_text = "Jump"
+        
+        dialog = MDDialog(
+            title=title_text,
+            type="custom",
+            content_cls=content,
+            buttons=[
+                MDFlatButton(
+                    text="TO PAGE", 
+                    on_release=lambda *args: [self.on_screen(self.test_type_open, page=int(content.text)) if content.text != '' else None, dialog.dismiss()]
+                ),
+                MDFlatButton(
+                    text="TO ITEM",
+                    on_release=lambda *args: [self.on_screen(self.test_type_open, page=math.ceil(int(content.text)/10)) if content.text != '' else None, dialog.dismiss()]
+                ),
+            ],
+        )
+        dialog.open()
+
     def on_screen(self, test_type='mc',page=None):
+        
         self.page = self.page if page is None else page
         if test_type=='mc':
             answer_key = fs.sheets[fs.open_index].answer_key.mc # set variable for reference on file system attribute for ease
             self.test_type_open = 'mc'
+            self.ids.pos_nav_label.text = 'Home > Sheets > Answer Keys (Multiple Choice)'
         elif test_type=='tf':
             answer_key = fs.sheets[fs.open_index].answer_key.tf # set variable for reference on file system attribute for ease
             self.test_type_open = 'tf'
-
+            self.ids.pos_nav_label.text = 'Home > Sheets > Answer Keys (True or False)'
+        if page is not None:
+            if page > math.ceil(len(answer_key.get_items())/10):
+                self.page = math.ceil(len(answer_key.get_items())/10)
+                
         saved_list = self.ids.saved_list
         iterations = 0
         self.ids.page_num_label.text = f'Page Number: {self.page} of {math.ceil(len(answer_key.get_items())/10)}'
+       
         self.ids.total_items_label.text = f'Total Items: {(len(answer_key.get_items()))}'
+        if len(answer_key.get_items()) == 0:
+            toast("Answer Key is empty.\nGo to `Sheet Settings` to set items.")
+            self.manager.change_screen('name')
         if test_type == 'mc':
             for x in saved_list.children[::-1]:
                 iterations+= 1
@@ -1303,6 +1384,10 @@ class KeyScreen(Screen):
                             print("Setting opacity")
                             choices.opacity = 1
                             choices.icon = set_icon('alpha-c')
+                        elif self.ans_equiv[choices.icon] in ['D']:
+                            print("Setting opacity")
+                            choices.opacity = 1
+                            choices.icon = set_icon('alpha-d')
                     else:
                         # this one is the label
                         print(type(choices))
@@ -1430,7 +1515,7 @@ class HomeScreen(Screen):
             instance.select_id = len(fs.sheets)-1 #sheet_i
             fs.open_index = instance.select_id
             instance.manager = self.manager
-            instance.secondary_text = 'Date Created: '+ str(sheet.date_created).split(' ')[0]
+            instance.secondary_text = str(sheet.date_created)
             saved_list.add_widget(instance)
 
     def show_init_list(self, defined_sheets=[]):
@@ -1460,7 +1545,7 @@ class HomeScreen(Screen):
             instance.add_widget(IconRightWidgetWithoutTouch(icon='chevron-right'))
             instance.select_id = ishet #sheet_i
             instance.manager = self.manager
-            instance.secondary_text = 'Date Created: '+ str(sheet.date_created).split(' ')[0]
+            instance.secondary_text = str(sheet.date_created)
             saved_list.add_widget(instance)
         
 
@@ -1536,7 +1621,29 @@ class NameScreen(Screen):
 
 
     def on_screen(self,*args,**kwargs):
+        print(self)
         self.ids.text_field.text = fs.get_sheet(fs.open_index).name
+        self.ids.date_label.text = "Date Created: "+ str(fs.get_sheet(fs.open_index).date_created)
+
+    def delete_sheet(self):
+        
+        saved_list = self.manager.get_screen('home').ids.saved_list
+        done_adjust = False
+        to_remove = None
+        for sheet in saved_list.children[::-1]:
+            print(sheet.select_id,fs.open_index)
+            if sheet.select_id == fs.open_index and done_adjust==False:
+                #saved_list.remove_widget(sheet)
+                to_remove = sheet
+                done_adjust = True
+
+            elif done_adjust:
+                print('adjusting')
+                sheet.select_id -= 1
+            print([x.select_id for x in saved_list.children])
+        saved_list.remove_widget(to_remove)
+        self.manager.change_screen('home')
+        fs.sheets.pop(fs.open_index)
 
     #METHOD_________________________________________________________
     def prepare_mc_keys(self):
@@ -1916,6 +2023,45 @@ class AnswerSheetScreen(Screen):
         sheet_name = fs.sheets[fs.open_index].name
         unique_name = str(datetime.now().strftime('%Y-%m-%d-%H-%M-%S'))
         fm = FileManager(lambda x: Function.copy_file('assets/whole_template.png', x+'/'+sheet_name+f' {unique_name}.png'), fs.filemanager_last_dir).file_manager_open()
+    
+    #METHOD_________________________________________________________
+    def get_fit(self):
+         #file system obj; get sheet based on opened index (openeded sheet on gui). then get answer keys
+    
+        # set variables based on key type
+        try:
+            mc_count = int(self.ids.mcq_textfield.text)
+        except ValueError as e:
+            print(e)
+            mc_count = 0
+        try:
+            tf_count = int(self.ids.tf_textfield.text)
+        except ValueError as e:
+            print(e)
+            tf_count = 0
+        try:
+            idtf_count = int(self.ids.ident_textfield.text)
+        except ValueError as e:
+            print(e)
+            idtf_count = 0
+        score = fit_score(mc_count,tf_count,idtf_count)*100
+        score = round(score, 2)
+        text = f'Fit: {score}%'
+        self.ids.fit_label.text = text
+        if score > 100:
+            self.ids.fit_label.text_color =(1,0,0,0.7)
+            self.ids.apply.disabled = True
+            self.ids.share.disabled = True
+            self.ids.export.disabled = True
+        else:
+            self.ids.fit_label.text_color = (0,0,1,0.7)
+            self.ids.apply.disabled = False
+            self.ids.share.disabled = False
+            self.ids.export.disabled = False
+        
+
+
+
 
     #METHOD_____________________________________________________-
 
@@ -1971,7 +2117,9 @@ class AnswerSheetScreen(Screen):
                      title=name)
         
         image_texture = CoreImage(template_path).texture
-        
+        self.ids.apply.disabled = False
+        self.ids.export.disabled = False
+        self.ids.share.disabled = False
         # Update the texture of the Image widget
         self.update_image_texture(image_texture,template_path)
         
@@ -2014,7 +2162,6 @@ class AnswerSheetScreen(Screen):
         
         
 
-    #METHOD_____________________________________________________
     def set_hidden_field(self):
         print('setting hidden')
         ansheet_ids = self.manager.get_screen('answer_sheet').ids
@@ -2074,7 +2221,8 @@ def autosave_sched():
 class CustomScreenManager(ScreenManager):
     def __init__(self, **kwargs):
         super().__init__(**kwargs)
-        self.transition = NoTransition()
+        self.transition =FadeTransition()
+        self.transition.duration = 0.10
         
 
     def change_screen(self, screen_name,**kwargs):
@@ -2118,7 +2266,7 @@ class App(MDApp):
         
         if dummy.manager.current == 'home': # on first screen
             self.stop() # stop app
-        elif dummy.manager.current == 'name':
+        elif dummy.manager.current in ['name','name_expanded']:
             dummy.manager.current = 'home' # go back to home
         elif dummy.manager.current =='check': # CHecking/Scanning of sheet
             try:
