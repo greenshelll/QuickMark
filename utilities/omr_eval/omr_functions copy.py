@@ -750,6 +750,34 @@ def get_rows(true_rectangles,CaptureSheet_obj):
         num_choices = index
         print("NUM CHOCIES", num_choices)
         db.p(f'num choices: {num_choices}')
+        ###########################################################################
+        sorted_indices = np.argsort(mat[:, 1 if CaptureSheet_obj.on_android else 0])
+        image = CaptureSheet_obj.boxes.crops[0]
+        sorted_mat = mat[sorted_indices]
+        print(sorted_mat)
+        for rect in sorted_mat:
+            ###*print(rect.xywh)
+            x,y,w,h = rect
+            #cv2.rectangle(image, (x, y), (x + w, y + h), (255,0,0), 5)
+        db.plot(image)
+        diff = np.diff(sorted_mat[:,1 if CaptureSheet_obj.on_android else 0])
+        ###*print(diff)
+        ###*print('diff\n',diff)
+        print(diff)
+        threshold = (np.max(diff) + np.min(diff))/2
+        ###*print(threshold)
+        choices = diff > threshold
+        ###*print(choices)
+        ###*print(sorted_indices)
+        ###*print(choices)
+        if np.any(choices):
+            
+            # Get the index of the first choice that satisfies the condition
+            index = np.where(choices)[0][0] + 1
+            ###*print(index)
+        else:
+            index = len(sorted_mat[:,0])
+        ###*print(index)
         ##*print("BYROWS")
         for x in by_rows:
             ##*print("ADDASDADD")

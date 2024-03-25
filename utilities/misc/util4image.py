@@ -85,6 +85,15 @@ def _stitch_images_horizontally(filepaths):
     return canvas
 
 def _crop_by_ratio(image, ratio=None):
+    # Example 3-channel image array (695x1246x3)
+    print(image.shape)
+    image_array = image  # Create an example image array filled with zeros
+
+    # Adding three rows of zeros to each channel
+    new_rows = np.ones((40, image_array.shape[1], image_array.shape[2]), dtype=image_array.dtype)*255
+    extended_image_array = np.vstack((image_array, new_rows))
+    image = extended_image_array
+    print(image.shape)
     if ratio is None:
         ratio = 13 / 8.5  # Default ratio for long size bond paper
 

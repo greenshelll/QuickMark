@@ -38,6 +38,7 @@ class Debugger:
             print(u4str.get_asciiface(f'[{self.funcname}] {self.text if text is None else text} (+{diff})', rgb if rgb is not None else self.color,bold,italic,underline,strike,dim))
 
     def plot(self,image,title='',**kwargs):
+        print(self.run_debug, self.show_plot)
         if self.run_debug and self.show_plot:
             import matplotlib.pyplot as plt
             import time
@@ -541,7 +542,6 @@ def get_scores(BubbleGetter_obj, BoxGetter_obj, CaptureSheet_obj, boxes_num):
             temp = ''.join(temp)
             bin_scores.append(scores[temp])
         BubbleGetter_obj.answers = bin_scores
-        
         ##*print(bin_scores)
         BubbleGetter_obj.eval_array = []
         print("RAW")
@@ -644,6 +644,7 @@ def get_choices_by_num(BubbleGetter_obj, BoxGetter_obj, CaptureSheet_obj, box_in
 
     try:
         num_choices, bubbles = get_rows(BubbleGetter_obj.rectangles,CaptureSheet_obj)
+        print(bubbles)
         ##*print('BUBBLES',bubbles)
         test_type_str=None
         if num_choices == 4:
@@ -712,12 +713,14 @@ def get_rows(true_rectangles,CaptureSheet_obj):
         db.p("GETTING COLUMNS")
         mat = true_rectangles
         ###*print(mat)
-        
+        db.p(true_rectangles)
         sorted_indices = np.argsort(mat[:, 0 if CaptureSheet_obj.on_android else 1])
         
         sorted_mat = mat[sorted_indices]
         
         diff = np.diff(sorted_mat[:,0 if CaptureSheet_obj.on_android else 1])
+        print(diff)
+        diffb = diff
         ###*print(diff)
         by_rows = []
         temp = []
@@ -736,12 +739,17 @@ def get_rows(true_rectangles,CaptureSheet_obj):
                 temp.append(sorted_mat[rowi])
                 by_rows.append(temp)
         
+        db.p(by_rows)
         if len(by_rows[0]) == 1:
+            db.p('equal1')
             by_rows = by_rows[1:]
+        print(db.p(by_rows))
         ###*print(np.array(by_rows).shape)
         ###*print('geting y')
-        mat = np.array(by_rows[0])
-        ###*print('aas')
+        print(np.array(by_rows).shape)
+
+        ###########################################3
+
         db.p('GETTING ROWS')
         sorted_indices = np.argsort(mat[:, 1 if CaptureSheet_obj.on_android else 0])
         image = CaptureSheet_obj.boxes.crops[0]
@@ -753,33 +761,32 @@ def get_rows(true_rectangles,CaptureSheet_obj):
             #cv2.rectangle(image, (x, y), (x + w, y + h), (255,0,0), 5)
         db.plot(image)
         diff = np.diff(sorted_mat[:,1 if CaptureSheet_obj.on_android else 0])
+        print("DIFF",diff)
         ###*print(diff)
         ###*print('diff\n',diff)
         threshold = (np.max(diff) + np.min(diff))/2
         ###*print(threshold)
-        choices = diff > threshold
+        print(threshold)
+        columns = sum(diff > 15 )+1
         ###*print(choices)
+        col_thresh = col_thresh = np.median(diff[diff > 15]) * 1.25
+
+        
+        
+        #print(sum(diffb > diffb[diffb>15].mean()*1.5))
+        print('diff' ,diffb)
+        print('trhesh',col_thresh)
+        print(diff > col_thresh)
+        col_groups = np.sum(diff > col_thresh)
+        col_groups =col_groups + 1
+
+        choices = int(columns/col_groups)
+        print("CHOICES",choices)
         ###*print(sorted_indices)
         ###*print(choices)
-        if np.any(choices):
-            
-            # Get the index of the first choice that satisfies the condition
-            index = np.where(choices)[0][0] + 1
-            ###*print(index)
-        else:
-            index = len(sorted_mat[:,0])
-        ###*print(index)
-
-        num_choices = index
-        print("NUM CHOCIES", num_choices)
-        db.p(f'num choices: {num_choices}')
-        ##*print("BYROWS")
-        for x in by_rows:
-            ##*print("ADDASDADD")
-            ##*print(np.array(x).shape)
-            pass
-        return num_choices, np.array(by_rows)
-    except Exception as e:
+        
+        return choices, np.array(by_rows)
+    except TabError as e:
         ##*print('omr.get_rows: ',e)
         pass
 

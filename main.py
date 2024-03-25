@@ -20,6 +20,8 @@ from utilities.misc.util4image import fit_score,stich_all_image as stitch_sheet,
 from utilities.misc.filesystem import *
 from utilities.misc.searchsystem import *
 from screens.camera import CameraWidget
+import utilities.misc.feedback_sheet as feedback
+
 
 # KIVY/KIVYMD IMPORTS
 #kivymd misc
@@ -684,7 +686,7 @@ CustomScreenManager:
                     id: mcq_checkbox
                     size_hint: None, None
                     size: dp(48), dp(48)
-                    on_active: root.show_text_field(self.active, 'mcq')
+                    on_active: root.show_text_field(self.active, 'mcq');root.get_fit()
 
                 MDLabel:
                     text: "Multiple Choice"
@@ -695,7 +697,7 @@ CustomScreenManager:
 
             MDTextField:
                 id: mcq_textfield
-                hint_text: "count"
+                hint_text: "count (175)"
                 input_filter: 'int'
                 mode: "fill"
                 size_hint: None, None
@@ -719,7 +721,7 @@ CustomScreenManager:
                         id: tf_checkbox
                         size_hint: None, None
                         size: dp(48), dp(48)
-                        on_active: root.show_text_field(self.active, 'tf')
+                        on_active: root.show_text_field(self.active, 'tf');root.get_fit()
 
                     MDLabel:
                         text: "True or False"
@@ -730,7 +732,7 @@ CustomScreenManager:
 
                 MDTextField:
                     id: tf_textfield
-                    hint_text: "count"
+                    hint_text: "(max: 275)"
                     input_filter: 'int'
                     mode: "fill"
                     size_hint: None, None
@@ -750,7 +752,7 @@ CustomScreenManager:
                         id: ident_checkbox
                         size_hint: None, None
                         size: dp(48), dp(48)
-                        on_active: root.show_text_field(self.active, 'ident')
+                        on_active: root.show_text_field(self.active, 'ident');root.get_fit()
 
                     MDLabel:
                         text: "Identification"
@@ -761,7 +763,7 @@ CustomScreenManager:
 
                 MDTextField:
                     id: ident_textfield
-                    hint_text: "count"
+                    hint_text: "(max: 20)"
                     input_filter: 'int'
                     mode: "fill"
                     size_hint: None, None
@@ -862,43 +864,76 @@ CustomScreenManager:
     name: 'check'
 
     MDTopAppBar:
-        
         title: "QuickMark"
+        right_action_items: [['file-export']]
+        left_action_items: [['chevron-left', lambda x: app.screen_manager_func()]]
         elevation: 0
         pos_hint: {"top": 1}
 
     MDBoxLayout:
         orientation: 'vertical'
         spacing: dp(5)
-        pos_hint: {'top':0.3, 'center_x': 0.5}
-        size_hint: 1,0.3
-        padding: dp(20)
+        pos_hint: {'top':0.5, 'center_x': 0.5}
+        size_hint: 1,0.5
+        padding: 20
+
+        MDTextField:
+            id: check_text_field
+            mode: "fill"
+            multiline: False
+            size_hint_y: None
+            size_hint_x: None
+            height: dp(20)
+            width: "250dp"
+            pos_hint: {"center_y":0.5, "center_x": .5}
+            hint_text: "Sheet Name"
+            
 
         MDLabel:
             text: 'Scores'
             theme_text_color: 'Primary'
             font_size: dp(20)
+            size_hint_y: None
+            size_hint_x: None
+            height: dp(40)
+
         MDLabel:
             id: mc_indicator
             text: 'Multiple Choice: '
             theme_text_color: 'Secondary'
             font_size: dp(15)
+            size_hint_y: None
+            height: dp(40)
+
         MDLabel:
             id: tf_indicator
             text: 'True or False: '
             theme_text_color: 'Secondary'
             font_size: dp(15)
+            size_hint_y: None
+            height: dp(40)
+
         MDLabel:
             id: idtf_indicator
             text: 'Identification: '
             theme_text_color: 'Secondary'
             font_size: dp(15)
+            size_hint_y: None
+            height: dp(40)
+    
+    MDFloatingActionButton:
+        id: plus_button
+        icon: 'plus'
+        on_release: app.root.get_screen('check').add_new_sheet()  # Call add_new_sheet method from CheckScreen        
+        pos_hint: {'center_x': .85, 'top': .12}
+        elevation: 0
 
-        MDIconButton:
-            id: camera_icon
-            icon: "camera-outline"
-            pos_hint: {"top":.2, "center_x": .5}
-            on_release: root.switch_cam()
+    MDFloatingActionButton:
+        id: cam_button
+        icon: 'camera-outline'
+        on_release: root.switch_cam()       
+        pos_hint: {'center_x': .85, 'top': .22}
+        elevation: 0
 
 
 <MCScreen>:
@@ -1031,28 +1066,97 @@ CustomScreenManager:
 <OneCheckScreen>
     name: 'onecheck'
 
-    MDBoxLayout:
-        orientation: 'vertical'
 
-        MDStackLayout:
-            MDTopAppBar:
-                title: "QuickMark"
-                right_action_items: [["plus-circle", lambda x: setattr(root.manager, 'current', 'name')]]
-                elevation: 0
+    MDStackLayout:
+        md_bg_color: (0.95,0.95,0.95,1)
+        height: self.minimum_height
+        pos_hint: {'center_x': 0.5}
+        MDTopAppBar:
+            title: "QuickMark"
+            right_action_items: [['']]
+            left_action_items: [['chevron-left', lambda x: app.screen_manager_func()]]
+            elevation: 0
+        BoxLayout:
+            canvas.before:
+                Color:
+                    rgba: 0.95,0.95,0.95,1 # Set the background color here
+                Rectangle:
+                    pos: self.pos
+                    size: root.size[0], self.size[1]
+            size_hint: (None,None)
+            orientation: 'horizontal'
+            height: dp(25)
+            padding: (20,10)
+            size_hint: (0.95,None)
 
-            ScrollView:
-                MDList:
-                    id: check_list
-        
-    MDRaisedButton:
-        text: 'CHECK TEST'
-        on_release: root.manager.current = 'check'
-        pos_hint: {"top":.2, "center_x": .5}
+            MDLabel:
+                text: "Home > Sheet > Check Papers "
+                font_size: dp(10)
+                pos_hint: {'center_x':0}
 
-    MDRaisedButton:
-        text: "Add Item to List"
-        pos_hint: {"top": .1, "center_x": .5}
-        on_release: root.add_new_sheet()
+        BoxLayout:
+            canvas.before:
+                Color:
+                    rgba: 1, 1, 1, 1  # Set the background color here
+                Rectangle:
+                    pos: self.pos
+                    size: root.size[0], self.size[1]
+            size_hint: (None,None)
+            orientation: 'horizontal'
+            height: dp(80)
+            padding: (20,10)
+            size_hint: (0.95,None)
+            
+            MDTextField:
+                md_bg_color: (1,1,1,1)
+                icon_left: 'magnify'
+                hint_text: "Search..."
+                height: dp(20)
+                padding: (40, 40)
+                size_hint: (0.9,None)
+                on_text: root.word_search(*args)
+
+        BoxLayout:
+            id: box_label
+            canvas.before:
+                Color:
+                    rgba: 0.95,0.95,0.95,1 # Set the background color here
+                Rectangle:
+                    pos: self.pos
+                    size: root.size[0], dp(1)
+            size_hint: (0,None)
+            orientation: 'horizontal'
+            
+            size_hint: (1,None)
+            height: 15
+            MDLabel:
+                id: empty_label
+                text: ""
+                halign:"center"  # Center the text horizontally
+                theme_text_color:"Secondary" # Set the color to gray
+                height:5
+                pos_hint:{"center_y": 0.5} 
+                
+        ScrollView:
+            id: scroll_view
+            size_hint: (1, None)
+            height: dp(500)
+
+            MDList:
+                id: onecheck_list 
+                size_hint_y: None
+                height: self.minimum_height
+                md_bg_color: (1,1,1,1)
+                padding: 0  # Set padding to 0
+                spacing: 0 
+
+
+    MDFloatingActionButton:
+        id: plus_button
+        icon: 'plus'
+        on_release: root.add_new_sheet()        
+        pos_hint: {'center_x': .85, 'top': .12}
+        elevation: 0
 '''
 
 class OneCheckScreen(Screen):
@@ -1067,11 +1171,11 @@ class OneCheckScreen(Screen):
         check_obj.get_session(-1).name = str(f'STUDENT {len(check_obj.check_sessions)}')
         #fs.save()
         self.add_item_to_list()
-        print(self.ids.check_list.children)
+        print(self.ids.onecheck_list.children)
         toast("New Checking Session Added.", (1,0,1,0.2), 1)
 
     def add_item_to_list(self, item_text="New Item Added"):
-        check_list = self.ids.check_list
+        check_list = self.ids.onecheck_list
 
         check_obj = fs.get_sheet(fs.open_index).check_sheets
         sessions = check_obj.check_sessions
@@ -1110,7 +1214,8 @@ class OneCheckScreen(Screen):
             session_instance.secondary_text =str(session_last.date_created)
            
             check_list.add_widget(session_instance)
-
+    """def __init__(self, **kwargs):
+        super(OneCheckScreen, self).__init__(**kwargs)"""
         
 
 
@@ -1917,7 +2022,7 @@ class CheckScreen(Screen):
         check_sheet = fs.get_sheet(fs.open_index).check_sheets
         print(check_sheet.session_open_index)
         check_session=check_sheet.get_session(check_sheet.session_open_index)
-
+        self.ids.check_text_field= check_session.name
         if test_type == 'MULTIPLE CHOICE':
             value = check_session._mc_score
             self.ids.mc_indicator.text = f'Multiple Choice: {value}'
@@ -2031,16 +2136,22 @@ class AnswerSheetScreen(Screen):
         # set variables based on key type
         try:
             mc_count = int(self.ids.mcq_textfield.text)
+            if self.ids.mcq_textfield.opacity ==0:
+                raise ValueError('')
         except ValueError as e:
             print(e)
             mc_count = 0
         try:
             tf_count = int(self.ids.tf_textfield.text)
+            if self.ids.tf_textfield.opacity ==0:
+                raise ValueError('')
         except ValueError as e:
             print(e)
             tf_count = 0
         try:
             idtf_count = int(self.ids.ident_textfield.text)
+            if self.ids.ident_textfield.opacity ==0:
+                raise ValueError('')
         except ValueError as e:
             print(e)
             idtf_count = 0

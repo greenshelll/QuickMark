@@ -2,11 +2,11 @@
 import cv2
 import sys
 try:
-    import utilities.omr_eval.omr_functions as omr_functions
+    import utilities.omr_eval.omr_functions2 as omr_functions
     import utilities.omr_eval.util4string as u4str
 except ModuleNotFoundError as e:
     print(e, 'Getting alt path')
-    import omr_functions as omr_functions
+    import omr_functions2 as omr_functions
     import util4string as u4str
 import numpy as np
 
