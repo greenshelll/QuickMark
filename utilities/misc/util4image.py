@@ -183,7 +183,7 @@ def fit_score(mc_num, tf_num, idtf_num):
         
 
     
-def stich_all_image(mc_num, tf_num, idtf_num,title, save_path=None):
+def stich_all_image(mc_num, tf_num, idtf_num,title, save_path=None, filepaths=None):
     """stitch all images.
     returns filepath of template
     """
@@ -191,7 +191,8 @@ def stich_all_image(mc_num, tf_num, idtf_num,title, save_path=None):
         save_path = 'assets/whole_template.png'
     
     header_path = 'assets/header.png'
-    filepaths = [f'assets/mc_img/{int(mc_num)}.png' if mc_num > 0 else None, 
+    if filepaths is None:
+        filepaths = [f'assets/mc_img/{int(mc_num)}.png' if mc_num > 0 else None, 
                  f'assets/tf_img/{int(tf_num)}.png' if tf_num>0 else None, 
                  f'assets/idtf_img/{int(idtf_num)}.png' if idtf_num>0 else None]
     print(filepaths)

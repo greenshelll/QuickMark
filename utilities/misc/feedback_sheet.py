@@ -54,28 +54,31 @@ def feedback(answer_array, correct_array, test_type, item_count, save_filepath='
             x,y,w,h = choice[bubble_pos].xywh
             x2, y2 = x + w, y + h
             
-            
-                
-            print(answer, index_char[bubble_pos], correct_array[bubble_pos])
-
-            if answer in index_char[bubble_pos]:
-                print(True)
-                cv2.rectangle(image, (x, y), (x2, y2), [00,00,00], cv2.FILLED)
-                if answer in correct:
-                
-                    cv2.rectangle(image, (x, y), (x2, y2), [00,200,00], cv2.FILLED)
-                else:
-                    print(False)
-                    cv2.rectangle(image, (x, y), (x2, y2), [00,000,200], cv2.FILLED)
-            # mark possible correct yellow
+            print("GETTING ")
+            print(bubble_pos)
+            print(answer)
+            print(index_char)
+            print(correct_array)
+            #print(answer, index_char[bubble_pos], correct_array[bubble_pos])
             for correct_list in correct: # correct single is a bubbble # caorrect can have cor
                 if  correct_list in index_char[bubble_pos]: # yellow, listed as correct list
                     #print(correct_list)
                     cv2.rectangle(image, (x, y), (x2, y2), [0,150,150], 5)
 
+            if answer in index_char[bubble_pos]:
+                print(True)
+                cv2.rectangle(image, (x, y), (x2, y2), [00,00,00], cv2.FILLED)
+                if answer in correct:
+        
+                    cv2.rectangle(image, (x, y), (x2, y2), [00,200,00], 5)
+                else:
+                    print(False)
+                    cv2.rectangle(image, (x, y), (x2, y2), [00,000,200],5)
+            # mark possible correct yellow
+            
                 # green = correct answer
                 
     
 
-    cv2.imwrite('img.png',image)
+    cv2.imwrite(save_filepath,image)
  

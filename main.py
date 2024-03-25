@@ -924,7 +924,7 @@ CustomScreenManager:
     MDFloatingActionButton:
         id: plus_button
         icon: 'plus'
-        on_release: app.root.get_screen('check').add_new_sheet()  # Call add_new_sheet method from CheckScreen        
+        on_release: app.root.get_screen('onecheck').add_new_sheet()  # Call add_new_sheet method from CheckScreen        
         pos_hint: {'center_x': .85, 'top': .12}
         elevation: 0
 
@@ -1160,6 +1160,30 @@ CustomScreenManager:
 '''
 
 class OneCheckScreen(Screen):
+    def word_search(self, instance, text):
+        saved_list = self.ids.onecheck_list
+        word_keys = []
+        obj_content = []
+        for subwidget in self.ids.onecheck_list.children:
+            word_keys.append(subwidget.text)
+            obj_content.append([subwidget.text,subwidget.secondary_text, subwidget.select_id])
+        search_system = SearchSystem(word_keys, obj_content)
+        result = search_system.search(text,True)
+
+        if text in ['', ' ']:
+            obj_content = []
+            inc = 0
+            for subwidget in fs.get_sheet(fs.open_index).check_sheets.check_sessions:
+                #word_keys.append(subwidget.text)
+                obj_content.append([subwidget.name ,subwidget.date_created, inc])
+                inc += 1
+            result = obj_content
+
+        for subwidget, widget_detail in zip(self.ids.onecheck_list.children, result[::-1]):
+            subwidget.text = widget_detail[0]
+            subwidget.secondary_text = widget_detail[1]
+            subwidget.select_id = widget_detail[2]
+
     def add_new_sheet(self):
         print("ADDING NEW SESSION")
         check_obj = fs.get_sheet(fs.open_index).check_sheets
@@ -1188,7 +1212,8 @@ class OneCheckScreen(Screen):
             session_instance.secondary_text = str(session_last.date_created)
            
             check_list.add_widget(session_instance)
-            self.manager.current = 'check'
+            #self.manager.current = 'check'
+            self.manager.change_screen('check')
 
 
         """list_item = TwoLineListItem(text=item_text)
@@ -1218,11 +1243,6 @@ class OneCheckScreen(Screen):
         super(OneCheckScreen, self).__init__(**kwargs)"""
         
 
-
-
-
-        
-
 class InstanceCheckScreen(TwoLineListItem):
     def __init__(self, **kwargs):
         super(InstanceCheckScreen, self).__init__(**kwargs)
@@ -1233,9 +1253,9 @@ class InstanceCheckScreen(TwoLineListItem):
         print("GETTING THERE")
         #fs.get_sheet(self.select_id).name = str(fs.get_sheet(self.select_id).name)
         fs.get_sheet(fs.open_index).check_sheets.session_open_index = self.select_id
-        self.manager.get_screen('check').start()
-
-        self.manager.current = 'check'
+        self.manager.get_screen('check')
+        self.manager.change_screen('check')
+        #self.manager.current = 'check'
         
 
 class Instance(TwoLineAvatarIconListItem):
@@ -1995,6 +2015,12 @@ class FileManager(MDFileManager):
 class IDScreen(Screen):
     pass
 
+#CLASS)))))))))))))_____________________________________________-
+class FeedBack(BoxLayout):
+    def __init__(self,**kwargs):
+        super(FeedBack, self).__init__(**kwargs)
+        self.frame_image = Image(size_hint=(1,1), pos_hint={'center_x': 0.5, 'center_y': 0.5},allow_stretch=True, keep_ratio=False)
+
 
 #CLASS________________________________________________________
 
@@ -2015,14 +2041,18 @@ class CheckScreen(Screen):
         del self.camera_widget
         self.cam_is_on = False  # status indicator
 
-
+    
     #METHOD____________________________________________
     def update(self, test_type):
+        print("UPDATING SHET")
         value=None
         check_sheet = fs.get_sheet(fs.open_index).check_sheets
         print(check_sheet.session_open_index)
         check_session=check_sheet.get_session(check_sheet.session_open_index)
-        self.ids.check_text_field= check_session.name
+        print(check_session.name)
+        self.ids.check_text_field.text = check_session.name
+        self.feedback_widget = FeedBack()
+        self.add_widget(self.feedback_widget)
         if test_type == 'MULTIPLE CHOICE':
             value = check_session._mc_score
             self.ids.mc_indicator.text = f'Multiple Choice: {value}'
@@ -2044,6 +2074,44 @@ class CheckScreen(Screen):
                 self.ids.idtf_indicator.color = (0,0.5,0,1)
             else:
                 print('idtf none')
+
+        print('preparing feedback')
+            
+        mc_answers = check_session.mc_answer
+        tf_answers = check_session.tf_answer
+        mc_key = fs.sheets[fs.open_index].answer_key.mc
+        tf_key = fs.sheets[fs.open_index].answer_key.tf
+        length = len(mc_answers)
+        print('getting feedback')
+        print('getting mc feedback')
+        feedback.feedback(
+            ['A','B','C'],
+            [['A'],['C'],['B']],
+            'MULTIPLE CHOICE', 3,'assets/mc_feedback.png')
+        print('getting true or false feedback')
+        feedback.feedback(
+            ['T','T','F'],
+            [['T'],['T'],['T']],
+            'TRUE OR FALSE', 3,'assets/tf_feedback.png')
+        print('stitching')
+        #saved_path = stitch_sheet(len(mc_answers), len(tf_answers), 0, title=check_session.name, save_path='assets/feedback_stitched.png',
+             #        filepaths=['assets/mc_feedback.png','assets/tf_feedback.png'])
+        image_texture = CoreImage('assets/mc_feedback.png').texture
+        image = self.feedback_widget.frame_image
+        
+        # Temporarily clear the source to force a texture reload
+        image.source = ''
+        
+        # Assign the new texture
+        image.texture =image_texture
+        
+        # Assign the source again to ensure the update is triggered
+        image.source = 'assets/mc_feedback.png'
+        
+        # Trigger a layout update to force the image to redraw
+        image.reload()
+        
+
 
     def cam_on(self):
         """Func for turning camera on
@@ -2076,9 +2144,11 @@ class CheckScreen(Screen):
         # status indicator
         self.cam_is_on = True
 
-    def start(self,*args,**kwargs):
+    def on_screen(self,*args,**kwargs):
         for x in ['MULTIPLE CHOICE', 'TRUE OR FALSE', 'IDENTIFICATION']:
             self.update(x)
+        
+        
 
     
 
@@ -2099,6 +2169,7 @@ class CheckScreen(Screen):
     def __init__(self,**kwargs):
         super(CheckScreen, self).__init__(**kwargs)
         self.cam_is_on = False # initialize status indicator
+        self.feedback_widget = None
 
 
 #CLASS_________________________________________________________
@@ -2342,7 +2413,7 @@ class CustomScreenManager(ScreenManager):
 
         try:
             screen.on_screen(**kwargs)
-        except Exception as e:
+        except AttributeError as e:
             print('screen.change_screen():',e)
 
 class App(MDApp):

@@ -16,6 +16,7 @@ import cv2
 from PIL import Image as Pimage
 from kivy.uix.boxlayout import BoxLayout
 from kivy.graphics import Color, Rectangle
+
 db = Debugger()
 db.run_debug = False
 sheet.omr_functions.db.run_debug=True

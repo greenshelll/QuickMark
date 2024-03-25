@@ -404,6 +404,7 @@ class CheckSheets:
         self.session_open_index = index
         return self.check_sessions[index]
     
+    
     def del_session(self):
         """
         Deletes last oepened check session
