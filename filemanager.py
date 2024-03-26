@@ -1,54 +1,28 @@
-from kivy.lang import Builder
-from kivymd.app import MDApp
-from kivymd.uix.button import MDRaisedButton
-from kivymd.uix.filemanager import MDFileManager
-import os
+from utilities.misc.feedback_sheet import *
+import random
+import pickle
 
-KV = '''
-BoxLayout:
-    orientation: "vertical"
 
-    MDRaisedButton:
-        text: "Open File Manager"
-        on_release: app.file_manager_open()
+#
+fbc,errors= PRESAVE_FEEDBACK(1,175,'mc')
+write_presaved_feedback(fbc)
+print(errors)
 
-    Label:
-        id: selected_file_label
-        text: "Selected file: None"
-'''
+print(fbc.mc[171])
+input("CONTINUE TO TF?: ")
+#fbc = read_presaved_feedback()
+fbc,errors = PRESAVE_FEEDBACK(1,300,'tf',fbc)
+write_presaved_feedback(fbc)
 
-class MyApp(MDApp):
-    def __init__(self, **kwargs):
-        super().__init__(**kwargs)
-        self.file_manager = MDFileManager(
-            exit_manager=self.exit_manager,
-            select_path=self.select_path,
-        )
-        self.previous_path = None  # Initialize previous selected path to None
+#fbc = read_presaved_feedback()
+#print(fbc.get_mc_by_count(3)[11])
 
-    def build(self):
-        return Builder.load_string(KV)
+answers = list('ABCD')
+get_random = lambda: answers[random.randint(0,1)]
+length = 50
+feedback_quick(
+     ['T','F','F']*length,
+    [['T','F'],['F'],['T']]*length,
+    'TRUE OR FALSE', length*3
 
-    def file_manager_open(self):
-        # Show file manager starting from the previous selected path or root directory
-        starting_path = self.previous_path or '/'
-        self.file_manager.show(starting_path)
-
-    def select_path(self, path):
-        # Method to handle file selection event
-        self.root.ids.selected_file_label.text = f"Selected file: {path}"
-        self.previous_path = path  # Store the selected path
-        self.run_script(path)
-        self.file_manager.close()
-
-    def run_script(self, file_path):
-        # Method to run a script using the selected file path
-        if os.path.isfile(file_path):
-            # Example: Run a Python script
-            os.system(f"python {file_path}")
-
-    def exit_manager(self, *args):
-        # Method to handle exit event
-        self.file_manager.close()
-
-MyApp().run()
+)

@@ -85,6 +85,15 @@ def _stitch_images_horizontally(filepaths):
     return canvas
 
 def _crop_by_ratio(image, ratio=None):
+    # Example 3-channel image array (695x1246x3)
+    print(image.shape)
+    image_array = image  # Create an example image array filled with zeros
+
+    # Adding three rows of zeros to each channel
+    new_rows = np.ones((40, image_array.shape[1], image_array.shape[2]), dtype=image_array.dtype)*255
+    extended_image_array = np.vstack((image_array, new_rows))
+    image = extended_image_array
+    print(image.shape)
     if ratio is None:
         ratio = 13 / 8.5  # Default ratio for long size bond paper
 
@@ -96,11 +105,14 @@ def _crop_by_ratio(image, ratio=None):
 
     # Crop the image, leaving the left side
     cropped_image = image[:, remaining_width:]
-
+    print('correct_ratio',ratio)
     # Print information for debugging
     print("Original image shape:", image.shape)
     print("Cropped image shape:", cropped_image.shape)
     print("Expected ratio:", cropped_image.shape[1] / cropped_image.shape[0])
+    
+    if abs(ratio-(cropped_image.shape[1] / cropped_image.shape[0])) > 0.5:
+        return _crop_by_ratio(image, ratio=8.5/13)
 
     return cropped_image
 
@@ -174,26 +186,36 @@ def fit_score(mc_num, tf_num, idtf_num):
         
 
     
-def stich_all_image(mc_num, tf_num, idtf_num,title, save_path=None):
+def stich_all_image(mc_num, tf_num, idtf_num,title, save_path=None, filepaths=None, stitch_header=True):
     """stitch all images.
     returns filepath of template
     """
+    print('stitching all images starting')
     if save_path is None:
+        print('save path is None')
         save_path = 'assets/whole_template.png'
     
     header_path = 'assets/header.png'
-    filepaths = [f'assets/mc_img/{int(mc_num)}.png' if mc_num > 0 else None, 
+    if filepaths is None:
+        print('file path is non')
+        filepaths = [f'assets/mc_img/{int(mc_num)}.png' if mc_num > 0 else None, 
                  f'assets/tf_img/{int(tf_num)}.png' if tf_num>0 else None, 
                  f'assets/idtf_img/{int(idtf_num)}.png' if idtf_num>0 else None]
     print(filepaths)
     if mc_num == 0 and tf_num == 0 and idtf_num == 0:
         return 'assets/empty_template.png'
     else:
+        print('stitching image orizontally')
         type_test_image = _stitch_images_horizontally(filepaths)
-        stitched_image = _stitch_header(type_test_image, header_path, title)
+        print('stitching header')
+        stitched_image = _stitch_header(type_test_image, header_path, title) if stitch_header==True else type_test_image
+        print('cropping by ratio')
         stitched_image = _crop_by_ratio(stitched_image)
-        stitched_image = _add_title(stitched_image, title)
+        print('adding title')
+        stitched_image = _add_title(stitched_image, title) 
+        print('saving')
         cv2.imwrite(save_path, stitched_image)
+        print('saving done')
         return save_path
 
 

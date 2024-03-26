@@ -2,11 +2,11 @@
 import cv2
 import sys
 try:
-    import utilities.omr_eval.omr_functions as omr_functions
+    import utilities.omr_eval.omr_functions2 as omr_functions
     import utilities.omr_eval.util4string as u4str
 except ModuleNotFoundError as e:
     print(e, 'Getting alt path')
-    import omr_functions as omr_functions
+    import omr_functions2 as omr_functions
     import util4string as u4str
 import numpy as np
 
@@ -78,6 +78,7 @@ class _BubbleGetter:
         self.rectangles = [] # to be taken later
         self.rows = None # to be taken later
         self.choices_by_num = None # to be taken later
+        self.choices_by_num_dict = None
         self.answers = None #later
         self.final_score = None #later
         self.test_type = None #later
@@ -85,12 +86,21 @@ class _BubbleGetter:
         
         
 
-    def retrieve(self, BoxGetter_obj, CaptureSheet_obj, box_index,redo,use_rect,param_value,**kwargs):
+    def retrieve(self, BoxGetter_obj, CaptureSheet_obj, box_index,redo,use_rect,param_value,for_feedback,**kwargs):
         """omr.get_choices(BubbleGetter_obj=self,
                         BoxGetter_obj=BoxGetter_obj,
                         CaptureSheet_obj=CaptureSheet_obj, 
                         box_index=box_index,
                         **kwargs)"""
+        if for_feedback:
+            omr_functions.get_bubbles_feedback(BubbleGetter_obj=self,
+                               CaptureSheet_obj=CaptureSheet_obj, 
+                               boxes_num=box_index,
+                                BoxGetter_obj=BoxGetter_obj,
+                                redo=redo,use_rect=use_rect,
+                                param_value=param_value,
+                                **kwargs)
+            return 0
         omr_functions.get_bubbles(BubbleGetter_obj=self,
                                CaptureSheet_obj=CaptureSheet_obj, 
                                boxes_num=box_index,
@@ -169,12 +179,14 @@ class CaptureSheet:
                             boxes_num=self.boxes_num,**kwargs)
         return self
         
-    def get_bubbles(self,redo=False,use_rect=False, mod_value=11):
+    def get_bubbles(self,redo=False,use_rect=False, mod_value=13,for_feedback=False):
         for crop_i in range(self.boxes_num):
             self.bubbles[crop_i].retrieve(BoxGetter_obj=self.boxes,
                                           CaptureSheet_obj=self,
                                           box_index=crop_i,redo=redo,use_rect=use_rect,
-                                          param_value=mod_value)
+                                          param_value=mod_value,
+                                          for_feedback=for_feedback)
+            
             #self.bubbles[crop_i].img = self.boxes[crop_i].transformed_imgs
         return self
     

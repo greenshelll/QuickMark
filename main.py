@@ -21,6 +21,8 @@ from utilities.misc.util4image import fit_score,stich_all_image as stitch_sheet,
 from utilities.misc.filesystem import *
 from utilities.misc.searchsystem import *
 from screens.camera import CameraWidget
+import utilities.misc.feedback_sheet as feedback
+
 
 # KIVY/KIVYMD IMPORTS
 #kivymd misc
@@ -686,7 +688,7 @@ CustomScreenManager:
                     id: mcq_checkbox
                     size_hint: None, None
                     size: dp(48), dp(48)
-                    on_active: root.show_text_field(self.active, 'mcq')
+                    on_active: root.show_text_field(self.active, 'mcq');root.get_fit()
 
                 MDLabel:
                     text: "Multiple Choice"
@@ -697,7 +699,7 @@ CustomScreenManager:
 
             MDTextField:
                 id: mcq_textfield
-                hint_text: "count"
+                hint_text: "count (175)"
                 input_filter: 'int'
                 mode: "fill"
                 size_hint: None, None
@@ -721,7 +723,7 @@ CustomScreenManager:
                         id: tf_checkbox
                         size_hint: None, None
                         size: dp(48), dp(48)
-                        on_active: root.show_text_field(self.active, 'tf')
+                        on_active: root.show_text_field(self.active, 'tf');root.get_fit()
 
                     MDLabel:
                         text: "True or False"
@@ -732,7 +734,7 @@ CustomScreenManager:
 
                 MDTextField:
                     id: tf_textfield
-                    hint_text: "count"
+                    hint_text: "(max: 275)"
                     input_filter: 'int'
                     mode: "fill"
                     size_hint: None, None
@@ -752,7 +754,7 @@ CustomScreenManager:
                         id: ident_checkbox
                         size_hint: None, None
                         size: dp(48), dp(48)
-                        on_active: root.show_text_field(self.active, 'ident')
+                        on_active: root.show_text_field(self.active, 'ident');root.get_fit()
 
                     MDLabel:
                         text: "Identification"
@@ -763,7 +765,7 @@ CustomScreenManager:
 
                 MDTextField:
                     id: ident_textfield
-                    hint_text: "count"
+                    hint_text: "(max: 20)"
                     input_filter: 'int'
                     mode: "fill"
                     size_hint: None, None
@@ -862,43 +864,77 @@ CustomScreenManager:
     name: 'check'
 
     MDTopAppBar:
-        
         title: "QuickMark"
+        right_action_items: [['file-export']]
+        left_action_items: [['chevron-left', lambda x: app.screen_manager_func()]]
         elevation: 0
         pos_hint: {"top": 1}
 
     MDBoxLayout:
         orientation: 'vertical'
         spacing: dp(5)
-        pos_hint: {'top':0.3, 'center_x': 0.5}
-        size_hint: 1,0.3
-        padding: dp(20)
+        pos_hint: {'top':0.5, 'center_x': 0.5}
+        size_hint: 1,0.5
+        padding: 20
+
+        MDTextField:
+            id: check_text_field
+            mode: "fill"
+            multiline: False
+            size_hint_y: None
+            size_hint_x: None
+            height: dp(20)
+            width: "250dp"
+            pos_hint: {"center_y":0.5, "center_x": .5}
+            hint_text: "Sheet Name"
+            
 
         MDLabel:
             text: 'Scores'
             theme_text_color: 'Primary'
-            font_size: dp(20)
+            font_size: dp(15)
+            size_hint_y: None
+            size_hint_x: 1
+            height: dp(40)
+            
+
         MDLabel:
             id: mc_indicator
             text: 'Multiple Choice: '
             theme_text_color: 'Secondary'
             font_size: dp(15)
+            size_hint_y: None
+            height: dp(40)
+
         MDLabel:
             id: tf_indicator
             text: 'True or False: '
             theme_text_color: 'Secondary'
             font_size: dp(15)
+            size_hint_y: None
+            height: dp(40)
+
         MDLabel:
             id: idtf_indicator
             text: 'Identification: '
             theme_text_color: 'Secondary'
             font_size: dp(15)
+            size_hint_y: None
+            height: dp(40)
+    
+    MDFloatingActionButton:
+        id: plus_button
+        icon: 'plus'
+        on_release: app.root.get_screen('onecheck').add_new_sheet()  # Call add_new_sheet method from CheckScreen        
+        pos_hint: {'center_x': .85, 'top': .12}
+        elevation: 0
 
-        MDIconButton:
-            id: camera_icon
-            icon: "camera-outline"
-            pos_hint: {"top":.2, "center_x": .5}
-            on_release: root.switch_cam()
+    MDFloatingActionButton:
+        id: cam_button
+        icon: 'camera-outline'
+        on_release: root.switch_cam()       
+        pos_hint: {'center_x': .85, 'top': .22}
+        elevation: 0
 
 <MCScreen>:
     name: 'MC'
@@ -1463,31 +1499,124 @@ CustomScreenManager:
 <OneCheckScreen>
     name: 'onecheck'
 
-    MDBoxLayout:
-        orientation: 'vertical'
 
-        MDStackLayout:
-            MDTopAppBar:
-                title: "QuickMark"
-                right_action_items: [["plus-circle", lambda x: setattr(root.manager, 'current', 'name')]]
-                elevation: 0
+    MDStackLayout:
+        md_bg_color: (0.95,0.95,0.95,1)
+        height: self.minimum_height
+        pos_hint: {'center_x': 0.5}
+        MDTopAppBar:
+            title: "QuickMark"
+            right_action_items: [['']]
+            left_action_items: [['chevron-left', lambda x: app.screen_manager_func()]]
+            elevation: 0
+        BoxLayout:
+            canvas.before:
+                Color:
+                    rgba: 0.95,0.95,0.95,1 # Set the background color here
+                Rectangle:
+                    pos: self.pos
+                    size: root.size[0], self.size[1]
+            size_hint: (None,None)
+            orientation: 'horizontal'
+            height: dp(25)
+            padding: (20,10)
+            size_hint: (0.95,None)
 
-            ScrollView:
-                MDList:
-                    id: check_list
-        
-    MDRaisedButton:
-        text: 'CHECK TEST'
-        on_release: root.manager.current = 'check'
-        pos_hint: {"top":.2, "center_x": .5}
+            MDLabel:
+                text: "Home > Sheet > Check Papers "
+                font_size: dp(10)
+                pos_hint: {'center_x':0}
 
-    MDRaisedButton:
-        text: "Add Item to List"
-        pos_hint: {"top": .1, "center_x": .5}
-        on_release: root.add_new_sheet()
+        BoxLayout:
+            canvas.before:
+                Color:
+                    rgba: 1, 1, 1, 1  # Set the background color here
+                Rectangle:
+                    pos: self.pos
+                    size: root.size[0], self.size[1]
+            size_hint: (None,None)
+            orientation: 'horizontal'
+            height: dp(80)
+            padding: (20,10)
+            size_hint: (0.95,None)
+            
+            MDTextField:
+                md_bg_color: (1,1,1,1)
+                icon_left: 'magnify'
+                hint_text: "Search..."
+                height: dp(20)
+                padding: (40, 40)
+                size_hint: (0.9,None)
+                on_text: root.word_search(*args)
+
+        BoxLayout:
+            id: box_label
+            canvas.before:
+                Color:
+                    rgba: 0.95,0.95,0.95,1 # Set the background color here
+                Rectangle:
+                    pos: self.pos
+                    size: root.size[0], dp(1)
+            size_hint: (0,None)
+            orientation: 'horizontal'
+            
+            size_hint: (1,None)
+            height: 15
+            MDLabel:
+                id: empty_label
+                text: ""
+                halign:"center"  # Center the text horizontally
+                theme_text_color:"Secondary" # Set the color to gray
+                height:5
+                pos_hint:{"center_y": 0.5} 
+                
+        ScrollView:
+            id: scroll_view
+            size_hint: (1, None)
+            height: dp(500)
+
+            MDList:
+                id: onecheck_list 
+                size_hint_y: None
+                height: self.minimum_height
+                md_bg_color: (1,1,1,1)
+                padding: 0  # Set padding to 0
+                spacing: 0 
+
+
+    MDFloatingActionButton:
+        id: plus_button
+        icon: 'plus'
+        on_release: root.add_new_sheet()        
+        pos_hint: {'center_x': .85, 'top': .12}
+        elevation: 0
 '''
 
 class OneCheckScreen(Screen):
+    def word_search(self, instance, text):
+        saved_list = self.ids.onecheck_list
+        word_keys = []
+        obj_content = []
+        for subwidget in self.ids.onecheck_list.children:
+            word_keys.append(subwidget.text)
+            obj_content.append([subwidget.text,subwidget.secondary_text, subwidget.select_id])
+        search_system = SearchSystem(word_keys, obj_content)
+        result = search_system.search(text,True)
+
+        if text in ['', ' ']:
+            obj_content = []
+            inc = 0
+            for subwidget in fs.get_sheet(fs.open_index).check_sheets.check_sessions:
+                #word_keys.append(subwidget.text)
+                obj_content.append([subwidget.name ,subwidget.date_created, inc])
+                inc += 1
+            result = obj_content
+
+        for subwidget, widget_detail in zip(self.ids.onecheck_list.children, result[::-1]):
+            subwidget.text = widget_detail[0]
+            subwidget.secondary_text = widget_detail[1]
+            subwidget.select_id = widget_detail[2]
+
     def add_new_sheet(self):
         print("ADDING NEW SESSION")
         check_obj = fs.get_sheet(fs.open_index).check_sheets
@@ -1499,11 +1628,11 @@ class OneCheckScreen(Screen):
         check_obj.get_session(-1).name = str(f'STUDENT {len(check_obj.check_sessions)}')
         #fs.save()
         self.add_item_to_list()
-        print(self.ids.check_list.children)
+        print(self.ids.onecheck_list.children)
         toast("New Checking Session Added.", (1,0,1,0.2), 1)
 
     def add_item_to_list(self, item_text="New Item Added"):
-        check_list = self.ids.check_list
+        check_list = self.ids.onecheck_list
 
         check_obj = fs.get_sheet(fs.open_index).check_sheets
         sessions = check_obj.check_sessions
@@ -1516,7 +1645,8 @@ class OneCheckScreen(Screen):
             session_instance.secondary_text = str(session_last.date_created)
            
             check_list.add_widget(session_instance)
-            self.manager.current = 'check'
+            #self.manager.current = 'check'
+            self.manager.change_screen('check')
 
 
         """list_item = TwoLineListItem(text=item_text)
@@ -1529,8 +1659,8 @@ class OneCheckScreen(Screen):
     def on_screen(self):
         #self.clear_widget()
         print("opening one check screen")
-        self.ids.check_list.clear_widgets()
-        check_list = self.ids.check_list
+        self.ids.onecheck_list.clear_widgets()
+        check_list = self.ids.onecheck_list
         check_sheets = fs.get_sheet(fs.open_index).check_sheets
         sessions = check_sheets.check_sessions
     
@@ -1621,7 +1751,10 @@ class MCQAnalysisScreen(Screen):
         self.generate_bar_graph()
         self.load_images()
         
-        
+
+    """def __init__(self, **kwargs):
+        super(OneCheckScreen, self).__init__(**kwargs)"""
+
 class InstanceCheckScreen(TwoLineListItem):
     def __init__(self, **kwargs):
         super(InstanceCheckScreen, self).__init__(**kwargs)
@@ -1632,9 +1765,9 @@ class InstanceCheckScreen(TwoLineListItem):
         print("GETTING THERE")
         #fs.get_sheet(self.select_id).name = str(fs.get_sheet(self.select_id).name)
         fs.get_sheet(fs.open_index).check_sheets.session_open_index = self.select_id
-        self.manager.get_screen('check').start()
-
-        self.manager.current = 'check'
+        self.manager.get_screen('check')
+        self.manager.change_screen('check')
+        #self.manager.current = 'check'
         
 class Instance(TwoLineAvatarIconListItem):
     def __init__(self, **kwargs):
@@ -2101,7 +2234,7 @@ class NameScreen(Screen):
 
 
     def on_screen(self,*args,**kwargs):
-        print(self)
+        print("NAMESCREEN ON SCREEN")
         self.ids.text_field.text = fs.get_sheet(fs.open_index).name
         self.ids.date_label.text = "Date Created: "+ str(fs.get_sheet(fs.open_index).date_created)
 
@@ -2205,6 +2338,7 @@ class NameScreen(Screen):
         """
         sheet_screen = self.manager.get_screen('answer_sheet')
         answer_key = fs.sheets[fs.open_index].answer_key
+
         sheet_screen.ids.mcq_textfield.text = str(len(answer_key.mc.get_items()))
         sheet_screen.ids.tf_textfield.text = str(len(answer_key.tf.get_items()))
         sheet_screen.ids.ident_textfield.text = str(len(answer_key.idtf.get_items()))
@@ -2213,8 +2347,7 @@ class NameScreen(Screen):
         sheet_screen.ids.ident_checkbox.active = True if len(answer_key.idtf.get_items()) > 0 else False
         sheet_screen.set_hidden_field()
         name = fs.sheets[fs.open_index].name
-        sheet_screen.generate_template(len(answer_key.mc.get_items()), len(answer_key.tf.get_items()), len(answer_key.idtf.get_items()), name)
-
+        
 
     def rename(self):
         """Renaming Function
@@ -2365,6 +2498,14 @@ class FileManager(MDFileManager):
 class IDScreen(Screen):
     pass
 
+
+class FeedBack(BoxLayout):
+    def __init__(self,**kwargs):
+        super(FeedBack, self).__init__(**kwargs)
+        self.frame_image = Image(size_hint=(1,1), pos_hint={'center_x': 0.5, 'center_y': 0.5},allow_stretch=True, keep_ratio=False)
+
+
+
 #CLASS________________________________________________________
 
 class CheckScreen(Screen):
@@ -2376,21 +2517,87 @@ class CheckScreen(Screen):
         """Function for turning camera off
         """
         self.remove_widget(self.camera_widget)
+        self.camera_widget.opacity = 0
         self.camera_widget.remove_camera = True # attribute from camera widget class; stop looping process on bg when True
         self.camera_widget.camera.remove_from_cache()
         self.camera_widget.camera.play = False # stop camera from playing
         del self.camera_widget.camera._camera
         del self.camera_widget
         self.cam_is_on = False  # status indicator
+        check_sheet = fs.get_sheet(fs.open_index).check_sheets
+        print(check_sheet.session_open_index)
+        check_session=check_sheet.get_session(check_sheet.session_open_index)
+        for x in ['MULTIPLE CHOICE', 'TRUE OR FALSE', 'IDENTIFICATION']:
+            self.update(x)
+        self.img_display.opacity = 1
 
+    def feedback_finish_load(self):
+         #image_texture = CoreImage('assets/feedback_stitched.png').texture
+        self.add_widget(Image(source='assets/feedback_stitched.png',size_hint = (1,0.3),pos_hint = {'top': 0.8, 'center_x': 0.5}))
+        #image = self.feedback_widget.frame_image
+        self.img_display.source = 'assets/feedback_stitched.png'
 
+        self.img_display.reload()
+        self.img_display.opacity = 1
+        print("DONE!")
+
+    def update_feedback(self,check_session):
+        print('preparing feedback')
+        img_stack = []
+        mc_answers = check_session.mc_answer
+        tf_answers = check_session.tf_answer
+        mc_key = [x.answer_key for x in fs.sheets[fs.open_index].answer_key.mc.get_items()]
+        tf_key = [x.answer_key for x in fs.sheets[fs.open_index].answer_key.tf.get_items()]
+        length = len(mc_answers)
+
+        mcdiff = len(mc_key)-len(mc_answers)
+        tfdiff = len(tf_key)-len(tf_answers)
+
+        mc_answers = mc_answers + [''] * mcdiff  # Add empty elements based on mcdiff
+        tf_answers = tf_answers + [''] * tfdiff  # Initialize with empty elements based on tfdiff
+        print("MC ANSWERS",mc_answers)
+        print("TF ANSWERS",tf_answers)
+        print("MCCORRECT",mc_key)
+        print("TFCORRECT",tf_key)
+        #print(f'mc answers {mc_answers}x',)
+        if len(mc_key) > 0 and len(mc_answers) > 0:
+            result1 = feedback.feedback_quick(
+                mc_answers,
+                mc_key,
+                'MULTIPLE CHOICE', len(mc_key),'assets/mc_feedback.png',fbc=fbc.fbc)
+            result1 = True
+        else:
+            result1 = False
+        print('getting true or false feedback')
+
+        if result1:
+            img_stack.append('assets/mc_feedback.png')
+        if len(tf_key) > 0 and len(tf_answers) > 0:
+            result2 = feedback.feedback_quick(
+                tf_answers,
+                tf_key,
+                'TRUE OR FALSE', len(tf_key),'assets/tf_feedback.png',fbc=fbc.fbc)
+            result2 = True
+        else:
+            result2 = False
+        if result2:
+            img_stack.append('assets/tf_feedback.png')
+        print('stitching')
+        #saved_path = stitch_sheet(len(mc_answers), len(tf_answers), 0, title=check_session.name, save_path='assets/feedback_stitched.png',
+         #            filepaths=['assets/mc_feedback.png','assets/tf_feedback.png'])
+        stitch_sheet(1,1,1,'title','assets/feedback_stitched.png',img_stack, True)
+        
     #METHOD____________________________________________
     def update(self, test_type):
+        print("UPDATING SHET")
         value=None
         check_sheet = fs.get_sheet(fs.open_index).check_sheets
         print(check_sheet.session_open_index)
         check_session=check_sheet.get_session(check_sheet.session_open_index)
-
+        print(check_session.name)
+        self.ids.check_text_field.text = check_session.name
+        self.feedback_widget = FeedBack()
+        self.add_widget(self.feedback_widget)
         if test_type == 'MULTIPLE CHOICE':
             value = check_session._mc_score
             self.ids.mc_indicator.text = f'Multiple Choice: {value}'
@@ -2412,6 +2619,27 @@ class CheckScreen(Screen):
                 self.ids.idtf_indicator.color = (0,0.5,0,1)
             else:
                 print('idtf none')
+        self.img_display.source = 'assets/loading.jpg'
+        scheduler.bg_run_once(func=lambda: self.update_feedback(check_session),
+                              callback_func=lambda: self.feedback_finish_load(),
+                              name='feedback_thread')
+        
+        
+       
+        
+        # Temporarily clear the source to force a texture reload
+        #image.source = ''
+        
+        # Assign the new texture
+        #image.texture =image_texture
+        
+        # Assign the source again to ensure the update is triggered
+        #image.source = 'assets/mc_feedback.png'
+        
+        # Trigger a layout update to force the image to redraw
+        #image.reload()
+        
+
 
     def cam_on(self):
         """Func for turning camera on
@@ -2429,7 +2657,8 @@ class CheckScreen(Screen):
 
         # debugging
         print(mc,tf,idtf)
-        
+        self.img_display.opacity = 0
+        self.img_display.reload()
         #self.camera_widget = CameraWidget() # out
         # pass answer keys to camera widget as ground truth later.
         check_sheet = fs.get_sheet(fs.open_index).check_sheets
@@ -2444,9 +2673,12 @@ class CheckScreen(Screen):
         # status indicator
         self.cam_is_on = True
 
-    def start(self,*args,**kwargs):
+    def on_screen(self,*args,**kwargs):
+        self.img_display.opacity = 0
         for x in ['MULTIPLE CHOICE', 'TRUE OR FALSE', 'IDENTIFICATION']:
             self.update(x)
+        
+        
 
     
 
@@ -2467,6 +2699,9 @@ class CheckScreen(Screen):
     def __init__(self,**kwargs):
         super(CheckScreen, self).__init__(**kwargs)
         self.cam_is_on = False # initialize status indicator
+        self.feedback_widget = None
+        self.img_display = Image(source='assets/loading.jpg',size_hint = (1,0.3),pos_hint = {'top': 0.8, 'center_x': 0.5})
+        self.add_widget(self.img_display)
 
 #CLASS_________________________________________________________
 
@@ -2503,16 +2738,22 @@ class AnswerSheetScreen(Screen):
         # set variables based on key type
         try:
             mc_count = int(self.ids.mcq_textfield.text)
+            if self.ids.mcq_textfield.opacity ==0:
+                raise ValueError('')
         except ValueError as e:
             print(e)
             mc_count = 0
         try:
             tf_count = int(self.ids.tf_textfield.text)
+            if self.ids.tf_textfield.opacity ==0:
+                raise ValueError('')
         except ValueError as e:
             print(e)
             tf_count = 0
         try:
             idtf_count = int(self.ids.ident_textfield.text)
+            if self.ids.ident_textfield.opacity ==0:
+                raise ValueError('')
         except ValueError as e:
             print(e)
             idtf_count = 0
@@ -2581,8 +2822,13 @@ class AnswerSheetScreen(Screen):
         return count
     
     #METHOD__________________________________________________
-   
-    def generate_template(self, mc, tf, idtf, name):
+    def generate_template(self,mc,tf,idtf,name):
+        generate_func = lambda: self.generate(mc,tf,idtf,name)
+        
+        scheduler.run_background(generate_func, 'generate_template_thread',lambda **kwargs: self.update_image_texture(**kwargs))
+
+    def generate(self, mc, tf, idtf, name):
+        print("GENERATING SHEET")
         template_path = stitch_sheet(mc_num=mc,
                      idtf_num=idtf,
                      tf_num=tf,
@@ -2593,7 +2839,10 @@ class AnswerSheetScreen(Screen):
         self.ids.export.disabled = False
         self.ids.share.disabled = False
         # Update the texture of the Image widget
-        self.update_image_texture(image_texture,template_path)
+        print("GENERATING DONE, PASSING PARaMETERS")
+        scheduler.pass_parameter('generate_template_thread','texture',image_texture)
+        scheduler.pass_parameter('generate_template_thread', 'path',template_path)
+        #self.update_image_texture(image_texture,template_path)
         
 
     def update_image_texture(self, texture,path):
@@ -2665,51 +2914,107 @@ class AnswerSheetScreen(Screen):
 
 #_________________________________________________
 
+manager = None
+
 def autosave():
     """Autosaves changes on filesystem into permanent local storage.
 
     TODO: Prevent data corruption while saving
 
     """
-    
+    #safe_exit=False
     fs.save() # saves filesystem
     autosave_sched() # restart when don
 
+
 #_______________________________________________
-
-
-def autosave_sched():
+def autosave_callback():
+    global manager
     """Function for scheduler on thread.
     Used to retrigger saving only after previous saving is done.
     """
-    Clock.schedule_once(lambda x:threading.Thread(target=lambda: autosave()).start(),0.01) # using kivy scheduler; do thread.
+    #scheduler.safe_exit=True
+    if scheduler.safe_exit:
+        manager.stop()
+def autosave_sched():
+   
+    scheduler.run_background(lambda: autosave(),'autosave_thread',lambda **kwargs: autosave_callback())
+    #Clock.schedule_once(lambda x:threading.Thread(target=lambda: autosave()).start(),0.01) # using kivy scheduler; do thread.
 
-
+import sys
 #_________________________________________________
-    
+
+class Scheduler:
+    def __init__(self):
+        self.run_background = self.bg_run_once
+        self.next_queue = None
+        self.working = False
+        self.thread_names = [t.name for t in threading.enumerate()]
+        self.parameters = {}
+        self.safe_exit = False
         
+
+    def pass_parameter(self, name, param_name, value):
+        self.parameters[name][param_name] = value
+
+    def reset_parameter(self,name):
+        self.parameters[name] = {}
+
+    def not_working(self):
+        self.working = False
+    def bg_run_once(self,func,name, callback_func = None, first_startup=True):
+        """_summary_
+
+        Args:
+            func (function): ex. lambda: yourFunction(), function to run on the background/thread.
+            callback_func (function, optional): ex. lambda: yourFunction2(), function to run when process is done. 
+                callback_func is processed on the main thread.
+        """
+        #____________________________________________
+        def trigger_function(func, callback,name):
+            func()
+            self._do_callback(callback,name) if callback is not None else None
+            #self.bg_run_once(func, callback, first_startup=False)
+        #_________________________________________
+        # 
+        self.parameters[name] = {} if name not in self.parameters.keys() else self.parameters[name]
+        func0, cb_func0 = func, callback_func
+        #print("THREADS",self.thread_names)
+        if name not in self.thread_names:
+            thread = threading.Thread(target = lambda: trigger_function(func0, cb_func0,name), name=name)
+            Clock.schedule_once(lambda x: thread.start(),0.01)
+
+     
+    def _do_callback(self, func,name):
+        kwargs = self.parameters[name]
+        Clock.schedule_once(lambda x: (self.not_working(),func(**kwargs)),0.01) # using kivy scheduler; do thread.
+        self.parameters[name] = {}
+        
+        return 
 class CustomScreenManager(ScreenManager):
     def __init__(self, **kwargs):
+
         super().__init__(**kwargs)
-        self.transition =FadeTransition()
-        self.transition.duration = 0.10
+        self.transition =NoTransition()
+        #self.transition.duration = 0.10
+        
 
     def change_screen(self, screen_name,**kwargs):
-        self.current = screen_name
         screen = self.get_screen(screen_name)
-
         try:
             screen.on_screen(**kwargs)
-        except Exception as e:
+        except AttributeError as e:
             print('screen.change_screen():',e)
-    
+        self.current = screen_name
 
 class App(MDApp):
     def build(self):
+       
         self.theme_cls.theme_style = "Light"
         self.theme_cls.primary_palette = "Indigo"
         self.screen = Builder.load_string(KV)
         self.manager = None
+        
         return self.screen
 
    
@@ -2726,6 +3031,8 @@ class App(MDApp):
         autosave_sched()
         from kivy.base import EventLoop
         EventLoop.window.bind(on_keyboard=self.hook_keyboard)
+        global manager
+        manager = self
 
     #_____________________________________________________
     
@@ -2736,7 +3043,8 @@ class App(MDApp):
         dummy = self.root.get_screen('home') # just for obvious accessing of manager attribute
         
         if dummy.manager.current == 'home': # on first screen
-            self.stop() # stop app
+            scheduler.safe_exit = True
+            
         elif dummy.manager.current in ['name','name_expanded']:
             dummy.manager.current = 'home' # go back to home
         elif dummy.manager.current =='check': # CHecking/Scanning of sheet
@@ -2845,7 +3153,44 @@ class Function:
         except Exception as e:
             toast(str(e))
 
+def set_fbc_callback(object):
+    fbc.fbc = object
+
+def get_fbc():
+    print('GETTING FBC')
+    fbc_object = feedback.read_presaved_feedback()
+    scheduler.pass_parameter('get_presaved_thread','object',fbc_object)
+    print("DONE GETTING FBC, PASSING PARAMETER")
+
+class SchedClassDummy:
+    def __init__(self):
+        self.fbc = None
+
+scheduler = Scheduler()
+fbc = SchedClassDummy()
 #START OF SCRIPT___________________________________________________
+scheduler.run_background(lambda: get_fbc(), 'get_presaved_thread',lambda **kwargs: set_fbc_callback(**kwargs))
+# feedback.read_presaved_feedback()
+
+def update_filesystem():
+    fs = FileSystem()
+    fs_previous = fs.load()
+
+    def update_class1_to_class2(obj):
+        if isinstance(obj, fs_previous.__class__):
+            for attr_name in dir(fs_previous):
+                if not attr_name.startswith('__') and not hasattr(obj, attr_name):
+                    setattr(obj, attr_name, getattr(fs_previous, attr_name))
+        for attr_name in dir(obj):
+            if not attr_name.startswith('__'):
+                attr = getattr(obj, attr_name)
+                if hasattr(attr, '__dict__'):
+                    update_class1_to_class2(attr)
+
+    update_class1_to_class2(fs_previous)
+    return fs_previous
+
+
 
 if on_android:
     root_folder = android_storage
@@ -2854,13 +3199,8 @@ else:
 
 # load filesystem previous data from permanent local storage;
 # comment out to not use previous data (warning; overwrites with empty new data because of autosave on app run)
-try:
-    fs = FileSystem()
-    #fs = fs.load() 
-
-except Exception as e:
-    fs = FileSystem()
-    pass
+fs = update_filesystem()
+print(dir(fs))
 
 try:
     if fs.filemanager_last_dir is None:
