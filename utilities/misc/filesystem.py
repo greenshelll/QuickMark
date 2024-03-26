@@ -340,24 +340,31 @@ class CheckSession:
         print(self.tf_eval_array)
         return self._tf_score
         
-    def _reset_order(self, reordered_lst, interval):
-        repeat_times = math.floor(len(reordered_lst)/interval)
-        result = []
-        for index in range(len(reordered_lst)):
-            temp_index = index
-            for repeat in range(0,repeat_times+1):
-                temp_index = temp_index + repeat*interval
-                result.append(temp_index)
-                if len(result) == len(reordered_lst): # stop, complete
-                    break
-            if len(result) == len(reordered_lst): #stop complete
-                break
-
+    def _reset_order(self, lis, interval):
+        def orig_index(lis , interval):
+            column_num = math.ceil(len(lis)/interval)
+            maxi = len(lis)
+            index_list = []
+            for num in range(300):
+                num+=1
+                
+                for coli in range(column_num):
+                    calc = (25*coli)+num
+                    index_list.append(calc)
+                    if calc == maxi:
+                        return index_list
+        orig = orig_index(lis,interval)
+        my_dict = {key:val for key,val in zip(orig,lis)}
+        array = []
+        for key in sorted(my_dict.keys()):
+            array.append(my_dict[key])
+            
         
-        dic = {key:corr for key,corr in zip(result, reordered_lst)}
-        sorted_d = dict(sorted(dic.items()))
+        return array
+        
 
-        return list(sorted_d.values())
+    
+        
     
 
 

@@ -256,13 +256,13 @@ def good_angles(points, threshold = 80):
         return True
     
 def xywh_to_points(xywh):
-    db.p('xywh to points')
+    #db.p('xywh to points')
     x, y, w, h = xywh
     x1, y1 = x, y
     x2, y2 = x + w, y
     x3, y3 = x + w, y + h
     x4, y4 = x, y + h
-    db.p('xywh translated to points')
+    #db.p('xywh translated to points')
     return [(x1, y1), (x2, y2), (x3, y3), (x4, y4)]
 from datetime import datetime
 def get_bubbles(BubbleGetter_obj, BoxGetter_obj, CaptureSheet_obj, boxes_num, redo=False, use_rect=False,param_value=13):
@@ -459,9 +459,11 @@ def get_by_num(circles_per_num,bubbles,CaptureSheet_obj):
         class Circle:
             def __init__(self, *args):
                 self.xywh = args
+       
 
         result_complete ={}
         result = []
+        result_dict = {}
         ###*print(bubbles)
         for i in range(len(bubbles)):
             row = np.array(bubbles)[i]
@@ -478,10 +480,12 @@ def get_by_num(circles_per_num,bubbles,CaptureSheet_obj):
                     interval = circles_per_num
                     
                     result_complete[(25*item_num)+i+1] = result
+                    result_dict[(25*item_num)+i+1] = result
                     item_num += 1
                     result = []
             item_num = 0
         ###*print("RESULT",result_complete)
+        CaptureSheet_obj.bubbles[0].choices_by_num_dict = result
         return result_complete
     except Exception as e:
         ##*print('Get By Num', e)

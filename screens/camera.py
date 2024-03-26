@@ -313,7 +313,7 @@ class CameraWidget(BoxLayout):
                                         except Exception as e:
                                             counting = 0
         
-                                        if counting in [x for x in range(3)]:
+                                        if True:
                                             obj.get_bubbles(redo=True)
                                             try:
                                                 counting = obj.bubbles[0].count
