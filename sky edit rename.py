@@ -861,7 +861,8 @@ CustomScreenManager:
           #  on_release: root.share()
     
 
-
+#MAY GIN EDIT KO DI
+#ANG TEXT FIELD GIN SAYLO KO SA DALOM
 <CheckScreen>:
     name: 'check'
 
@@ -878,20 +879,7 @@ CustomScreenManager:
         pos_hint: {'top':0.5, 'center_x': 0.5}
         size_hint: 1,0.5
         padding: 20
-
-        MDTextField:
-            id: check_text_field
-            mode: "fill"
-            multiline: False
-            size_hint_y: None
-            size_hint_x: None
-            height: dp(20)
-            width: "250dp"
-            pos_hint: {"center_y":0.5, "center_x": .5}
-            hint_text: "Sheet Name"
-            on_text_validate: root.rename()
             
-
         MDLabel:
             text: 'Scores'
             theme_text_color: 'Primary'
@@ -937,6 +925,19 @@ CustomScreenManager:
         on_release: root.switch_cam()       
         pos_hint: {'center_x': .85, 'top': .22}
         elevation: 0
+
+    #ANG ON_TEXT_VALIDATE DI KAG POS HINT(EDIT)
+    MDTextField:
+        id: check_text_field
+        mode: "fill"
+        multiline: False
+        size_hint_y: None
+        size_hint_x: None
+        height: dp(20)
+        width: "250dp"
+        pos_hint: {"center_y":0.8, "center_x": .5}
+        hint_text: "Sheet Name"
+        on_text_validate: root.rename()
 
 
 <MCScreen>:
@@ -1136,7 +1137,6 @@ CustomScreenManager:
                 id: empty_label
                 text: ""
                 halign:"center"  # Center the text horizontally
-                theme_text_color:"Secondary" # Set the color to gray
                 height:5
                 pos_hint:{"center_y": 0.5} 
                 
@@ -1152,6 +1152,7 @@ CustomScreenManager:
                 md_bg_color: (1,1,1,1)
                 padding: 0  # Set padding to 0
                 spacing: 0 
+                
 
 
     MDFloatingActionButton:
@@ -1161,9 +1162,10 @@ CustomScreenManager:
         pos_hint: {'center_x': .85, 'top': .12}
         elevation: 0
 '''
+#MAY GIN EDIT KO DI NGA CLASS
 
 class OneCheckScreen(Screen):
-
+#ARI HO
     #OneCheckScreen = HomeScreen
     def respond_to_rename(self):
         print('responding to rename')
@@ -1173,7 +1175,7 @@ class OneCheckScreen(Screen):
             if subwidget.select_id == fs.get_sheet(fs.open_index).check_sheets.session_open_index:
                 print('renaming')
                 subwidget.text = fs.get_sheet(fs.open_index).check_sheets.check_sessions[fs.get_sheet(fs.open_index).check_sheets.session_open_index].name
-
+#ASTA DI
 
     def word_search(self, instance, text):
         saved_list = self.ids.onecheck_list
@@ -1198,6 +1200,7 @@ class OneCheckScreen(Screen):
             subwidget.text = widget_detail[0]
             subwidget.secondary_text = widget_detail[1]
             subwidget.select_id = widget_detail[2]
+            
 
     def add_new_sheet(self):
         print("ADDING NEW SESSION")
@@ -1211,10 +1214,13 @@ class OneCheckScreen(Screen):
         #fs.save()
         self.add_item_to_list()
         print(self.ids.onecheck_list.children)
+        
+
         toast("New Checking Session Added.", (1,0,1,0.2), 1)
 
     def add_item_to_list(self, item_text="New Item Added"):
         check_list = self.ids.onecheck_list
+        
 
         check_obj = fs.get_sheet(fs.open_index).check_sheets
         sessions = check_obj.check_sessions
@@ -1223,8 +1229,11 @@ class OneCheckScreen(Screen):
             session_last = sessions[-1]
             session_instance = InstanceCheckScreen(text=session_last.name)
             session_instance.select_id = len(sessions)-1 #sheet_i
+            #ARI HO
             session_instance.add_widget(IconLeftWidgetWithoutTouch(icon='account-outline'))
             session_instance.add_widget(IconRightWidgetWithoutTouch(icon='chevron-right'))
+            
+            #ASTA DI
             session_instance.manager = self.manager
             session_instance.secondary_text = str(session_last.date_created)
            
@@ -1259,12 +1268,15 @@ class OneCheckScreen(Screen):
     """def __init__(self, **kwargs):
         super(OneCheckScreen, self).__init__(**kwargs)"""
         
-
+#ARI SA CLASS _________ANG SA DALOM SANG TEXT NGA NI HO (EDIT)
 class InstanceCheckScreen(TwoLineAvatarIconListItem):
     def __init__(self, **kwargs):
         super(InstanceCheckScreen, self).__init__(**kwargs)
         self.select_id = None
         self.manager = None
+        #EDIT
+        self.theme_text_color= "Custom"
+        self.text_color= (1,0,0,1)
     
     def on_release(self, *args, **kwargs):
         print("GETTING THERE")
@@ -1272,6 +1284,7 @@ class InstanceCheckScreen(TwoLineAvatarIconListItem):
         fs.get_sheet(fs.open_index).check_sheets.session_open_index = self.select_id
         self.manager.get_screen('check')
         self.manager.change_screen('check')
+
         #self.manager.current = 'check'
         
 
@@ -1280,6 +1293,7 @@ class Instance(TwoLineAvatarIconListItem):
         super(Instance, self).__init__(**kwargs)
         self.select_id = None
         self.manager = None
+        
     
     def on_release(self, *args, **kwargs):
         #fs.get_sheet(self.select_id).name = str(fs.get_sheet(self.select_id).name)
@@ -2045,7 +2059,7 @@ class FeedBack(BoxLayout):
 class CheckScreen(Screen):
 
     #METHOD________________________________________________
-
+#ARI HO
     def rename(self):
         """Renaming Function
         """
@@ -2064,7 +2078,7 @@ class CheckScreen(Screen):
 
         # quick confirmation dialog
         toast("Renamed successfully.", (1,0,1,0.2), 1)
-
+#ASTA DI
 
     def cam_off(self):
         """Function for turning camera off
