@@ -5,6 +5,7 @@ from datetime import datetime
 import shutil
 import os
 import time
+import matplotlib.pyplot as plt
 try:
     from android.storage import primary_external_storage_path
     android_storage = primary_external_storage_path()
@@ -68,6 +69,9 @@ CustomScreenManager:
     OneCheckScreen:
     NameScreenExpanded:
     KeyScreen:
+    MCQAnalysisScreen:
+    TFAnalysis:
+    IDAnalysis:
 
 <KeyScreen>:
     name: 'keyscreen'
@@ -315,8 +319,6 @@ CustomScreenManager:
                 md_bg_color: (1,1,1,1)
                 padding: 0  # Set padding to 0
                 spacing: 0 
-
-
                                  
 <NameScreen>:
     name: 'name'
@@ -858,8 +860,6 @@ CustomScreenManager:
           #  pos_hint: {'center_x': 0.5}
           #  on_release: root.share()
     
-
-
 <CheckScreen>:
     name: 'check'
 
@@ -936,7 +936,6 @@ CustomScreenManager:
         pos_hint: {'center_x': .85, 'top': .22}
         elevation: 0
 
-
 <MCScreen>:
     name: 'MC'
     
@@ -959,7 +958,6 @@ CustomScreenManager:
                 size_hint_y: None
                 height: self.minimum_height
          
-
 <TFScreen>:
     name: 'TF'
 
@@ -980,57 +978,491 @@ CustomScreenManager:
                 id: tf_box_all
                 size_hint_y: None
                 height: self.minimum_height
-
-                
+        
 <AnalysisScreen>:
     name: 'analysis'
-
     MDBoxLayout:
         orientation: 'vertical'
+        pos_hint: {'top': 1}
         adaptive_height: True
-        pos_hint: {'top': 1}  # Align to the top
-        spacing: dp(10)
+        spacing: dp(20)
 
         MDTopAppBar:
             title: "QuickMark"
-            right_action_items: [["cog-outline", lambda x: app.show_text_input_dialog()]]
             elevation: 0
-        
-        MDLabel:
-            text: '#                          Percent'
 
-            
+        MDBoxLayout:
+            padding: dp(10)
+            size_hint_y: None
+            height: self.minimum_height
+            pos_hint: {"center_y": 0.5}
+            orientation: 'vertical'
+
+            MDCard:
+                size_hint: None, None
+                size: 0.9 * root.width, "100dp"
+                padding: "12dp"
+                elevation: 0.5
+                pos_hint: {"center_x": 0.5}
+                MDBoxLayout:
+                    spacing: dp(15)
+                    orientation: 'vertical'
+                    MDLabel:
+                        text: 'Overall Statistics'
+                        halign: 'center'
+                    MDLabel:
+                        id: mean_label
+                        text: 'Average Score:'
+                        halign: 'left'
+                        font_style: 'Subtitle1'
+                        font_size: dp(12)
+                    MDLabel:
+                        id: min_label
+                        text: 'Min. Score:'
+                        halign: 'left'
+                        font_style: 'Subtitle1'
+                        font_size: dp(12)
+                    MDLabel:
+                        id: max_label
+                        text: 'Max Score:'
+                        halign: 'left'
+                        font_style: 'Subtitle1'
+                        font_size: dp(12)
+                    MDLabel:
+                        id: max_label
+                        text: 'Std. Dev:'
+                        halign: 'left'
+                        font_style: 'Subtitle1'
+                        font_size: dp(12)
+
+        MDBoxLayout:
+            orientation: 'vertical'
+            spacing: dp(30)
+            size_hint_y: None
+            height: self.minimum_height
+            pos_hint: {"center_y": 0.4}  # Adjusted position
+            MDLabel:
+                text: "Item Analysis:"
+                halign: 'center'
+            MDRaisedButton:
+                text: "Multiple Choice"
+                size_hint_y: None
+                height: dp(64) 
+                size_hint_x: None
+                width: dp(100)
+                pos_hint: {'center_x': 0.5}
+                on_release: root.on_release('mcqanalysis')
+            MDRaisedButton:
+                text: "True or False"
+                size_hint_y: None
+                height: dp(64) 
+                size_hint_x: None
+                width: dp(100)
+                pos_hint: {'center_x': 0.5}
+                on_release: root.on_release('tfanalysis')
+            MDRaisedButton:
+                text: "Identification"
+                size_hint_y: None
+                height: dp(64) 
+                size_hint_x: None
+                width: dp(100)
+                pos_hint: {'center_x': 0.5}
+                on_release: root.on_release('idanalysis')
+<MCQAnalysisScreen>:
+    name: 'mcqanalysis'
+    MDBoxLayout:
+        orientation: 'vertical'
+
+        MDTopAppBar:
+            title: "QuickMark"
+            pos_hint: {'center':0.5}
+            elevation: 0
+
+        MDBoxLayout:
+            size_hint_y: None
+            height: dp(130)
+            padding: dp(10)
+            pos_hint: {"center_x": 0.535}
+            orientation: 'vertical'
+
+            MDCard:
+                size_hint: None, None
+                size: 0.9 * root.width, "100dp"
+                padding: "12dp"
+                elevation: 0.5
+                MDBoxLayout:
+                    spacing: dp(15)
+                    orientation: 'vertical'
+                    MDLabel:
+                        text: 'Multiple Choice Statistics'
+                        halign: 'center'
+                    MDLabel:
+                        id: mean_label
+                        text: 'Average Score:'
+                        halign: 'left'
+                        font_style: 'Subtitle1'
+                        font_size: dp(12)
+                    MDLabel:
+                        id: min_label
+                        text: 'Min. Score:'
+                        halign: 'left'
+                        font_style: 'Subtitle1'
+                        font_size: dp(12)
+                    MDLabel:
+                        id: max_label
+                        text: 'Max Score:'
+                        halign: 'left'
+                        font_style: 'Subtitle1'
+                        font_size: dp(12)
+                    MDLabel:
+                        id: max_label
+                        text: 'Std. Dev:'
+                        halign: 'left'
+                        font_style: 'Subtitle1'
+                        font_size: dp(12)
+        MDLabel:
+            text: 'Item Analysis'
+            halign: 'center'
+            size_hint_y: None
+            height: dp(20)
+        ScrollView:
+            MDList:
+                id: mcqlist
+                size_hint_y: 3
+                Image:
+                    id: img1
+                    height: dp(200)
+                    source:''
+                Image:
+                    id: img2
+                    height: dp(100)
+                    source:''
+                Image:
+                    id: img3
+                    height: dp(100)
+                    source:''
+                Image:
+                    id: img4
+                    height: dp(100)
+                    source:''
+                Image:
+                    id: img5
+                    height: dp(100)
+                    source:''
+                Image:
+                    id: img6
+                    height: dp(100)
+                    source:''
+                Image:
+                    id: img7
+                    height: dp(100)
+                    source:''
+                Image:
+                    id: img8
+                    height: dp(100)
+                    source:''
+                Image:
+                    id: img9
+                    height: dp(100)
+                    source:''
+                Image:
+                    id: img10
+                    height: dp(100)
+                    source:''
+
         MDBoxLayout:
             orientation: 'horizontal'
-            adaptive_height: True
-            spacing: dp(5)
+            size_hint: {0.75, 0.15}
+            pos_hint: {"center_x": 0.5, "top": 0.9}
+            md_bg_color: (0.8,0.8,0.8,1)
+            MDIconButton:
+                id: previous
+                icon: "skip-previous"
+                line_color: 0, 0, 0, 0
+                theme_icon_color: "Custom"
+                icon_color: 'black'
+                pos_hint: {"center_x": .5, "center_y": .5}
+                on_release: root.previous()
+                size_hint: 0.35,1
+            
+            MDRectangleFlatButton:
+                id: jump
+                text: "JUMP"
+                text_color: 'black'
+                line_color: 0, 0, 0, 0
+                pos_hint: {"center_x": .5, "center_y": .5}
+                size_hint: 0.35,1
+            MDIconButton:
+                id: next
+                icon: 'skip-next'
+                theme_icon_color: "Custom"
+                icon_color: 'black'
+                on_release: root.next()
+                size_hint: 0.35,1
 
-            MDLabel:
-                text: '1.'
+<TFAnalysis>:
+    name: 'tfanalysis'
+    MDBoxLayout:
+        orientation: 'vertical'
 
-            Widget:
-                id: graph_widget
-                size_hint_x: None
-                width: dp(50)
-                canvas.before:
-                    Color:
-                        rgba: (0, 1, 0, 1) if root.percentage >= 0.75 else (1, 1, 0, 1) if 0.5 < root.percentage < 0.75 else (1, 0, 0, 1)  # Adjust color dynamically based on percentage
-                    Rectangle:
-                        pos: self.pos
-                        size: self.width, root.percentage * self.height  # Adjust height dynamically based on percentage
+        MDTopAppBar:
+            title: "QuickMark"
+            pos_hint: {'center':0.5}
+            elevation: 0
 
-            MDLabel:
-                id: percentage_label
-                text: f'{int(root.percentage * 100)}%'  # Display percentage dynamically
+        MDBoxLayout:
+            size_hint_y: None
+            height: dp(130)
+            padding: dp(10)
+            pos_hint: {"center_x": 0.535}
+            orientation: 'vertical'
 
-        MDTextField:
-            hint_text: "Enter Percentage"
-            helper_text: "Enter a value between 0 and 100"
-            helper_text_mode: "persistent"
-            input_filter: "float"
-            multiline: False
-            on_text_validate: root.update_percentage(self.text)
+            MDCard:
+                size_hint: None, None
+                size: 0.9 * root.width, "100dp"
+                padding: "12dp"
+                elevation: 0.5
+                MDBoxLayout:
+                    spacing: dp(15)
+                    orientation: 'vertical'
+                    MDLabel:
+                        text: 'Multiple Choice Statistics'
+                        halign: 'center'
+                    MDLabel:
+                        id: mean_label
+                        text: 'Average Score:'
+                        halign: 'left'
+                        font_style: 'Subtitle1'
+                        font_size: dp(12)
+                    MDLabel:
+                        id: min_label
+                        text: 'Min. Score:'
+                        halign: 'left'
+                        font_style: 'Subtitle1'
+                        font_size: dp(12)
+                    MDLabel:
+                        id: max_label
+                        text: 'Max Score:'
+                        halign: 'left'
+                        font_style: 'Subtitle1'
+                        font_size: dp(12)
+                    MDLabel:
+                        id: max_label
+                        text: 'Std. Dev:'
+                        halign: 'left'
+                        font_style: 'Subtitle1'
+                        font_size: dp(12)
+        MDLabel:
+            text: 'Item Analysis'
+            halign: 'center'
+            size_hint_y: None
+            height: dp(20)
+        ScrollView:
+            MDList:
+                id: mcqlist
+                size_hint_y: 3
+                Image:
+                    id: img1
+                    height: dp(200)
+                    source:''
+                Image:
+                    id: img2
+                    height: dp(100)
+                    source:''
+                Image:
+                    id: img3
+                    height: dp(100)
+                    source:''
+                Image:
+                    id: img4
+                    height: dp(100)
+                    source:''
+                Image:
+                    id: img5
+                    height: dp(100)
+                    source:''
+                Image:
+                    id: img6
+                    height: dp(100)
+                    source:''
+                Image:
+                    id: img7
+                    height: dp(100)
+                    source:''
+                Image:
+                    id: img8
+                    height: dp(100)
+                    source:''
+                Image:
+                    id: img9
+                    height: dp(100)
+                    source:''
+                Image:
+                    id: img10
+                    height: dp(100)
+                    source:''
 
+        MDBoxLayout:
+            orientation: 'horizontal'
+            size_hint: {0.75, 0.15}
+            pos_hint: {"center_x": 0.5, "top": 0.9}
+            md_bg_color: (0.8,0.8,0.8,1)
+            MDIconButton:
+                id: previous
+                icon: "skip-previous"
+                line_color: 0, 0, 0, 0
+                theme_icon_color: "Custom"
+                icon_color: 'black'
+                pos_hint: {"center_x": .5, "center_y": .5}
+                on_release: app.previous()
+                size_hint: 0.35,1
+            
+            MDRectangleFlatButton:
+                id: jump
+                text: "JUMP"
+                text_color: 'black'
+                line_color: 0, 0, 0, 0
+                pos_hint: {"center_x": .5, "center_y": .5}
+                size_hint: 0.35,1
+            MDIconButton:
+                id: next
+                icon: 'skip-next'
+                theme_icon_color: "Custom"
+                icon_color: 'black'
+                on_release: app.next()
+                size_hint: 0.35,1
+
+<IDAnalysis>:
+    name: 'idanalysis'
+    MDBoxLayout:
+        orientation: 'vertical'
+
+        MDTopAppBar:
+            title: "QuickMark"
+            pos_hint: {'center':0.5}
+            elevation: 0
+
+        MDBoxLayout:
+            size_hint_y: None
+            height: dp(130)
+            padding: dp(10)
+            pos_hint: {"center_x": 0.535}
+            orientation: 'vertical'
+
+            MDCard:
+                size_hint: None, None
+                size: 0.9 * root.width, "100dp"
+                padding: "12dp"
+                elevation: 0.5
+                MDBoxLayout:
+                    spacing: dp(15)
+                    orientation: 'vertical'
+                    MDLabel:
+                        text: 'Multiple Choice Statistics'
+                        halign: 'center'
+                    MDLabel:
+                        id: mean_label
+                        text: 'Average Score:'
+                        halign: 'left'
+                        font_style: 'Subtitle1'
+                        font_size: dp(12)
+                    MDLabel:
+                        id: min_label
+                        text: 'Min. Score:'
+                        halign: 'left'
+                        font_style: 'Subtitle1'
+                        font_size: dp(12)
+                    MDLabel:
+                        id: max_label
+                        text: 'Max Score:'
+                        halign: 'left'
+                        font_style: 'Subtitle1'
+                        font_size: dp(12)
+                    MDLabel:
+                        id: max_label
+                        text: 'Std. Dev:'
+                        halign: 'left'
+                        font_style: 'Subtitle1'
+                        font_size: dp(12)
+        MDLabel:
+            text: 'Item Analysis'
+            halign: 'center'
+            size_hint_y: None
+            height: dp(20)
+        ScrollView:
+            MDList:
+                id: mcqlist
+                size_hint_y: 3
+                Image:
+                    id: img1
+                    height: dp(200)
+                    source:''
+                Image:
+                    id: img2
+                    height: dp(100)
+                    source:''
+                Image:
+                    id: img3
+                    height: dp(100)
+                    source:''
+                Image:
+                    id: img4
+                    height: dp(100)
+                    source:''
+                Image:
+                    id: img5
+                    height: dp(100)
+                    source:''
+                Image:
+                    id: img6
+                    height: dp(100)
+                    source:''
+                Image:
+                    id: img7
+                    height: dp(100)
+                    source:''
+                Image:
+                    id: img8
+                    height: dp(100)
+                    source:''
+                Image:
+                    id: img9
+                    height: dp(100)
+                    source:''
+                Image:
+                    id: img10
+                    height: dp(100)
+                    source:''
+
+        MDBoxLayout:
+            orientation: 'horizontal'
+            size_hint: {0.75, 0.15}
+            pos_hint: {"center_x": 0.5, "top": 0.9}
+            md_bg_color: (0.8,0.8,0.8,1)
+            MDIconButton:
+                id: previous
+                icon: "skip-previous"
+                line_color: 0, 0, 0, 0
+                theme_icon_color: "Custom"
+                icon_color: 'black'
+                pos_hint: {"center_x": .5, "center_y": .5}
+                on_release: app.previous()
+                size_hint: 0.35,1
+            
+            MDRectangleFlatButton:
+                id: jump
+                text: "JUMP"
+                text_color: 'black'
+                line_color: 0, 0, 0, 0
+                pos_hint: {"center_x": .5, "center_y": .5}
+                size_hint: 0.35,1
+            MDIconButton:
+                id: next
+                icon: 'skip-next'
+                theme_icon_color: "Custom"
+                icon_color: 'black'
+                on_release: app.next()
+                size_hint: 0.35,1
 
 <IDScreen>:
     name: 'ID'
@@ -1240,9 +1672,88 @@ class OneCheckScreen(Screen):
             session_instance.secondary_text =str(session_last.date_created)
            
             check_list.add_widget(session_instance)
+
+class TFAnalysis(Screen):
+    def __init__(self, **kwargs):
+        super(TFAnalysis, self).__init__(**kwargs)
+        self.page = 1
+
+class IDAnalysis(Screen):
+    def __init__(self, **kwargs):
+        super(IDAnalysis, self).__init__(**kwargs)
+        self.page = 1
+
+class MCQAnalysisScreen(Screen):
+    def __init__(self, **kwargs):
+        super(MCQAnalysisScreen, self).__init__(**kwargs)
+        self.page = 1
+    def on_enter(self):
+        app = App()
+        self.generate_bar_graph()
+        self.load_images()
+
+    def generate_bar_graph(self):
+        data = [
+            {'categories': ['A', 'B', 'C', 'D', 'None'], 'values': [10, 20, 15, 25, 0]},
+            {'categories': ['A', 'B', 'C', 'D', 'None'], 'values': [5, 15, 10, 20, 5]},
+            {'categories': ['A', 'B', 'C', 'D', 'None'], 'values': [15, 10, 5, 30, 0]},
+            {'categories': ['A', 'B', 'C', 'D', 'None'], 'values': [45, 10, 50, 30, 40]},
+            {'categories': ['A', 'B', 'C', 'D', 'None'], 'values': [0, 0, 0, 0, 0]},
+            {'categories': ['A', 'B', 'C', 'D', 'None'], 'values': [5, 15, 10, 20, 5]},
+            {'categories': ['A', 'B', 'C', 'D', 'None'], 'values': [15, 10, 5, 30, 0]},
+            {'categories': ['A', 'B', 'C', 'D', 'None'], 'values': [45, 10, 50, 30, 40]},
+            {'categories': ['A', 'B', 'C', 'D', 'None'], 'values': [10, 20, 15, 25, 0]},
+            {'categories': ['A', 'B', 'C', 'D', 'None'], 'values': [5, 15, 10, 20, 5]},
+            {'categories': ['A', 'B', 'C', 'D', 'None'], 'values': [10, 20, 15, 25, 0]},
+            {'categories': ['A', 'B', 'C', 'D', 'None'], 'values': [5, 15, 10, 20, 5]},
+        ]
+        start_ind = (self.page-1) * 10
+        end_ind = (self.page * 10)
+        graph = start_ind
+        graphs_dir = "assets/graphs/mcq"
+        os.makedirs(graphs_dir, exist_ok=True)
+        print(start_ind, end_ind)
+        print(data[10])
+        for i, d in enumerate(data[start_ind: end_ind]):
+            plt.figure(i, figsize=(3.3, 1))
+            bars = plt.bar(d['categories'], d['values'])
+
+            for category, value in zip(d['categories'], d['values']):
+                plt.text(category, value, f"{category}: {value}", ha='center', va='bottom', fontsize=7)
+
+            plt.tick_params(axis='y', left=False, labelleft=False)
+            plt.tick_params(axis='x', bottom=False, labelbottom=False)
+            plt.gca().spines['top'].set_visible(False)
+            plt.gca().spines['right'].set_visible(False)
+            plt.gca().spines['left'].set_visible(False)
+            filename = f'{graph+1}'
+            plt.text(-1.3, max(d['values']) + 3, filename, ha='left', va='top', fontsize=14, color='black')
+            chart_path = os.path.join(graphs_dir, f'{graph+1}.png')
+            plt.savefig(chart_path)
+            graph = graph + 1
+            plt.close()
+
+    def load_images(self):
+        images_dir = "assets/graphs/mcq"
+        image_files = [filename for filename in os.listdir(images_dir) if filename.endswith(".png")]
+        page = self.page
+
+        for i, image in zip(range(1,len(image_files)+1), self.ids.mcqlist.children[::-1]):
+            image.source = os.path.join(images_dir, f"{(page-1)*10+i}.png")
+            if ((page-1)*10+i) >= ((page)*10):
+                break
+    def next(self):
+        self.page += 1
+        self.generate_bar_graph()
+        self.load_images()
+    def previous(self):
+        self.page -= 1
+        self.generate_bar_graph()
+        self.load_images()
+        
+
     """def __init__(self, **kwargs):
         super(OneCheckScreen, self).__init__(**kwargs)"""
-        
 
 class InstanceCheckScreen(TwoLineListItem):
     def __init__(self, **kwargs):
@@ -1258,7 +1769,6 @@ class InstanceCheckScreen(TwoLineListItem):
         self.manager.change_screen('check')
         #self.manager.current = 'check'
         
-
 class Instance(TwoLineAvatarIconListItem):
     def __init__(self, **kwargs):
         super(Instance, self).__init__(**kwargs)
@@ -1272,8 +1782,6 @@ class Instance(TwoLineAvatarIconListItem):
         fs.open_index = self.select_id
         self.manager.change_screen('name')
         #self.manager.current = 'name'
-
-
 
 class MCInstanceBox(BoxLayout):
     def __init__(self, number, **kwargs):
@@ -1315,8 +1823,7 @@ class MCInstanceBox(BoxLayout):
                 btn.md_bg_color = [0.5,0.5,0.5,1]
                 fs.sheets[fs.open_index].answer_key.mc.items[self.number].answer_key = [btn.text]
         # Highlight the pressed button
-            
-                
+                        
 class TFInstanceBox(BoxLayout):
     def __init__(self, number, **kwargs):
         super(TFInstanceBox, self).__init__(**kwargs)
@@ -1411,11 +1918,6 @@ class CustomListItem(MDStackLayout):
                         print([x.answer_key for x in answer_keys.items])
                         answer_keys.items[index].answer_key.remove(self.ans_equiv[btn.icon])
                     
-                    
-                        
-                   
-                
-
 class KeyScreen(Screen):
     def __init__(self, **kwargs):
         super(KeyScreen, self).__init__(**kwargs)
@@ -1709,23 +2211,8 @@ class HomeScreen(Screen):
         self.thread_lock = threading.Lock()
 
 class AnalysisScreen(Screen):
-    percentage = 0.5  # Example percentage value
-
-    def update_percentage(self, value):
-        try:
-
-            percentage = float(value) / 100
-            if 0 <= percentage <= 1:
-                self.percentage = percentage
-            else:
-                print("Percentage must be between 0 and 100.")
-        except ValueError:
-            print("Invalid input. Please enter a valid percentage.")
-
-
-#CLASS____________________________________________________________-
-
-
+    def on_release(self, Screen):
+        self.manager.change_screen(Screen)
 
 class NameScreen(Screen):
     #INIT_________________________________________________________
@@ -1890,7 +2377,6 @@ class NameScreenExpanded(NameScreen):
     def __init__(self, **kwargs):
         super(NameScreenExpanded, self).__init__(**kwargs)
     
-
 class MCScreen(Screen):
     def toggle_button_state(self, button):
         # Deselect all buttons
@@ -1915,7 +2401,6 @@ class MCScreen(Screen):
     def on_leave(self, *args):
         # Reset button background color when leaving the screen
         self.on_pre_enter()
-
 
 class TFScreen(Screen):
     def toggle_button_state(self, button):
@@ -1967,7 +2452,6 @@ class TFScreen(Screen):
         # Here you can do something with the entered text, like updating the UI, etc.
         dialog.dismiss()
 
-
 #CLASS____________________________________________________________
 
 class FileManager(MDFileManager):
@@ -2010,22 +2494,20 @@ class FileManager(MDFileManager):
         
         self.close()
         
-
 # CLASS_________________________________________________________
         
-
 class IDScreen(Screen):
     pass
 
-#CLASS)))))))))))))_____________________________________________-
+
 class FeedBack(BoxLayout):
     def __init__(self,**kwargs):
         super(FeedBack, self).__init__(**kwargs)
         self.frame_image = Image(size_hint=(1,1), pos_hint={'center_x': 0.5, 'center_y': 0.5},allow_stretch=True, keep_ratio=False)
 
 
-#CLASS________________________________________________________
 
+#CLASS________________________________________________________
 
 class CheckScreen(Screen):
 
@@ -2221,7 +2703,6 @@ class CheckScreen(Screen):
         self.feedback_widget = None
         self.img_display = Image(source='assets/loading.jpg',size_hint = (1,0.3),pos_hint = {'top': 0.8, 'center_x': 0.5})
         self.add_widget(self.img_display)
-
 
 #CLASS_________________________________________________________
 
@@ -2433,7 +2914,9 @@ class AnswerSheetScreen(Screen):
 #CLASS_____________________
 
 #_________________________________________________
+
 manager = None
+
 def autosave():
     """Autosaves changes on filesystem into permanent local storage.
 
@@ -2442,8 +2925,7 @@ def autosave():
     """
     #safe_exit=False
     fs.save() # saves filesystem
-    autosave_sched() # restart when done
-
+    autosave_sched() # restart when don
 
 
 #_______________________________________________
@@ -2525,7 +3007,6 @@ class CustomScreenManager(ScreenManager):
         except AttributeError as e:
             print('screen.change_screen():',e)
         self.current = screen_name
-        
 
 class App(MDApp):
     def build(self):
@@ -2536,7 +3017,8 @@ class App(MDApp):
         self.manager = None
         
         return self.screen
-    
+
+   
     #________________________________________________
    
 
