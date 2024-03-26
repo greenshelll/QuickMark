@@ -1485,6 +1485,7 @@ class KeyScreen(Screen):
                 index = ((self.page-1)*10)+iterations - 1
                 
                 print('num',index,len(answer_key.get_items())-1)
+                
                 if index >= len(answer_key.get_items()):
                     print('above index')
                     x.opacity=0
